@@ -1,10 +1,11 @@
 'use client'
 import TrailerEmbed from "./_components/TrailerEmbed";
 import Button from "@/app/_components/Button";
-import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, CtaRow, HeadsGrid, HeadCard, Avatar, DiscordRow } from "./styles";
+import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow } from "./styles";
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from "@/app/_utils/constants";
 import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
+import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
 import Image from "next/image";
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 
@@ -23,36 +24,28 @@ const DiscordIcon = () => (
   </svg>
 );
 
+const SteamIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z" />
+  </svg>
+);
+
 const Home = () => {
   const sm = useMediaQuery('(max-width: 700px)');
+  const cardMobile = useMediaQuery('(max-width: 640px)');
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
 
   return (
-    <SectionContainer id="inicio" $headerHeight={headerHeight}> 
+    <SectionContainer id="inicio" $headerHeight={headerHeight}>
 
-      <Hero>
-        <Text as="h1" $styles="heroTagline">
-          Currently developing an <span className="big">asymmetrical online co-op 3D platformer</span> where <span className="big">3 demons</span> are trying to escape the Demon World. Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.
+      <Section id="estudio" marginBottom="0px">
+        <StudioLogo>
+          <Image src={HellBrosIso} alt="Hell Bros" priority />
+        </StudioLogo>
+        <Text as="p" $styles="studioIntro">
+          We are a <span className="big">Peruvian</span> indie game <span className="big">studio</span> with a lot of <span className="big">passion</span>. We love the games we make and we focus on developing online co-op experiences.
         </Text>
-
-        <TrailerEmbed videoId={TRAILER_ID} />
-
-        <HeroLogo>
-          <Image src={LookOutLogo} alt="Look Out" priority />
-        </HeroLogo>
-
-        <CtaRow>
-          <Button
-            as="a"
-            href="https://store.steampowered.com/app/4605750/"
-            target="_blank"
-            rel="noopener noreferrer"
-            $variant="solid"
-            color={theme.colors.red}>
-            Wishlist on Steam
-          </Button>
-        </CtaRow>
-      </Hero>
+      </Section>
 
       <Section $styles="card" id="discord" color={theme.colors.black} textColor="white">
         <DiscordRow>
@@ -71,15 +64,54 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             $variant="solid"
-            color="#5865F2">
-            Join the server
+            color="#5865F2"
+            icon={cardMobile ? "assets/icons/discord.svg" : undefined}
+            iconColor="#fff">
+            {cardMobile ? 'Join' : 'Join the server'}
           </Button>
         </DiscordRow>
       </Section>
 
-      <Section id="nosotros" marginBottom="48px">
+      <Hero id="lookout">
+        <HeroLogo>
+          <Image src={LookOutLogo} alt="Look Out" priority />
+        </HeroLogo>
+
+        <Text as="h1" $styles="heroTagline">
+          an <span className="big">asymmetrical online co-op 3D platformer</span> where <span className="big">3 demons</span> are trying to escape the Demon World. Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.
+        </Text>
+
+        <TrailerEmbed videoId={TRAILER_ID} />
+      </Hero>
+
+      <Section $styles="card" id="wishlist" color={theme.colors.black} textColor="white">
+        <WishlistRow>
+          <div className="left">
+            <span className="icon" aria-hidden="true">
+              <SteamIcon />
+            </span>
+            <div>
+              <h2 className="title">Wishlist Look Out</h2>
+              <p className="sub">Add it on Steam!</p>
+            </div>
+          </div>
+          <Button
+            as="a"
+            href="https://store.steampowered.com/app/4605750/"
+            target="_blank"
+            rel="noopener noreferrer"
+            $variant="solid"
+            color={theme.colors.cyan}
+            icon={cardMobile ? "assets/icons/steam.svg" : undefined}
+            iconColor="#fff">
+            {cardMobile ? 'Wishlist' : 'Wishlist on Steam'}
+          </Button>
+        </WishlistRow>
+      </Section>
+
+      <Section id="nosotros" marginBottom="40px">
         <Text as="h2" $styles="sectionTitle">
-          The Heads behind Hell Bros
+          Our Heads
         </Text>
         <HeadsGrid>
           <HeadCard $accent={theme.colors.red}>

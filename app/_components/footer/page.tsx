@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import HellBrosLogoWhite from '@/public/assets/brand/hellbros-logo-white.png';
+import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
 
 const IgIcon = () => (

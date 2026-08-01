@@ -24,12 +24,15 @@ export const Section = styled.section<SectionProps & StyledProps>`
   align-items: center;
   justify-content: center;
   margin: auto;
+  /* Fill up to max-width instead of shrinking to fit content, so every
+     section shares the same box width (1000px). */
+  width: 100%;
   max-width: ${MAX_WIDTH};
   padding: ${SECTION_PADDING};
   background-color: ${({ color }) => color};
   color: ${({ textColor }) => textColor};
   border-radius: 40px;
-  margin-bottom: 125px;
+  margin-bottom: 100px;
 
   ${() => variant({
   prop: '$styles',
@@ -40,6 +43,9 @@ export const Section = styled.section<SectionProps & StyledProps>`
       borderRadius: '0px',
     },
     card: {
+      // Keeps its own 5px inset on each side (990px in full); shrink-to-fit,
+      // so it opts out of the base `width: 100%`.
+      width: 'auto',
       maxWidth: `calc(${MAX_WIDTH} + 80px)`,
       '& > div': {
         maxWidth: `calc(${MAX_WIDTH} - 80px)`,
@@ -47,6 +53,10 @@ export const Section = styled.section<SectionProps & StyledProps>`
       '@media (min-width: 0px)': {
         marginX: '5px',
         paddingX: `calc(${SECTION_PADDING} - 5px)`,
+      },
+      '@media (max-width: 640px)': {
+        paddingX: '20px',
+        paddingY: '24px',
       },
       [`@media (min-width: calc(${MAX_WIDTH} + 80px))`]: {
         marginX: 'auto',
@@ -94,6 +104,18 @@ export const Text = styled(TextGlobal)`
       fontSize: '18px',
       color: `${theme.colors.secondaryText}`,
       lineHeight: '28px'
+    },
+    studioIntro: {
+      fontSize: '18px',
+      lineHeight: '28px',
+      color: `${theme.colors.secondaryText}`,
+      textAlign: 'center',
+      width: '100%',
+      '.big': {
+        fontSize: '24px',
+        fontWeight: 700,
+        color: theme.colors.black,
+      },
     },
     sectionDesc2: {
       fontSize: '18px',
@@ -145,19 +167,19 @@ export const Hero = styled.section`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 720px;
+  /* Match the shared 1000px section box. */
+  width: 100%;
+  max-width: ${MAX_WIDTH};
   margin: 0 auto;
-  padding: 48px ${SECTION_PADDING} 80px;
+  /* 40px top/bottom for the Look Out section itself (wishlist card aside). */
+  padding: 40px ${SECTION_PADDING};
   gap: 1.75rem;
-
-  @media (min-width: 700px) {
-    padding: 72px ${SECTION_PADDING} 100px;
-  }
 `;
 
 export const TrailerFrame = styled.div`
   width: 100%;
-  max-width: 660px;
+  /* Grow to the full section content width. */
+  max-width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 14px;
   overflow: hidden;
@@ -197,7 +219,7 @@ export const TrailerFrame = styled.div`
     width: 68px;
     height: 68px;
     border-radius: 50%;
-    background: ${theme.colors.primary};
+    background: ${theme.colors.black};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -208,19 +230,13 @@ export const TrailerFrame = styled.div`
     transform: translate(-50%, -50%) scale(1.08);
   }
 
-  .facade .play svg {
-    width: 30px;
-    height: 30px;
-    fill: ${theme.colors.white};
-    margin-left: 3px;
-  }
-
-  .facade .label {
-    position: absolute;
-    left: 14px;
-    bottom: 12px;
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 13px;
+  .facade .play .switch {
+    width: 52px;
+    height: 52px;
+    /* Green tint (multiply-equivalent on the white silhouette). */
+    background-color: #B5E61D;
+    -webkit-mask: url(/assets/look-out/switch.png) center / contain no-repeat;
+    mask: url(/assets/look-out/switch.png) center / contain no-repeat;
   }
 `;
 
@@ -256,6 +272,18 @@ export const HeroLogo = styled.div`
 
   @media (max-width: 700px) {
     max-width: 300px;
+  }
+`;
+
+export const StudioLogo = styled.div`
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 32px;
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 `;
 
@@ -385,9 +413,54 @@ export const DiscordRow = styled.div`
     color: rgba(255, 255, 255, 0.6);
   }
 
+  /* Mobile: keep everything on one line, shrink the pieces and use a
+     compact CTA (short label + brand icon). */
   @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: flex-start;
+    width: 100%;
+    gap: 0.6rem;
+
+    .left {
+      gap: 12px;
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+    }
+
+    .icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .title {
+      font-size: 16px;
+    }
+
+    .sub {
+      font-size: 12px;
+    }
+
+    & > a {
+      min-height: 40px;
+      padding-left: 12px;
+      padding-right: 12px;
+      gap: 6px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    & > a svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+`;
+
+// Same black-card row as Discord, with a Steam-cyan icon tile.
+export const WishlistRow = styled(DiscordRow)`
+  .icon {
+    background: ${theme.colors.cyan};
   }
 `;
 

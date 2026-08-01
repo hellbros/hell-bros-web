@@ -10,12 +10,13 @@ import { theme } from "@/app/_styles/theme";
 import useScrollbarWidth from '@/app/hooks/useScrollbarWidth';
 import useActiveSection from '@/app/hooks/useActiveSection';
 import Image from 'next/image';
-import HellBrosLogo from '@/public/assets/brand/hellbros-logo.png';
+import HellBrosLogo from '@/public/assets/brand/logo_hb_color02.svg';
 
-const NAV = [
-  { id: 'inicio', label: 'Home' },
-  { id: 'nosotros', label: 'About' },
-  { id: 'contact', label: 'Contact' },
+const NAV: { id: string; label: string; scrollTo?: string }[] = [
+  { id: 'estudio', label: 'Home' },
+  { id: 'lookout', label: 'Look Out' },
+  // Contact lands on the "Heads" section so it and the footer show together.
+  { id: 'contact', label: 'Contact', scrollTo: 'nosotros' },
 ];
 const NAV_IDS = NAV.map((n) => n.id);
 
@@ -61,12 +62,12 @@ const Header = () => {
           </div>
 
           <HeaderOptions>
-            {NAV.map(({ id, label }) => (
+            {NAV.map(({ id, label, scrollTo }) => (
               <button
                 key={id}
                 type="button"
                 className={activeSection === id ? 'active' : undefined}
-                onClick={() => scrollToSection(id, headerHeight)}
+                onClick={() => scrollToSection(scrollTo ?? id, headerHeight)}
               >
                 <Text $styles='link' as="span">{label}</Text>
               </button>
@@ -85,12 +86,12 @@ const Header = () => {
 
         {mobileMenuOpen &&
           <HeaderMobileOptions>
-            {NAV.map(({ id, label }) => (
+            {NAV.map(({ id, label, scrollTo }) => (
               <button
                 key={id}
                 type="button"
                 className={activeSection === id ? 'active' : undefined}
-                onClick={() => ScrollMobile(id)}
+                onClick={() => ScrollMobile(scrollTo ?? id)}
               >
                 <Text as="span">{label}</Text>
               </button>

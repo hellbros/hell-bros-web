@@ -8,12 +8,6 @@ type Props = {
   title?: string;
 };
 
-const PlayIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M8 5v14l11-7z" />
-  </svg>
-);
-
 const TrailerEmbed = ({ videoId, title = 'Demo trailer' }: Props) => {
   const [playing, setPlaying] = useState(false);
 
@@ -49,9 +43,8 @@ const TrailerEmbed = ({ videoId, title = 'Demo trailer' }: Props) => {
           />
         ) : null}
         <span className="play" aria-hidden="true">
-          <PlayIcon />
+          <span className="switch" />
         </span>
-        <span className="label">{title}</span>
       </button>
     </TrailerFrame>
   );
