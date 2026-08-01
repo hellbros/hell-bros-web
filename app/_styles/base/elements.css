@@ -1,0 +1,37 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #000000;
+  background-color: #F5F5F5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  padding: 0;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  vertical-align: middle;
+  letter-spacing: inherit;
+  background-color: transparent;
+}
+
+button:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+ul,
+li {
+  list-style-type: none;
+}
+
+img {
+  max-width: 100%;
+  /* height: auto; */
+  display: block;
+}
