@@ -49,10 +49,15 @@ export const Section = styled.section<SectionProps & StyledProps>`
       width: `calc(100% - ${SECTION_PADDING} * 2)`,
       maxWidth: `calc(${MAX_WIDTH} - ${SECTION_PADDING} * 2)`,
       '@media (max-width: 640px)': {
-        // Left icon + text + CTA on one line needs more room, so padding
-        // scales down on narrow phones and up where there's space.
-        paddingX: 'clamp(8px, calc((100vw - 366px) / 2), 24px)',
-        paddingY: '24px',
+        // Fixed insets instead of a viewport-based guess at the row's
+        // content width: the row itself (DiscordRow) shrinks its own
+        // pieces to fit, so the card padding can just stay constant.
+        paddingX: '12px',
+        paddingY: '20px',
+        // Smaller radius to match the shorter mobile card; the 40px
+        // desktop radius is too big for this height and crowds the
+        // icon/button against the curve.
+        borderRadius: '24px',
       },
     },
   },
@@ -377,6 +382,14 @@ export const DiscordRow = styled.div`
     align-items: center;
     gap: 18px;
     text-align: left;
+    /* Lets the title/sub shrink and ellipsize instead of pushing the
+       button out or overflowing the card. */
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .left > div {
+    min-width: 0;
   }
 
   .icon {
@@ -400,18 +413,24 @@ export const DiscordRow = styled.div`
     margin: 0;
     font-size: 22px;
     font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .sub {
     margin: 4px 0 0;
     font-size: 15px;
     color: rgba(255, 255, 255, 0.6);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /* Mobile: keep everything on one line, shrink the pieces and use a
      compact CTA (short label + brand icon). */
   @media (max-width: 640px) {
-    gap: 0.5rem;
+    gap: 6px;
 
     .left {
       gap: 10px;
@@ -435,11 +454,13 @@ export const DiscordRow = styled.div`
       font-size: 12px;
     }
 
-    /* Compact text-only CTA. */
+    /* Compact text-only CTA; never shrinks, so .title/.sub above give up
+       space first via ellipsis instead of the button getting squeezed. */
     & > a {
+      flex-shrink: 0;
       min-height: 38px;
-      padding-left: 12px;
-      padding-right: 12px;
+      padding-left: 10px;
+      padding-right: 10px;
       font-size: 13px;
       white-space: nowrap;
     }
