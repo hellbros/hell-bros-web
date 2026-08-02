@@ -43,23 +43,16 @@ export const Section = styled.section<SectionProps & StyledProps>`
       borderRadius: '0px',
     },
     card: {
-      // Keeps its own 5px inset on each side (990px in full); shrink-to-fit,
-      // so it opts out of the base `width: 100%`.
-      width: 'auto',
-      maxWidth: `calc(${MAX_WIDTH} + 80px)`,
-      '& > div': {
-        maxWidth: `calc(${MAX_WIDTH} - 80px)`,
-      },
-      '@media (min-width: 0px)': {
-        marginX: '5px',
-        paddingX: `calc(${SECTION_PADDING} - 5px)`,
-      },
+      // Align the black card with the section content column (the video):
+      // same 40px side margins as a normal section body, so it no longer
+      // sticks out past the video. Kept as a reusable variant (not removed).
+      width: `calc(100% - ${SECTION_PADDING} * 2)`,
+      maxWidth: `calc(${MAX_WIDTH} - ${SECTION_PADDING} * 2)`,
       '@media (max-width: 640px)': {
-        paddingX: '20px',
+        // Left icon + text + CTA on one line needs more room, so padding
+        // scales down on narrow phones and up where there's space.
+        paddingX: 'clamp(8px, calc((100vw - 366px) / 2), 24px)',
         paddingY: '24px',
-      },
-      [`@media (min-width: calc(${MAX_WIDTH} + 80px))`]: {
-        marginX: 'auto',
       },
     },
   },
@@ -219,7 +212,7 @@ export const TrailerFrame = styled.div`
     width: 68px;
     height: 68px;
     border-radius: 50%;
-    background: ${theme.colors.black};
+    background: ${theme.colors.primary};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -230,13 +223,11 @@ export const TrailerFrame = styled.div`
     transform: translate(-50%, -50%) scale(1.08);
   }
 
-  .facade .play .switch {
-    width: 52px;
-    height: 52px;
-    /* Green tint (multiply-equivalent on the white silhouette). */
-    background-color: #B5E61D;
-    -webkit-mask: url(/assets/look-out/switch.png) center / contain no-repeat;
-    mask: url(/assets/look-out/switch.png) center / contain no-repeat;
+  .facade .play svg {
+    width: 30px;
+    height: 30px;
+    fill: ${theme.colors.white};
+    margin-left: 3px;
   }
 `;
 
@@ -310,6 +301,10 @@ export const HeadCard = styled.div<{ $accent?: string }>`
   align-items: center;
   text-align: center;
   gap: 0.6rem;
+  /* Fixed width so every people-card is equal and both grids wrap
+     2 -> 1 columns at the same width. */
+  flex: 0 0 240px;
+  max-width: 100%;
 
   .name {
     margin: 0;
@@ -375,7 +370,7 @@ export const DiscordRow = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  width: min(calc(${MAX_WIDTH} - 80px), calc(100vw - 96px));
+  width: 100%;
 
   .left {
     display: flex;
@@ -416,11 +411,10 @@ export const DiscordRow = styled.div`
   /* Mobile: keep everything on one line, shrink the pieces and use a
      compact CTA (short label + brand icon). */
   @media (max-width: 640px) {
-    width: 100%;
-    gap: 0.6rem;
+    gap: 0.5rem;
 
     .left {
-      gap: 12px;
+      gap: 10px;
     }
 
     .icon {
@@ -441,18 +435,13 @@ export const DiscordRow = styled.div`
       font-size: 12px;
     }
 
+    /* Compact text-only CTA. */
     & > a {
-      min-height: 40px;
+      min-height: 38px;
       padding-left: 12px;
       padding-right: 12px;
-      gap: 6px;
-      font-size: 14px;
+      font-size: 13px;
       white-space: nowrap;
-    }
-
-    & > a svg {
-      width: 18px;
-      height: 18px;
     }
   }
 `;

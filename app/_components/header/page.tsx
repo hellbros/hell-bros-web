@@ -15,8 +15,8 @@ import HellBrosLogo from '@/public/assets/brand/logo_hb_color02.svg';
 const NAV: { id: string; label: string; scrollTo?: string }[] = [
   { id: 'estudio', label: 'Home' },
   { id: 'lookout', label: 'Look Out' },
-  // Contact lands on the "Heads" section so it and the footer show together.
-  { id: 'contact', label: 'Contact', scrollTo: 'nosotros' },
+  { id: 'nosotros', label: 'About Us' },
+  { id: 'contact', label: 'Contact' },
 ];
 const NAV_IDS = NAV.map((n) => n.id);
 

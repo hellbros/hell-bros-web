@@ -43,7 +43,7 @@ const Home = () => {
           <Image src={HellBrosIso} alt="Hell Bros" priority />
         </StudioLogo>
         <Text as="p" $styles="studioIntro">
-          We are a <span className="big">Peruvian</span> indie game <span className="big">studio</span> with a lot of <span className="big">passion</span>. We love the games we make and we focus on developing online co-op experiences.
+          <span className="big">Hell Bros</span> is a <span className="big">Peruvian</span> indie game <span className="big">studio</span> with a lot of <span className="big">passion</span>. We love the games we make and we focus on developing online co-op experiences.
         </Text>
       </Section>
 
@@ -64,10 +64,8 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             $variant="solid"
-            color="#5865F2"
-            icon={cardMobile ? "assets/icons/discord.svg" : undefined}
-            iconColor="#fff">
-            {cardMobile ? 'Join' : 'Join the server'}
+            color="#5865F2">
+            {cardMobile ? 'Join Us' : 'Join the server'}
           </Button>
         </DiscordRow>
       </Section>
@@ -101,15 +99,13 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
             $variant="solid"
-            color={theme.colors.cyan}
-            icon={cardMobile ? "assets/icons/steam.svg" : undefined}
-            iconColor="#fff">
+            color={theme.colors.cyan}>
             {cardMobile ? 'Wishlist' : 'Wishlist on Steam'}
           </Button>
         </WishlistRow>
       </Section>
 
-      <Section id="nosotros" marginBottom="40px">
+      <Section id="nosotros" marginBottom="60px">
         <Text as="h2" $styles="sectionTitle">
           Our Heads
         </Text>
@@ -138,6 +134,42 @@ const Home = () => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Iván Aráoz on LinkedIn"
+            >
+              <LinkedinIcon />
+            </a>
+          </HeadCard>
+        </HeadsGrid>
+      </Section>
+
+      <Section id="team">
+        <Text as="h2" $styles="sectionTitle">
+          Our Team
+        </Text>
+        <HeadsGrid>
+          <HeadCard $accent={theme.colors.cyan}>
+            <Avatar $bg={theme.colors.cyan} aria-hidden="true">AC</Avatar>
+            <p className="name">Ariana Coronel</p>
+            <p className="role">Art Director</p>
+            <a
+              className="linkedin"
+              href="https://www.linkedin.com/in/ariana-coronel-palma-48b653401/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ariana Coronel on LinkedIn"
+            >
+              <LinkedinIcon />
+            </a>
+          </HeadCard>
+          <HeadCard $accent="#7C3AED">
+            <Avatar $bg="#7C3AED" aria-hidden="true">GB</Avatar>
+            <p className="name">Gunter Brenner</p>
+            <p className="role">Sound &amp; Music Designer</p>
+            <a
+              className="linkedin"
+              href="https://www.linkedin.com/in/gunterbrenner/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Gunter Brenner on LinkedIn"
             >
               <LinkedinIcon />
             </a>

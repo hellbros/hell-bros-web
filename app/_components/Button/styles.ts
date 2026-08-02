@@ -52,6 +52,7 @@ export const StyledButton = styled.button<ButtonProps>`
   background-color: ${({ color, justIcon }) => justIcon ? "transparent" : (color ? color : theme.colors.primary)};
   position: relative;
   transition: background-color 250ms ease, color 250ms ease, border-color 250ms ease, transform 200ms ease;
+  transform-origin: center center;
   cursor: pointer;
   text-decoration: none;
   text-align: center;
