@@ -76,7 +76,7 @@ const HomeContent = () => {
         </HeroLogo>
 
         <Text as="h1" $styles="heroTagline">
-          an <span className="big">asymmetrical online co-op 3D platformer</span> where <span className="big">3 demons</span> are trying to escape the Demon World. Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.
+          An <span className="big">asymmetrical online co-op 3D platformer</span> where <span className="big">3 demons</span> are trying to escape the Demon World. Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.
         </Text>
 
         <TrailerEmbed videoId={TRAILER_ID} />
