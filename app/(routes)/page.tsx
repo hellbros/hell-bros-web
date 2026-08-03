@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/assets/brand/hellbros-og.png',
+        url: '/assets/brand/hellbros-og.png?v=2',
         width: 1200,
         height: 630,
         alt: 'Hell Bros',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: 'Hell Bros | Indie Game Studio',
     description:
       'Hell Bros is an independent Peruvian game studio making Look Out, an asymmetrical online co-op 3D platformer for 3 players.',
-    images: ['/assets/brand/hellbros-og.png'],
+    images: ['/assets/brand/hellbros-og.png?v=2'],
   },
 }
 
