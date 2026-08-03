@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from 'react';
 import Image from 'next/image';
 import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
+
+const EMAIL = 'hello@hellbrosstudio.com';
 
 const IgIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -56,33 +59,63 @@ const socials = [
   { label: 'Reddit', href: 'https://www.reddit.com/user/hellbrosstudio/', Icon: RedditIcon },
 ];
 
-const Footer = () => (
-  <FooterStyled id="contact">
-    <FooterInner>
-      <FooterGrid>
-        <Brand>
-          <Image src={HellBrosLogoWhite} alt="Hell Bros" />
-          <span>Lima, Peru</span>
-          <a href="mailto:hello@hellbrosstudio.com">hello@hellbrosstudio.com</a>
-        </Brand>
+const Footer = () => {
+  const [copied, setCopied] = useState(false);
 
-        <Col>
-          <p className="label">Follow us</p>
-          <SocialRow>
-            {socials.map(({ label, href, Icon }) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
-                <Icon />
-              </a>
-            ))}
-          </SocialRow>
-        </Col>
-      </FooterGrid>
+  const handleEmailClick = () => {
+    // Copy the address too — useful on desktop where no default mail client is
+    // set (the mailto still fires, so phones / configured clients open it).
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard
+        .writeText(EMAIL)
+        .then(() => {
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 1600);
+        })
+        .catch(() => {});
+    }
+  };
 
-      <FooterBottom>
-        © 2026 Hell Bros. All rights reserved.
-      </FooterBottom>
-    </FooterInner>
-  </FooterStyled>
-);
+  return (
+    <FooterStyled id="contact">
+      <FooterInner>
+        <FooterGrid>
+          <Brand>
+            <Image src={HellBrosLogoWhite} alt="Hell Bros" />
+            <span>Lima, Peru</span>
+            <a
+              className="email"
+              href={`mailto:${EMAIL}`}
+              onClick={handleEmailClick}
+              title={copied ? 'Copied!' : 'Click to copy'}
+            >
+              {EMAIL}
+              {copied && (
+                <span className="copied-badge" role="status">
+                  Copied!
+                </span>
+              )}
+            </a>
+          </Brand>
+
+          <Col>
+            <p className="label">Follow us</p>
+            <SocialRow>
+              {socials.map(({ label, href, Icon }) => (
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+                  <Icon />
+                </a>
+              ))}
+            </SocialRow>
+          </Col>
+        </FooterGrid>
+
+        <FooterBottom>
+          © 2026 Hell Bros. All rights reserved.
+        </FooterBottom>
+      </FooterInner>
+    </FooterStyled>
+  );
+};
 
 export default Footer;
