@@ -59,7 +59,7 @@ export const Brand = styled.div`
 
   .copied-badge {
     position: absolute;
-    left: 0;
+    right: 0;
     bottom: calc(100% + 6px);
     padding: 3px 8px;
     border-radius: 6px;
