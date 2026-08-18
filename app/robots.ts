@@ -5,7 +5,7 @@ const robots = (): MetadataRoute.Robots => ({
     userAgent: '*',
     allow: '/',
   },
-  sitemap: 'https://hellbrosstudio.com/sitemap.xml',
+  sitemap: 'https://www.hellbrosstudio.com/sitemap.xml',
 })
 
 export default robots

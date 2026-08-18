@@ -40,8 +40,8 @@ const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Hell Bros',
-  url: 'https://hellbrosstudio.com',
-  logo: 'https://hellbrosstudio.com/assets/brand/logo_hb_color02.svg',
+  url: 'https://www.hellbrosstudio.com',
+  logo: 'https://www.hellbrosstudio.com/assets/brand/logo_hb_color02.svg',
   sameAs: [
     'https://discord.gg/5yXsbXfKM',
     'https://www.instagram.com/hellbrosstudio',
