@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://hellbrosstudio.com'),
   title: 'Hell Bros | Indie Game Studio',
   description:
-    'An independent Peruvian game studio focused on online cooperative experiences — makers of Look Out, a 3-player co-op platformer.',
+    'An independent Peruvian game studio focused on online cooperative experiences — makers of Look Out: Indie Game, a 3-player co-op platformer.',
 }
 
 export default function RootLayout({

@@ -7,14 +7,14 @@ import HomeContent from './home/_components/HomeContent'
 export const metadata: Metadata = {
   title: 'Hell Bros | Indie Game Studio',
   description:
-    'Hell Bros is an independent Peruvian game studio making Look Out, an asymmetrical online co-op 3D platformer for 3 players. Wishlist it on Steam and join our Discord.',
+    'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an asymmetrical online co-op 3D platformer for 3 players. Wishlist it on Steam and join our Discord.',
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: 'Hell Bros | Indie Game Studio',
     description:
-      'Hell Bros is an independent Peruvian game studio making Look Out, an asymmetrical online co-op 3D platformer for 3 players.',
+      'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an asymmetrical online co-op 3D platformer for 3 players.',
     url: '/',
     siteName: 'Hell Bros',
     type: 'website',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Hell Bros | Indie Game Studio',
     description:
-      'Hell Bros is an independent Peruvian game studio making Look Out, an asymmetrical online co-op 3D platformer for 3 players.',
+      'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an asymmetrical online co-op 3D platformer for 3 players.',
     images: ['/assets/brand/hellbros-og.png?v=2'],
   },
 }
@@ -56,7 +56,7 @@ const organizationJsonLd = {
 const videoGameJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'VideoGame',
-  name: 'Look Out',
+  name: 'Look Out: Indie Game',
   description:
     'An asymmetrical online co-op 3D platformer where 3 demons are trying to escape the Demon World. Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.',
   url: 'https://store.steampowered.com/app/4605750/',
