@@ -169,8 +169,8 @@ export const Hero = styled.section`
   width: 100%;
   max-width: ${MAX_WIDTH};
   margin: 0 auto;
-  /* 40px top/bottom for the Look Out section itself (wishlist card aside). */
-  padding: 40px ${SECTION_PADDING};
+  /* 50px top/bottom for the section itself. */
+  padding: 50px ${SECTION_PADDING};
   gap: 1.75rem;
 `;
 
@@ -303,15 +303,32 @@ export const ShotsGrid = styled.div`
   }
 `;
 
-/* A single, full-width standalone image (not inside a grid/card). */
+/* A single standalone image (not inside a grid/card), ~half width, centered. */
 export const FullShot = styled.div`
-  width: 100%;
+  width: 50%;
+  margin: 0 auto;
 
   img {
     width: 100%;
     height: auto;
     display: block;
     border-radius: 12px;
+  }
+`;
+
+/* Black CTA card (Discord / Wishlist) placed inside a section rather than
+   being its own section. 50px of separation above it. */
+export const CtaCard = styled.div`
+  width: 100%;
+  margin-top: 50px;
+  padding: 40px;
+  background-color: ${theme.colors.black};
+  color: ${theme.colors.white};
+  border-radius: 40px;
+
+  @media (max-width: 640px) {
+    padding: 20px 12px;
+    border-radius: 24px;
   }
 `;
 

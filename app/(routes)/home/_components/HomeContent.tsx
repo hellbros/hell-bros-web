@@ -1,7 +1,7 @@
 'use client'
 import TrailerEmbed from "./TrailerEmbed";
 import Button from "@/app/_components/Button";
-import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot } from "../styles";
+import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard } from "../styles";
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from "@/app/_utils/constants";
 import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
@@ -42,35 +42,31 @@ const HomeContent = () => {
   return (
     <SectionContainer id="inicio" $headerHeight={headerHeight}>
 
-      {/* HOME: slogan + trailer + wishlist */}
+      {/* HOME: trailer + wishlist */}
       <Section id="home">
-        <Text as="h1" $styles="sectionTitle">
-          Games from hell
-        </Text>
         <TrailerEmbed videoId={TRAILER_ID} />
-      </Section>
-
-      <Section $styles="card" id="wishlist" color={theme.colors.black} textColor="white">
-        <WishlistRow>
-          <div className="left">
-            <span className="icon" aria-hidden="true">
-              <SteamIcon />
-            </span>
-            <div>
-              <h2 className="title">Wishlist Look Out</h2>
-              <p className="sub">Add it on Steam!</p>
+        <CtaCard>
+          <WishlistRow>
+            <div className="left">
+              <span className="icon" aria-hidden="true">
+                <SteamIcon />
+              </span>
+              <div>
+                <h2 className="title">Wishlist Look Out</h2>
+                <p className="sub">Add it on Steam!</p>
+              </div>
             </div>
-          </div>
-          <Button
-            as="a"
-            href="https://store.steampowered.com/app/4605750/"
-            target="_blank"
-            rel="noopener noreferrer"
-            $variant="solid"
-            color={theme.colors.cyan}>
-            {cardMobile ? 'Wishlist' : 'Wishlist on Steam'}
-          </Button>
-        </WishlistRow>
+            <Button
+              as="a"
+              href="https://store.steampowered.com/app/4605750/"
+              target="_blank"
+              rel="noopener noreferrer"
+              $variant="solid"
+              color={theme.colors.cyan}>
+              {cardMobile ? 'Wishlist' : 'Wishlist on Steam'}
+            </Button>
+          </WishlistRow>
+        </CtaCard>
       </Section>
 
       {/* LOOK OUT: logo + text + shots + text + full shot */}
@@ -104,9 +100,9 @@ const HomeContent = () => {
         </FullShot>
       </Hero>
 
-      {/* ABOUT US: our studio + logo + text */}
+      {/* ABOUT US: our studio + logo + text + Join Us */}
       <Section id="about">
-        <Text as="h2" $styles="sectionTitle">
+        <Text as="h2" $styles="sectionTitle" style={{ marginBottom: 0 }}>
           Our Studio
         </Text>
         <StudioLogo>
@@ -115,30 +111,29 @@ const HomeContent = () => {
         <Text as="p" $styles="studioIntro">
           <span className="big">Hell Bros</span> is a <span className="big">Peruvian</span> indie game <span className="big">studio</span> with a lot of <span className="big">passion</span>. We love the games we make and we focus on developing online co-op experiences.
         </Text>
-      </Section>
 
-      {/* Join Us (Discord) */}
-      <Section $styles="card" id="discord" color={theme.colors.black} textColor="white">
-        <DiscordRow>
-          <div className="left">
-            <span className="icon" aria-hidden="true">
-              <DiscordIcon />
-            </span>
-            <div>
-              <h2 className="title">Join our Discord</h2>
-              <p className="sub">Become a Hell Bro!</p>
+        <CtaCard>
+          <DiscordRow>
+            <div className="left">
+              <span className="icon" aria-hidden="true">
+                <DiscordIcon />
+              </span>
+              <div>
+                <h2 className="title">Join our Discord</h2>
+                <p className="sub">Become a Hell Bro!</p>
+              </div>
             </div>
-          </div>
-          <Button
-            as="a"
-            href="https://discord.gg/5yXsbXfKM"
-            target="_blank"
-            rel="noopener noreferrer"
-            $variant="solid"
-            color="#5865F2">
-            {cardMobile ? 'Join Us' : 'Join the server'}
-          </Button>
-        </DiscordRow>
+            <Button
+              as="a"
+              href="https://discord.gg/5yXsbXfKM"
+              target="_blank"
+              rel="noopener noreferrer"
+              $variant="solid"
+              color="#5865F2">
+              {cardMobile ? 'Join Us' : 'Join the server'}
+            </Button>
+          </DiscordRow>
+        </CtaCard>
       </Section>
 
       {/* Our Heads */}
