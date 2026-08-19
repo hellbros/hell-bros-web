@@ -1,11 +1,15 @@
 'use client'
 import TrailerEmbed from "./TrailerEmbed";
 import Button from "@/app/_components/Button";
-import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow } from "../styles";
+import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot } from "../styles";
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from "@/app/_utils/constants";
 import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
 import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
+import Shot1 from "@/public/assets/images/1.png"
+import Shot2 from "@/public/assets/images/2.png"
+import Shot3 from "@/public/assets/images/3.png"
+import Shot4 from "@/public/assets/images/4.png"
 import Image from "next/image";
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 
@@ -38,49 +42,13 @@ const HomeContent = () => {
   return (
     <SectionContainer id="inicio" $headerHeight={headerHeight}>
 
-      <Section id="estudio" marginBottom="0px">
-        <StudioLogo>
-          <Image src={HellBrosIso} alt="Hell Bros" priority />
-        </StudioLogo>
-        <Text as="p" $styles="studioIntro">
-          <span className="big">Hell Bros</span> is a <span className="big">Peruvian</span> indie game <span className="big">studio</span> with a lot of <span className="big">passion</span>. We love the games we make and we focus on developing online co-op experiences.
+      {/* HOME: slogan + trailer + wishlist */}
+      <Section id="home">
+        <Text as="h1" $styles="sectionTitle">
+          Games from hell
         </Text>
-      </Section>
-
-      <Section $styles="card" id="discord" color={theme.colors.black} textColor="white">
-        <DiscordRow>
-          <div className="left">
-            <span className="icon" aria-hidden="true">
-              <DiscordIcon />
-            </span>
-            <div>
-              <h2 className="title">Join our Discord</h2>
-              <p className="sub">Become a Hell Bro!</p>
-            </div>
-          </div>
-          <Button
-            as="a"
-            href="https://discord.gg/5yXsbXfKM"
-            target="_blank"
-            rel="noopener noreferrer"
-            $variant="solid"
-            color="#5865F2">
-            {cardMobile ? 'Join Us' : 'Join the server'}
-          </Button>
-        </DiscordRow>
-      </Section>
-
-      <Hero id="lookout">
-        <HeroLogo>
-          <Image src={LookOutLogo} alt="Look Out" priority />
-        </HeroLogo>
-
-        <Text as="h1" $styles="heroTagline">
-          An <span className="big">asymmetrical online co-op 3D platformer</span> where <span className="big">3 demons</span> are trying to escape the Demon World. Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.
-        </Text>
-
         <TrailerEmbed videoId={TRAILER_ID} />
-      </Hero>
+      </Section>
 
       <Section $styles="card" id="wishlist" color={theme.colors.black} textColor="white">
         <WishlistRow>
@@ -105,6 +73,75 @@ const HomeContent = () => {
         </WishlistRow>
       </Section>
 
+      {/* LOOK OUT: logo + text + shots + text + full shot */}
+      <Hero id="lookout">
+        <HeroLogo>
+          <Image src={LookOutLogo} alt="Look Out" priority />
+        </HeroLogo>
+
+        <Text as="p" $styles="heroTagline">
+          An <span className="big">asymmetrical online co-op 3D platformer</span> where <span className="big">3 demons</span> are trying to escape the Demon World.
+        </Text>
+
+        <ShotsGrid>
+          <div className="shot">
+            <Image src={Shot1} alt="Look Out gameplay" fill sizes="(max-width: 700px) 31vw, 300px" />
+          </div>
+          <div className="shot">
+            <Image src={Shot2} alt="Look Out gameplay" fill sizes="(max-width: 700px) 31vw, 300px" />
+          </div>
+          <div className="shot">
+            <Image src={Shot3} alt="Look Out gameplay" fill sizes="(max-width: 700px) 31vw, 300px" />
+          </div>
+        </ShotsGrid>
+
+        <Text as="p" $styles="heroTagline">
+          Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.
+        </Text>
+
+        <FullShot>
+          <Image src={Shot4} alt="Look Out gameplay" sizes="(max-width: 1000px) 100vw, 920px" />
+        </FullShot>
+      </Hero>
+
+      {/* ABOUT US: our studio + logo + text */}
+      <Section id="about">
+        <Text as="h2" $styles="sectionTitle">
+          Our Studio
+        </Text>
+        <StudioLogo>
+          <Image src={HellBrosIso} alt="Hell Bros" />
+        </StudioLogo>
+        <Text as="p" $styles="studioIntro">
+          <span className="big">Hell Bros</span> is a <span className="big">Peruvian</span> indie game <span className="big">studio</span> with a lot of <span className="big">passion</span>. We love the games we make and we focus on developing online co-op experiences.
+        </Text>
+      </Section>
+
+      {/* Join Us (Discord) */}
+      <Section $styles="card" id="discord" color={theme.colors.black} textColor="white">
+        <DiscordRow>
+          <div className="left">
+            <span className="icon" aria-hidden="true">
+              <DiscordIcon />
+            </span>
+            <div>
+              <h2 className="title">Join our Discord</h2>
+              <p className="sub">Become a Hell Bro!</p>
+            </div>
+          </div>
+          <Button
+            as="a"
+            href="https://discord.gg/5yXsbXfKM"
+            target="_blank"
+            rel="noopener noreferrer"
+            $variant="solid"
+            color="#5865F2">
+            {cardMobile ? 'Join Us' : 'Join the server'}
+          </Button>
+        </DiscordRow>
+      </Section>
+
+      {/* Our Heads */}
       <Section id="nosotros" marginBottom="60px">
         <Text as="h2" $styles="sectionTitle">
           Our Heads
@@ -141,6 +178,7 @@ const HomeContent = () => {
         </HeadsGrid>
       </Section>
 
+      {/* Our Team */}
       <Section id="team">
         <Text as="h2" $styles="sectionTitle">
           Our Team

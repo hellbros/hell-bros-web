@@ -13,9 +13,9 @@ import Image from 'next/image';
 import HellBrosLogo from '@/public/assets/brand/logo_hb_color02.svg';
 
 const NAV: { id: string; label: string; scrollTo?: string }[] = [
-  { id: 'estudio', label: 'Home' },
+  { id: 'home', label: 'Home' },
   { id: 'lookout', label: 'Look Out' },
-  { id: 'nosotros', label: 'About Us' },
+  { id: 'about', label: 'About Us' },
   { id: 'contact', label: 'Contact' },
 ];
 const NAV_IDS = NAV.map((n) => n.id);

@@ -283,6 +283,38 @@ export const StudioLogo = styled.div`
   }
 `;
 
+/* Look Out: three gameplay shots in one row (3 equal columns with gaps). */
+export const ShotsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+
+  .shot {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .shot img {
+    object-fit: cover;
+  }
+`;
+
+/* A single, full-width standalone image (not inside a grid/card). */
+export const FullShot = styled.div`
+  width: 100%;
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+  }
+`;
+
 export const CtaRow = styled.div`
   display: flex;
   flex-wrap: wrap;
