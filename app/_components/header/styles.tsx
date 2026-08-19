@@ -18,7 +18,8 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
   position: fixed;
   background: ${(props) => (props.$hasScrolled ? theme.colors.white : theme.colors.whiteSmoke)};
   box-shadow: ${(props) => (props.$hasScrolled ? '0 2px 5px rgba(0,0,0,.05), 0 8px 40px rgba(0,0,0,.04), 0 0 2px rgba(0,0,0,.15)' : 'unset')};
-  transition: background 0.3s ease-out, box-shadow 0.3s ease-out, height 0.3s ease-out;
+  transition: background 0.3s ease-out, box-shadow 0.3s ease-out,
+    height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 9999;
 
   .header-content {
@@ -60,7 +61,10 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
   }
 
   @media (max-width: 700px) {
-    height: ${(props) => (props.$mobileMenuOpen ? '150%' : `${HEADER_HEIGHT_MOBILE}px`)};
+    /* Fit the open header to the 4-item menu (measured ~407px to the last
+       button + its margin) instead of a viewport-relative 150%, which swept
+       far past the content and looked wrong. */
+    height: ${(props) => (props.$mobileMenuOpen ? '424px' : `${HEADER_HEIGHT_MOBILE}px`)};
 
     .header-content {
       top: ${HEADER_HEIGHT_MOBILE / 2}px;
@@ -99,9 +103,21 @@ export const HeaderOptions = styled.div`
     user-select: none;
     text-align: center;
 
-    &:hover,
+    &:hover {
+      color: ${theme.colors.primary};
+    }
+
     &.active {
       color: ${theme.colors.primary};
+    }
+
+    /* The active tab is already red, so a red hover would be invisible on it;
+       hovering the active tab swaps to Hell Bros blue instead. Kept pure CSS
+       (higher-specificity &.active:hover) so wheel-scrolling to another
+       section while the pointer stays put swaps red <-> blue automatically as
+       the .active class moves between tabs. */
+    &.active:hover {
+      color: ${theme.colors.blue};
     }
   }
 `;
@@ -120,7 +136,8 @@ export const HeaderMobileOptions = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  animation: ${fadeIn} 0.4s ease-out 0.1s forwards;
+  /* Buttons appear only after the header has finished expanding (0.35s). */
+  animation: ${fadeIn} 0.25s ease-out 0.35s forwards;
   opacity: 0;
 
   @media (min-width: 701px) {
@@ -144,9 +161,16 @@ export const HeaderMobileOptions = styled.div`
       font-size: 16px;
     }
 
-    &:hover,
+    &:hover {
+      color: ${theme.colors.primary};
+    }
+
     &.active {
       color: ${theme.colors.primary};
+    }
+
+    &.active:hover {
+      color: ${theme.colors.blue};
     }
   }
 `;
