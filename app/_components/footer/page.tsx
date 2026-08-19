@@ -111,6 +111,7 @@ const Footer = () => {
         </FooterGrid>
 
         <FooterBottom>
+          <p className="slogan">Games from hell</p>
           © 2026 Hell Bros. All rights reserved.
         </FooterBottom>
       </FooterInner>

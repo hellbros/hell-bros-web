@@ -36,14 +36,13 @@ const SteamIcon = () => (
 
 const HomeContent = () => {
   const sm = useMediaQuery('(max-width: 700px)');
-  const cardMobile = useMediaQuery('(max-width: 640px)');
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
 
   return (
     <SectionContainer id="inicio" $headerHeight={headerHeight}>
 
-      {/* HOME: trailer + wishlist */}
-      <Section id="home">
+      {/* HOME: trailer + wishlist (first section: top = header + 40px) */}
+      <Section id="home" style={{ paddingTop: '40px' }}>
         <TrailerEmbed videoId={TRAILER_ID} />
         <CtaCard>
           <WishlistRow>
@@ -52,8 +51,7 @@ const HomeContent = () => {
                 <SteamIcon />
               </span>
               <div>
-                <h2 className="title">Wishlist Look Out</h2>
-                <p className="sub">Add it on Steam!</p>
+                <h2 className="title">Wishlist on Steam</h2>
               </div>
             </div>
             <Button
@@ -63,7 +61,7 @@ const HomeContent = () => {
               rel="noopener noreferrer"
               $variant="solid"
               color={theme.colors.cyan}>
-              {cardMobile ? 'Wishlist' : 'Wishlist on Steam'}
+              Add it on Steam
             </Button>
           </WishlistRow>
         </CtaCard>
@@ -92,7 +90,7 @@ const HomeContent = () => {
         </ShotsGrid>
 
         <Text as="p" $styles="heroTagline">
-          Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.
+          Unable to see their own path, <span className="big">each player depends on another</span> to move forward, forcing them to <span className="big">coordinate constantly</span>.
         </Text>
 
         <FullShot>
@@ -120,7 +118,6 @@ const HomeContent = () => {
               </span>
               <div>
                 <h2 className="title">Join our Discord</h2>
-                <p className="sub">Become a Hell Bro!</p>
               </div>
             </div>
             <Button
@@ -130,7 +127,7 @@ const HomeContent = () => {
               rel="noopener noreferrer"
               $variant="solid"
               color="#5865F2">
-              {cardMobile ? 'Join Us' : 'Join the server'}
+              Become a Hell Bro!
             </Button>
           </DiscordRow>
         </CtaCard>

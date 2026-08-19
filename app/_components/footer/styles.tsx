@@ -136,6 +136,15 @@ export const FooterBottom = styled.div`
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);
 
+  .slogan {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
   .heart {
     color: ${theme.colors.red};
   }

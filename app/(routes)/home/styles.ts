@@ -28,7 +28,10 @@ export const Section = styled.section<SectionProps & StyledProps>`
      section shares the same box width (1000px). */
   width: 100%;
   max-width: ${MAX_WIDTH};
-  padding: ${SECTION_PADDING};
+  /* No vertical padding; sections are spaced by margin-bottom. Side padding
+     stays for the content column. The first section adds its own top padding
+     (header + 40px) inline. */
+  padding: 0 ${SECTION_PADDING};
   background-color: ${({ color }) => color};
   color: ${({ textColor }) => textColor};
   border-radius: 40px;
@@ -169,8 +172,8 @@ export const Hero = styled.section`
   width: 100%;
   max-width: ${MAX_WIDTH};
   margin: 0 auto;
-  /* 50px top/bottom for the section itself. */
-  padding: 50px ${SECTION_PADDING};
+  /* No vertical padding; spacing comes from the surrounding margins. */
+  padding: 0 ${SECTION_PADDING};
   gap: 1.75rem;
 `;
 
@@ -303,9 +306,9 @@ export const ShotsGrid = styled.div`
   }
 `;
 
-/* A single standalone image (not inside a grid/card), ~half width, centered. */
+/* A single standalone image (not inside a grid/card), ~75% width, centered. */
 export const FullShot = styled.div`
-  width: 50%;
+  width: 75%;
   margin: 0 auto;
 
   img {
@@ -458,26 +461,14 @@ export const DiscordRow = styled.div`
     fill: ${theme.colors.white};
   }
 
+  /* Single line normally; wraps to 2 lines when the card gets narrow. */
   .title {
     margin: 0;
     font-size: 22px;
     font-weight: 700;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  .sub {
-    margin: 4px 0 0;
-    font-size: 15px;
-    color: rgba(255, 255, 255, 0.6);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Mobile: keep everything on one line, shrink the pieces and use a
-     compact CTA (short label + brand icon). */
+  /* Mobile: shrink the pieces and use a compact CTA. */
   @media (max-width: 640px) {
     gap: 6px;
 
@@ -499,12 +490,8 @@ export const DiscordRow = styled.div`
       font-size: 16px;
     }
 
-    .sub {
-      font-size: 12px;
-    }
-
-    /* Compact text-only CTA; never shrinks, so .title/.sub above give up
-       space first via ellipsis instead of the button getting squeezed. */
+    /* Compact CTA; never shrinks, so the title above wraps to give up
+       space first instead of the button getting squeezed. */
     & > a {
       flex-shrink: 0;
       min-height: 38px;
