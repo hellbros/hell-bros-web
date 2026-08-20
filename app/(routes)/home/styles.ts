@@ -331,16 +331,12 @@ export const FullShot = styled.div`
    being its own section. 50px of separation above it. */
 export const CtaCard = styled.div`
   width: 100%;
-  /* Spacing above is the section's 40px gap. */
-  padding: 40px;
+  /* Spacing above is the section's 40px gap. Adaptive inner padding: 15px on
+     phones up to 30px on desktop. */
+  padding: clamp(15px, 3vw, 30px);
   background-color: ${theme.colors.black};
   color: ${theme.colors.white};
   border-radius: 24px;
-
-  /* Smaller inner padding on phones. */
-  @media (max-width: 640px) {
-    padding: 15px;
-  }
 `;
 
 export const CtaRow = styled.div`

@@ -81,7 +81,6 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
 `;
 
 export const MenuToggle = styled.button`
-  position: relative;
   width: 40px;
   height: 40px;
   padding: 0;
@@ -89,35 +88,9 @@ export const MenuToggle = styled.button`
   background: transparent;
   color: ${theme.colors.primary};
   cursor: pointer;
-  /* Clip the vertical icon track so only one icon shows at a time. */
-  overflow: hidden;
-
-  /* Two icons stacked on a track: closed shows the bottom one (hamburger);
-     opening slides the track down to reveal the top one (X), and closing
-     slides it back up — a little vertical "rotation". */
-  .icon-track {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    transform: translateY(-50%);
-    transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
-  }
-
-  &[aria-expanded='true'] .icon-track {
-    transform: translateY(0);
-  }
-
-  .icon-track > span {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  /* No animation: the icon just swaps between hamburger and X. */
+  align-items: center;
+  justify-content: center;
 
   svg {
     width: 26px;
@@ -176,9 +149,11 @@ export const HeaderOptions = styled.div`
 const fadeIn = keyframes`
   from {
     opacity: 0;
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 `;
 
@@ -187,9 +162,6 @@ export const HeaderMobileOptions = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* Buttons appear only after the header has finished expanding (0.35s). */
-  animation: ${fadeIn} 0.25s ease-out 0.35s forwards;
-  opacity: 0;
 
   @media (min-width: 701px) {
     display: none;
@@ -207,6 +179,11 @@ export const HeaderMobileOptions = styled.div`
     user-select: none;
     width: 100%;
     text-align: center;
+
+    /* Each option drops in on a stagger, so they appear one by one as the
+       panel expands instead of all at once. */
+    opacity: 0;
+    animation: ${fadeIn} 0.28s ease-out forwards;
 
     span {
       font-size: 16px;
@@ -227,6 +204,13 @@ export const HeaderMobileOptions = styled.div`
       }
     }
   }
+
+  /* Stagger: options appear one after another, not all at once, and start
+     early (no need to wait for the panel to finish dropping). */
+  button:nth-child(1) { animation-delay: 0.05s; }
+  button:nth-child(2) { animation-delay: 0.13s; }
+  button:nth-child(3) { animation-delay: 0.21s; }
+  button:nth-child(4) { animation-delay: 0.29s; }
 `;
 
 export const Text = styled(TextGlobal)`

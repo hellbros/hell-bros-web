@@ -91,10 +91,7 @@ const Header = () => {
             aria-expanded={mobileMenuOpen}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            <span className="icon-track" aria-hidden="true">
-              <span><CloseIcon /></span>
-              <span><HamburgerIcon /></span>
-            </span>
+            {mobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
           </MenuToggle>
         </div>
 
