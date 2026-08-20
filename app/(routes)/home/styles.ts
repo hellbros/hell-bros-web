@@ -332,10 +332,10 @@ export const CtaCard = styled.div`
   color: ${theme.colors.white};
   border-radius: 40px;
 
-  /* Phones: a bit less padding (the row stacks; see DiscordRow). */
+  /* Phones: smaller inner padding so the single row has room. */
   @media (max-width: 640px) {
-    padding: 24px;
-    border-radius: 28px;
+    padding: 16px 12px;
+    border-radius: 24px;
   }
 `;
 
@@ -473,34 +473,36 @@ export const DiscordRow = styled.div`
     font-weight: 700;
   }
 
-  /* Phones: stack the row — icon + title on top, full-width button below —
-     so the title keeps the full width (one line) instead of being crushed
-     next to a wide button. */
+  /* Phones: keep the single row, just shrink the pieces and use a compact
+     CTA so the title/button fit. */
   @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+    gap: 8px;
 
     .left {
-      gap: 12px;
+      gap: 8px;
     }
 
     .icon {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
     }
 
     .icon svg {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
     }
 
     .title {
-      font-size: 18px;
+      font-size: 14px;
     }
 
     & > a {
-      width: 100%;
+      flex-shrink: 0;
+      min-height: 36px;
+      padding-left: 10px;
+      padding-right: 10px;
+      font-size: 12px;
+      white-space: nowrap;
     }
   }
 `;

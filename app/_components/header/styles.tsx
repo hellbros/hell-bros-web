@@ -138,8 +138,6 @@ export const HeaderMobileOptions = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* Fill the full-screen header and center the buttons vertically. */
-  flex: 1;
   /* Buttons appear only after the header has finished expanding (0.35s). */
   animation: ${fadeIn} 0.25s ease-out 0.35s forwards;
   opacity: 0;
