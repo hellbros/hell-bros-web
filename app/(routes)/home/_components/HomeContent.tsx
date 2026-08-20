@@ -91,7 +91,7 @@ const HomeContent = () => {
         </ShotsGrid>
 
         <Text as="p" $styles="heroTagline">
-          Every platform is one of three colors. You can only stand on a color you <span className="big">can&apos;t see</span>, while the color you <span className="big">do see</span> marks the platforms a teammate needs, not you.
+          Every platform is one of three colors. You can see one of those colors, but you <span className="big">can&apos;t stand on it</span>, while you can stand on a different color that you <span className="big">can&apos;t see</span>.
         </Text>
 
         <FullShot>
