@@ -91,7 +91,7 @@ const HomeContent = () => {
         </ShotsGrid>
 
         <Text as="p" $styles="heroTagline">
-          Each player must travel a unique path they <span className="big">cannot see</span>, while they can <span className="big">watch another player&apos;s path</span> but never walk it themselves.
+          Every platform is one of three colors. You can only stand on a color you <span className="big">can&apos;t see</span>, while the color you <span className="big">do see</span> marks the platforms a teammate needs, not you.
         </Text>
 
         <FullShot>
@@ -99,7 +99,7 @@ const HomeContent = () => {
         </FullShot>
 
         <Text as="p" $styles="heroTagline">
-          This strips away all self-sufficiency: <span className="big">no one advances alone</span>, and progress depends on <span className="big">communication, trust, and coordination</span> between the three, forming a circular chain of dependency.
+          Every player wears one of those colors. The color you see belongs to a teammate, so you <span className="big">guide them just as another guides you</span>. It&apos;s a circular chain of dependency where <span className="big">no one advances alone</span>, and progress depends on <span className="big">communication, trust, and coordination</span> between the three.
         </Text>
       </Hero>
 
