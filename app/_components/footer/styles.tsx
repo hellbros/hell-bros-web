@@ -74,11 +74,11 @@ export const Brand = styled.div`
     pointer-events: none;
   }
 
-  /* Mobile: shown below Follow Us, centered. */
+  /* Mobile: shown below Follow Us, left-aligned. */
   @media (max-width: 780px) {
     order: 2;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
   }
 `;
 
@@ -112,18 +112,24 @@ export const Col = styled.div`
     }
   }
 
-  /* Mobile: shown first (above the brand) and centered. */
+  /* Mobile: shown first (above the brand), left-aligned. */
   @media (max-width: 780px) {
     order: 1;
-    align-items: center;
+    align-items: flex-start;
   }
 `;
 
 export const SocialRow = styled.div`
-  /* Two rows of three icons. */
-  display: grid;
-  grid-template-columns: repeat(3, auto);
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
+  width: 100%;
+  /* PC: icons to the right; mobile: to the left (as many as fit per row). */
+  justify-content: flex-end;
+
+  @media (max-width: 780px) {
+    justify-content: flex-start;
+  }
 
   a {
     display: inline-flex;
@@ -153,6 +159,7 @@ export const SocialRow = styled.div`
 export const FooterBottom = styled.div`
   margin-top: 48px;
   padding-top: 24px;
+  border-top: 1px solid #333;
   text-align: center;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);

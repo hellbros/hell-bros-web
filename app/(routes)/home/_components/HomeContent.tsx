@@ -91,12 +91,16 @@ const HomeContent = () => {
         </ShotsGrid>
 
         <Text as="p" $styles="heroTagline">
-          Each player must travel a unique path they <span className="big">cannot see</span>, while they can watch another player&apos;s path but never walk it themselves. This strips away all self-sufficiency: <span className="big">no one advances alone</span>, and progress depends on <span className="big">communication, trust, and coordination</span> between the three &mdash; a circular chain of dependency.
+          Each player must travel a unique path they <span className="big">cannot see</span>, while they can <span className="big">watch another player&apos;s path</span> but never walk it themselves.
         </Text>
 
         <FullShot>
           <Image src={Shot4} alt="Look Out gameplay" sizes="(max-width: 1000px) 100vw, 920px" />
         </FullShot>
+
+        <Text as="p" $styles="heroTagline">
+          This strips away all self-sufficiency: <span className="big">no one advances alone</span>, and progress depends on <span className="big">communication, trust, and coordination</span> between the three &mdash; a circular chain of dependency.
+        </Text>
       </Hero>
 
       {/* OUR STUDIO */}
