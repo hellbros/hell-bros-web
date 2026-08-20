@@ -61,10 +61,9 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
   }
 
   @media (max-width: 700px) {
-    /* Fit the open header to the 4-item menu (measured ~407px to the last
-       button + its margin) instead of a viewport-relative 150%, which swept
-       far past the content and looked wrong. */
-    height: ${(props) => (props.$mobileMenuOpen ? '424px' : `${HEADER_HEIGHT_MOBILE}px`)};
+    /* Open menu is a full-screen overlay (covers the whole viewport) rather
+       than a fixed height that let the page show through underneath. */
+    height: ${(props) => (props.$mobileMenuOpen ? '100dvh' : `${HEADER_HEIGHT_MOBILE}px`)};
 
     .header-content {
       top: ${HEADER_HEIGHT_MOBILE / 2}px;
@@ -139,6 +138,8 @@ export const HeaderMobileOptions = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  /* Fill the full-screen header and center the buttons vertically. */
+  flex: 1;
   /* Buttons appear only after the header has finished expanding (0.35s). */
   animation: ${fadeIn} 0.25s ease-out 0.35s forwards;
   opacity: 0;

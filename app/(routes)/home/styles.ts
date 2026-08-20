@@ -326,12 +326,17 @@ export const FullShot = styled.div`
    being its own section. 50px of separation above it. */
 export const CtaCard = styled.div`
   width: 100%;
-  /* Spacing above is the section's 40px gap. Same padding/radius on mobile as
-     desktop — the single-line card leaves enough room now. */
+  /* Spacing above is the section's 40px gap. */
   padding: 40px;
   background-color: ${theme.colors.black};
   color: ${theme.colors.white};
   border-radius: 40px;
+
+  /* Phones: a bit less padding (the row stacks; see DiscordRow). */
+  @media (max-width: 640px) {
+    padding: 24px;
+    border-radius: 28px;
+  }
 `;
 
 export const CtaRow = styled.div`
@@ -468,12 +473,16 @@ export const DiscordRow = styled.div`
     font-weight: 700;
   }
 
-  /* Mobile: shrink the pieces and use a compact CTA. */
+  /* Phones: stack the row — icon + title on top, full-width button below —
+     so the title keeps the full width (one line) instead of being crushed
+     next to a wide button. */
   @media (max-width: 640px) {
-    gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
 
     .left {
-      gap: 10px;
+      gap: 12px;
     }
 
     .icon {
@@ -487,18 +496,11 @@ export const DiscordRow = styled.div`
     }
 
     .title {
-      font-size: 16px;
+      font-size: 18px;
     }
 
-    /* Compact CTA; never shrinks, so the title above wraps to give up
-       space first instead of the button getting squeezed. */
     & > a {
-      flex-shrink: 0;
-      min-height: 38px;
-      padding-left: 10px;
-      padding-right: 10px;
-      font-size: 13px;
-      white-space: nowrap;
+      width: 100%;
     }
   }
 `;
