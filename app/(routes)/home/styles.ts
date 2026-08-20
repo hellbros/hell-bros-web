@@ -326,17 +326,12 @@ export const FullShot = styled.div`
    being its own section. 50px of separation above it. */
 export const CtaCard = styled.div`
   width: 100%;
-  /* Spacing above is the section's 40px gap. */
-  padding: 40px;
+  /* Spacing above is the section's 40px gap. Same 15px inner padding on
+     desktop and mobile. */
+  padding: 15px;
   background-color: ${theme.colors.black};
   color: ${theme.colors.white};
-  border-radius: 40px;
-
-  /* Phones: smaller inner padding so the single row has room. */
-  @media (max-width: 640px) {
-    padding: 16px 12px;
-    border-radius: 24px;
-  }
+  border-radius: 24px;
 `;
 
 export const CtaRow = styled.div`
@@ -428,21 +423,19 @@ align-items: center;
 `;
 
 export const DiscordRow = styled.div`
-  display: flex;
+  /* Two equal columns: left = icon + text, right = button. */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
+  gap: 12px;
   width: 100%;
 
   .left {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     text-align: left;
-    /* Lets the title/sub shrink and ellipsize instead of pushing the
-       button out or overflowing the card. */
     min-width: 0;
-    flex: 1 1 auto;
   }
 
   .left > div {
@@ -466,20 +459,25 @@ export const DiscordRow = styled.div`
     fill: ${theme.colors.white};
   }
 
-  /* Single line normally; wraps to 2 lines when the card gets narrow. */
+  /* One line normally; wraps to 2 lines when its column gets narrow. */
   .title {
     margin: 0;
     font-size: 22px;
     font-weight: 700;
   }
 
-  /* Phones: keep the single row, just shrink the pieces and use a compact
-     CTA so the title/button fit. */
+  /* Button fills 90% of the right column, pinned right, so it's a long,
+     easy-to-press target. */
+  & > a {
+    width: 90%;
+    justify-self: end;
+  }
+
   @media (max-width: 640px) {
     gap: 8px;
 
     .left {
-      gap: 8px;
+      gap: 10px;
     }
 
     .icon {
@@ -493,16 +491,15 @@ export const DiscordRow = styled.div`
     }
 
     .title {
-      font-size: 14px;
+      font-size: 15px;
     }
 
     & > a {
-      flex-shrink: 0;
-      min-height: 36px;
-      padding-left: 10px;
-      padding-right: 10px;
+      min-height: 40px;
+      padding-left: 8px;
+      padding-right: 8px;
       font-size: 12px;
-      white-space: nowrap;
+      line-height: 1.2;
     }
   }
 `;
