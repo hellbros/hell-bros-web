@@ -309,10 +309,15 @@ export const ShotsGrid = styled.div`
   }
 `;
 
-/* A single standalone image (not inside a grid/card), ~75% width, centered. */
+/* A single standalone image (not inside a grid/card): 75% on desktop, full
+   width on phones. */
 export const FullShot = styled.div`
   width: 75%;
   margin: 0 auto;
+
+  @media (max-width: 640px) {
+    width: 100%;
+  }
 
   img {
     width: 100%;
@@ -326,12 +331,16 @@ export const FullShot = styled.div`
    being its own section. 50px of separation above it. */
 export const CtaCard = styled.div`
   width: 100%;
-  /* Spacing above is the section's 40px gap. Same 15px inner padding on
-     desktop and mobile. */
-  padding: 15px;
+  /* Spacing above is the section's 40px gap. */
+  padding: 40px;
   background-color: ${theme.colors.black};
   color: ${theme.colors.white};
   border-radius: 24px;
+
+  /* Smaller inner padding on phones. */
+  @media (max-width: 640px) {
+    padding: 15px;
+  }
 `;
 
 export const CtaRow = styled.div`

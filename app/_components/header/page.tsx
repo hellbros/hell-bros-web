@@ -1,16 +1,26 @@
 "use client";
 import React, { useEffect, useState } from 'react'
-import { HeaderMobileOptions, HeaderOptions, HeaderStyled, Text } from './styles'
+import { HeaderMobileOptions, HeaderOptions, HeaderStyled, MenuToggle, Text } from './styles'
 import useScroll from '@/app/hooks/useScroll';
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from '@/app/_utils/constants';
 import scrollToSection from '@/app/_utils/functions';
 import useMediaQuery from '@/app/hooks/useMediaQuery';
-import Button from '@/app/_components/Button';
-import { theme } from "@/app/_styles/theme";
 import useScrollbarWidth from '@/app/hooks/useScrollbarWidth';
 import useActiveSection from '@/app/hooks/useActiveSection';
 import Image from 'next/image';
 import HellBrosLogo from '@/public/assets/brand/logo_hb_color02.svg';
+
+const HamburgerIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M6 6l12 12M18 6 6 18" />
+  </svg>
+);
 
 const NAV: { id: string; label: string; scrollTo?: string }[] = [
   { id: 'home', label: 'Home' },
@@ -74,14 +84,18 @@ const Header = () => {
             ))}
           </HeaderOptions>
 
-          <Button
+          <MenuToggle
             className="menu-toggle"
-            $variant="justIcon"
-            icon="assets/icons/HAMBURGUESA.svg"
-            color={theme.colors.primary}
+            type="button"
             aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={mobileMenuOpen}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}/>
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <span className="icon-track" aria-hidden="true">
+              <span><CloseIcon /></span>
+              <span><HamburgerIcon /></span>
+            </span>
+          </MenuToggle>
         </div>
 
         {mobileMenuOpen &&

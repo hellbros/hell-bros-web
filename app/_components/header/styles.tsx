@@ -80,6 +80,55 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
   }
 `;
 
+export const MenuToggle = styled.button`
+  position: relative;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: ${theme.colors.primary};
+  cursor: pointer;
+  /* Clip the vertical icon track so only one icon shows at a time. */
+  overflow: hidden;
+
+  /* Two icons stacked on a track: closed shows the bottom one (hamburger);
+     opening slides the track down to reveal the top one (X), and closing
+     slides it back up — a little vertical "rotation". */
+  .icon-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(-50%);
+    transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  &[aria-expanded='true'] .icon-track {
+    transform: translateY(0);
+  }
+
+  .icon-track > span {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  svg {
+    width: 26px;
+    height: 26px;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    fill: none;
+  }
+`;
+
 export const HeaderOptions = styled.div`
   display: flex;
   justify-content: center;

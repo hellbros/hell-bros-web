@@ -99,7 +99,7 @@ const HomeContent = () => {
         </FullShot>
 
         <Text as="p" $styles="heroTagline">
-          This strips away all self-sufficiency: <span className="big">no one advances alone</span>, and progress depends on <span className="big">communication, trust, and coordination</span> between the three &mdash; a circular chain of dependency.
+          This strips away all self-sufficiency: <span className="big">no one advances alone</span>, and progress depends on <span className="big">communication, trust, and coordination</span> between the three, forming a circular chain of dependency.
         </Text>
       </Hero>
 
