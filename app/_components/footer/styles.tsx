@@ -73,11 +73,20 @@ export const Brand = styled.div`
     white-space: nowrap;
     pointer-events: none;
   }
+
+  /* Mobile: shown below Follow Us, centered. */
+  @media (max-width: 780px) {
+    order: 2;
+    align-items: center;
+    text-align: center;
+  }
 `;
 
 export const Col = styled.div`
   display: flex;
   flex-direction: column;
+  /* PC: Follow Us label + icons pushed to the right. */
+  align-items: flex-end;
   gap: 0.85rem;
 
   .label {
@@ -102,11 +111,18 @@ export const Col = styled.div`
       color: ${theme.colors.red};
     }
   }
+
+  /* Mobile: shown first (above the brand) and centered. */
+  @media (max-width: 780px) {
+    order: 1;
+    align-items: center;
+  }
 `;
 
 export const SocialRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+  /* Two rows of three icons. */
+  display: grid;
+  grid-template-columns: repeat(3, auto);
   gap: 0.75rem;
 
   a {

@@ -52,7 +52,7 @@ const HomeContent = () => {
                 <SteamIcon />
               </span>
               <div>
-                <h2 className="title">Wishlist Look Out</h2>
+                <h2 className="title">Wishlist <span style={{ whiteSpace: 'nowrap' }}>Look Out</span></h2>
               </div>
             </div>
             <Button
@@ -91,7 +91,7 @@ const HomeContent = () => {
         </ShotsGrid>
 
         <Text as="p" $styles="heroTagline">
-          Unable to see their own path, <span className="big">each player depends on another</span> to move forward, forcing them to <span className="big">coordinate constantly</span>.
+          Each player must travel a unique path they <span className="big">cannot see</span>, while they can watch another player&apos;s path but never walk it themselves. This strips away all self-sufficiency: <span className="big">no one advances alone</span>, and progress depends on <span className="big">communication, trust, and coordination</span> between the three &mdash; a circular chain of dependency.
         </Text>
 
         <FullShot>
@@ -128,7 +128,7 @@ const HomeContent = () => {
               rel="noopener noreferrer"
               $variant="solid"
               color="#5865F2">
-              Become a Hell Bro!
+              Become a <span style={{ whiteSpace: 'nowrap' }}>Hell Bro!</span>
             </Button>
           </DiscordRow>
         </CtaCard>
