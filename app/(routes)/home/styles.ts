@@ -23,19 +23,20 @@ export const Section = styled.section<SectionProps & StyledProps>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  /* 40px between every direct child, so elements share one vertical rhythm. */
+  gap: ${SECTION_PADDING};
   margin: auto;
   /* Fill up to max-width instead of shrinking to fit content, so every
      section shares the same box width (1000px). */
   width: 100%;
   max-width: ${MAX_WIDTH};
-  /* No vertical padding; sections are spaced by margin-bottom. Side padding
-     stays for the content column. The first section adds its own top padding
-     (header + 40px) inline. */
-  padding: 0 ${SECTION_PADDING};
+  /* 40px padding on every side (the first section also clears the fixed
+     header via the container's padding-top). */
+  padding: ${SECTION_PADDING};
   background-color: ${({ color }) => color};
   color: ${({ textColor }) => textColor};
   border-radius: 40px;
-  margin-bottom: 100px;
+  margin-bottom: ${SECTION_PADDING};
 
   ${() => variant({
   prop: '$styles',
@@ -87,7 +88,8 @@ export const Text = styled(TextGlobal)`
   variants: {
     sectionTitle: {
       fontSize: '40px',
-      marginBottom: '54px',
+      // No own margin; the section's 40px gap handles title-to-content spacing.
+      marginBottom: '0px',
       textAlign: 'center',
       fontWeight: 500,
     },
@@ -171,10 +173,11 @@ export const Hero = styled.section`
   /* Match the shared 1000px section box. */
   width: 100%;
   max-width: ${MAX_WIDTH};
-  margin: 0 auto;
-  /* No vertical padding; spacing comes from the surrounding margins. */
-  padding: 0 ${SECTION_PADDING};
-  gap: 1.75rem;
+  /* Same box as the other sections: 40px all sides, 40px between children,
+     40px bottom margin. */
+  margin: 0 auto ${SECTION_PADDING};
+  padding: ${SECTION_PADDING};
+  gap: ${SECTION_PADDING};
 `;
 
 export const TrailerFrame = styled.div`
@@ -277,7 +280,7 @@ export const HeroLogo = styled.div`
 export const StudioLogo = styled.div`
   width: 100%;
   max-width: 400px;
-  margin: 0 auto 32px;
+  margin: 0 auto;
 
   img {
     width: 100%;
@@ -323,16 +326,12 @@ export const FullShot = styled.div`
    being its own section. 50px of separation above it. */
 export const CtaCard = styled.div`
   width: 100%;
-  margin-top: 50px;
+  /* Spacing above is the section's 40px gap. Same padding/radius on mobile as
+     desktop — the single-line card leaves enough room now. */
   padding: 40px;
   background-color: ${theme.colors.black};
   color: ${theme.colors.white};
   border-radius: 40px;
-
-  @media (max-width: 640px) {
-    padding: 20px 12px;
-    border-radius: 24px;
-  }
 `;
 
 export const CtaRow = styled.div`
@@ -348,7 +347,6 @@ export const HeadsGrid = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   gap: 2.5rem;
-  margin-top: 1rem;
   width: 100%;
 `;
 
@@ -384,8 +382,10 @@ export const HeadCard = styled.div<{ $accent?: string }>`
     transition: transform 0.2s ease;
   }
 
-  .linkedin:hover {
-    transform: scale(1.15);
+  @media (hover: hover) {
+    .linkedin:hover {
+      transform: scale(1.15);
+    }
   }
 
   .linkedin svg {

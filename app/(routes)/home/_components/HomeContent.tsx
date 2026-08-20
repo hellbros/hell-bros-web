@@ -41,8 +41,9 @@ const HomeContent = () => {
   return (
     <SectionContainer id="inicio" $headerHeight={headerHeight}>
 
-      {/* HOME: trailer + wishlist (first section: top = header + 40px) */}
-      <Section id="home" style={{ paddingTop: '40px' }}>
+      {/* HOME: trailer + wishlist (first section clears header via the
+          container's padding-top, plus the section's own 40px top padding) */}
+      <Section id="home">
         <TrailerEmbed videoId={TRAILER_ID} />
         <CtaCard>
           <WishlistRow>
@@ -51,7 +52,7 @@ const HomeContent = () => {
                 <SteamIcon />
               </span>
               <div>
-                <h2 className="title">Wishlist on Steam</h2>
+                <h2 className="title">Wishlist Look Out</h2>
               </div>
             </div>
             <Button
@@ -100,7 +101,7 @@ const HomeContent = () => {
 
       {/* ABOUT US: our studio + logo + text + Join Us */}
       <Section id="about">
-        <Text as="h2" $styles="sectionTitle" style={{ marginBottom: 0 }}>
+        <Text as="h2" $styles="sectionTitle">
           Our Studio
         </Text>
         <StudioLogo>
@@ -131,10 +132,9 @@ const HomeContent = () => {
             </Button>
           </DiscordRow>
         </CtaCard>
-      </Section>
 
-      {/* Our Heads */}
-      <Section id="nosotros" marginBottom="60px">
+        {/* Our Heads (same section; separated by ~section padding, not a
+            100px between-section margin) */}
         <Text as="h2" $styles="sectionTitle">
           Our Heads
         </Text>
@@ -168,10 +168,8 @@ const HomeContent = () => {
             </a>
           </HeadCard>
         </HeadsGrid>
-      </Section>
 
-      {/* Our Team */}
-      <Section id="team">
+        {/* Our Team (same section) */}
         <Text as="h2" $styles="sectionTitle">
           Our Team
         </Text>

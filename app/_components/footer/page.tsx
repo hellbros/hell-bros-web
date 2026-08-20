@@ -112,7 +112,7 @@ const Footer = () => {
 
         <FooterBottom>
           <p className="slogan">Games from hell</p>
-          © 2026 Hell Bros. All rights reserved.
+          © {new Date().getFullYear()} Hell Bros. All rights reserved.
         </FooterBottom>
       </FooterInner>
     </FooterStyled>

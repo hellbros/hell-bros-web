@@ -48,8 +48,10 @@ export const Brand = styled.div`
     transition: color 0.2s ease;
   }
 
-  a:hover {
-    color: ${theme.colors.red};
+  @media (hover: hover) {
+    a:hover {
+      color: ${theme.colors.red};
+    }
   }
 
   a.email {
@@ -95,8 +97,10 @@ export const Col = styled.div`
     transition: color 0.2s ease;
   }
 
-  a:hover {
-    color: ${theme.colors.red};
+  @media (hover: hover) {
+    a:hover {
+      color: ${theme.colors.red};
+    }
   }
 `;
 
@@ -116,9 +120,11 @@ export const SocialRow = styled.div`
     transition: color 0.2s ease, transform 0.2s ease;
   }
 
-  a:hover {
-    color: ${theme.colors.red};
-    transform: scale(1.1);
+  @media (hover: hover) {
+    a:hover {
+      color: ${theme.colors.red};
+      transform: scale(1.1);
+    }
   }
 
   svg {
@@ -131,7 +137,6 @@ export const SocialRow = styled.div`
 export const FooterBottom = styled.div`
   margin-top: 48px;
   padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);

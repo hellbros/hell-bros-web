@@ -103,21 +103,24 @@ export const HeaderOptions = styled.div`
     user-select: none;
     text-align: center;
 
-    &:hover {
-      color: ${theme.colors.primary};
-    }
-
     &.active {
       color: ${theme.colors.primary};
     }
 
-    /* The active tab is already red, so a red hover would be invisible on it;
-       hovering the active tab swaps to Hell Bros blue instead. Kept pure CSS
-       (higher-specificity &.active:hover) so wheel-scrolling to another
-       section while the pointer stays put swaps red <-> blue automatically as
-       the .active class moves between tabs. */
-    &.active:hover {
-      color: ${theme.colors.blue};
+    /* Hover only on real pointer devices, so tapping/holding on touch doesn't
+       leave a stuck hover color. The active tab is already red, so a red hover
+       would be invisible on it; hovering the active tab swaps to Hell Bros
+       blue instead. Pure CSS (higher-specificity &.active:hover) so
+       wheel-scrolling to another section while the pointer stays put swaps
+       red <-> blue automatically as the .active class moves between tabs. */
+    @media (hover: hover) {
+      &:hover {
+        color: ${theme.colors.primary};
+      }
+
+      &.active:hover {
+        color: ${theme.colors.blue};
+      }
     }
   }
 `;
@@ -161,16 +164,19 @@ export const HeaderMobileOptions = styled.div`
       font-size: 16px;
     }
 
-    &:hover {
-      color: ${theme.colors.primary};
-    }
-
     &.active {
       color: ${theme.colors.primary};
     }
 
-    &.active:hover {
-      color: ${theme.colors.blue};
+    /* Hover only with a real pointer — avoids stuck hover color on touch taps. */
+    @media (hover: hover) {
+      &:hover {
+        color: ${theme.colors.primary};
+      }
+
+      &.active:hover {
+        color: ${theme.colors.blue};
+      }
     }
   }
 `;
