@@ -99,7 +99,7 @@ const HomeContent = () => {
         </FullShot>
       </Hero>
 
-      {/* ABOUT US: our studio + logo + text + Join Us */}
+      {/* OUR STUDIO */}
       <Section id="about">
         <Text as="h2" $styles="sectionTitle">
           Our Studio
@@ -132,9 +132,10 @@ const HomeContent = () => {
             </Button>
           </DiscordRow>
         </CtaCard>
+      </Section>
 
-        {/* Our Heads (same section; separated by ~section padding, not a
-            100px between-section margin) */}
+      {/* OUR HEADS */}
+      <Section id="nosotros">
         <Text as="h2" $styles="sectionTitle">
           Our Heads
         </Text>
@@ -168,8 +169,10 @@ const HomeContent = () => {
             </a>
           </HeadCard>
         </HeadsGrid>
+      </Section>
 
-        {/* Our Team (same section) */}
+      {/* OUR TEAM */}
+      <Section id="team">
         <Text as="h2" $styles="sectionTitle">
           Our Team
         </Text>
