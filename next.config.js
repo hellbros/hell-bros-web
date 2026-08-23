@@ -4,7 +4,7 @@ module.exports = {
       {
         source: '/home',
         destination: '/',
-        permanent: false,
+        permanent: true,
       },
     ];
   },
