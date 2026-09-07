@@ -317,7 +317,7 @@ export const ShotsGrid = styled.div`
 
   @media (hover: hover) {
     .shot:hover img {
-      transform: scale(1.05);
+      transform: scale(1.12);
     }
   }
 `;
