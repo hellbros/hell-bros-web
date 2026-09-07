@@ -1,6 +1,6 @@
 "use client"
 
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { LayoutProps, SpaceProps, layout, space, variant } from 'styled-system';
 import TextGlobal from '../../_components/Text';
 import { MAX_WIDTH, SECTION_PADDING } from '../../_utils/constants';
@@ -302,10 +302,23 @@ export const ShotsGrid = styled.div`
     aspect-ratio: 16 / 9;
     border-radius: 12px;
     overflow: hidden;
+    /* Button reset — each shot is a clickable zoom trigger. */
+    border: 0;
+    padding: 0;
+    background: none;
+    cursor: zoom-in;
+    display: block;
   }
 
   .shot img {
     object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  @media (hover: hover) {
+    .shot:hover img {
+      transform: scale(1.05);
+    }
   }
 `;
 
@@ -533,5 +546,107 @@ export const HalfCircle = styled.div`
 
   @media (max-width: 700px) {
     height: 36px;
+  }
+`;
+
+const lightboxFade = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+/* Full-screen overlay to view a gameplay shot larger. Above the header
+   (z-index 9999). Click the backdrop / X / Esc to close; arrows to browse. */
+export const Lightbox = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.9);
+  cursor: zoom-out;
+  animation: ${lightboxFade} 0.2s ease-out;
+
+  .frame {
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .frame img {
+    max-width: 90vw;
+    max-height: 85vh;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  button {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    color: ${theme.colors.white};
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  @media (hover: hover) {
+    button:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  }
+
+  button svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+
+  .close {
+    top: 20px;
+    right: 20px;
+  }
+
+  .nav {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .nav.prev {
+    left: 16px;
+  }
+  .nav.next {
+    right: 16px;
+  }
+  .nav.next svg {
+    transform: rotate(180deg);
+  }
+
+  @media (max-width: 640px) {
+    .nav {
+      width: 40px;
+      height: 40px;
+    }
+    .nav.prev {
+      left: 8px;
+    }
+    .nav.next {
+      right: 8px;
+    }
+    .close {
+      top: 12px;
+      right: 12px;
+    }
   }
 `;

@@ -1,7 +1,8 @@
 'use client'
+import { useState, useEffect } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import Button from "@/app/_components/Button";
-import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard } from "../styles";
+import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox } from "../styles";
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from "@/app/_utils/constants";
 import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
@@ -34,9 +35,36 @@ const SteamIcon = () => (
   </svg>
 );
 
+// The three Look Out gameplay shots, in order (used by the grid + lightbox).
+const SHOTS = [Shot1, Shot2, Shot3];
+
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6L18 18M18 6L6 18" /></svg>
+);
+const ChevronIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5L8 12l7 7" /></svg>
+);
+
 const HomeContent = () => {
   const sm = useMediaQuery('(max-width: 700px)');
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
+  const [zoom, setZoom] = useState<number | null>(null);
+
+  // While the lightbox is open: lock body scroll and wire Esc / arrow keys.
+  useEffect(() => {
+    if (zoom === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setZoom(null);
+      else if (e.key === 'ArrowRight') setZoom((z) => (z === null ? z : (z + 1) % SHOTS.length));
+      else if (e.key === 'ArrowLeft') setZoom((z) => (z === null ? z : (z - 1 + SHOTS.length) % SHOTS.length));
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [zoom]);
 
   return (
     <SectionContainer id="inicio" $headerHeight={headerHeight}>
@@ -79,15 +107,17 @@ const HomeContent = () => {
         </Text>
 
         <ShotsGrid>
-          <div className="shot">
-            <Image src={Shot1} alt="Look Out gameplay" fill sizes="(max-width: 700px) 31vw, 300px" />
-          </div>
-          <div className="shot">
-            <Image src={Shot2} alt="Look Out gameplay" fill sizes="(max-width: 700px) 31vw, 300px" />
-          </div>
-          <div className="shot">
-            <Image src={Shot3} alt="Look Out gameplay" fill sizes="(max-width: 700px) 31vw, 300px" />
-          </div>
+          {SHOTS.map((src, i) => (
+            <button
+              key={i}
+              type="button"
+              className="shot"
+              onClick={() => setZoom(i)}
+              aria-label={`Ampliar captura ${i + 1} de ${SHOTS.length}`}
+            >
+              <Image src={src} alt="Look Out gameplay" fill sizes="(max-width: 700px) 31vw, 300px" />
+            </button>
+          ))}
         </ShotsGrid>
 
         <Text as="p" $styles="heroTagline">
@@ -215,6 +245,38 @@ const HomeContent = () => {
       <HalfCircleContainer>
         <HalfCircle/>
       </HalfCircleContainer>
+
+      {zoom !== null && (
+        <Lightbox
+          onClick={() => setZoom(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Look Out gameplay"
+        >
+          <button className="close" type="button" aria-label="Cerrar" onClick={() => setZoom(null)}>
+            <CloseIcon />
+          </button>
+          <button
+            className="nav prev"
+            type="button"
+            aria-label="Anterior"
+            onClick={(e) => { e.stopPropagation(); setZoom((z) => (z === null ? z : (z - 1 + SHOTS.length) % SHOTS.length)); }}
+          >
+            <ChevronIcon />
+          </button>
+          <div className="frame" onClick={(e) => e.stopPropagation()}>
+            <Image src={SHOTS[zoom]} alt="Look Out gameplay" sizes="90vw" priority />
+          </div>
+          <button
+            className="nav next"
+            type="button"
+            aria-label="Siguiente"
+            onClick={(e) => { e.stopPropagation(); setZoom((z) => (z === null ? z : (z + 1) % SHOTS.length)); }}
+          >
+            <ChevronIcon />
+          </button>
+        </Lightbox>
+      )}
 
     </SectionContainer>
   );
