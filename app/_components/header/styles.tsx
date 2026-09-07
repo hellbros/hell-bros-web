@@ -9,7 +9,6 @@ import { theme } from '@/app/_styles/theme';
 interface HeaderStyledProps {
   $hasScrolled?: boolean;
   $mobileMenuOpen?: boolean;
-  $scrollbarWidth?: number;
 }
 
 export const HeaderStyled = styled.div<HeaderStyledProps>`
@@ -67,7 +66,6 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
 
     .header-content {
       top: ${HEADER_HEIGHT_MOBILE / 2}px;
-      padding-right: ${(props) => (props.$mobileMenuOpen ? `calc(${SECTION_PADDING} + ${props.$scrollbarWidth}px - 0.5px)` : SECTION_PADDING)};
 
       .logo img {
         height: 26px;

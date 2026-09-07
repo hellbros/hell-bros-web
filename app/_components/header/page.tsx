@@ -4,8 +4,8 @@ import { HeaderMobileOptions, HeaderOptions, HeaderStyled, MenuToggle, Text } fr
 import useScroll from '@/app/hooks/useScroll';
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from '@/app/_utils/constants';
 import scrollToSection from '@/app/_utils/functions';
+import { lockScroll, unlockScroll } from '@/app/_utils/scrollLock';
 import useMediaQuery from '@/app/hooks/useMediaQuery';
-import useScrollbarWidth from '@/app/hooks/useScrollbarWidth';
 import useActiveSection from '@/app/hooks/useActiveSection';
 import Image from 'next/image';
 import HellBrosLogo from '@/public/assets/brand/logo_hb_color02.svg';
@@ -35,7 +35,6 @@ const Header = () => {
   const hasScrolled = useScroll();
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const scrollbarWidth = useScrollbarWidth();
   const activeSection = useActiveSection(NAV_IDS, headerHeight);
 
   function ScrollMobile(sectionId: string): void {
@@ -44,24 +43,20 @@ const Header = () => {
   }
 
   useEffect(() => {
+    // Lock background scroll while the mobile menu is open (no layout shift).
     if (sm && mobileMenuOpen) {
-      // Al ocultar el scroll se quita la barra; compensamos su ancho con
-      // padding-right para que el contenido no se re-maquete (salto lateral).
-      document.body.style.overflow = 'hidden';
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
+      lockScroll();
     } else {
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
+      unlockScroll();
     }
 
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
+      unlockScroll();
     };
-  }, [mobileMenuOpen, sm, scrollbarWidth]);
+  }, [mobileMenuOpen, sm]);
 
   return (
-    <HeaderStyled $hasScrolled={hasScrolled} $mobileMenuOpen={mobileMenuOpen} $scrollbarWidth={scrollbarWidth}>
+    <HeaderStyled className="site-header" $hasScrolled={hasScrolled} $mobileMenuOpen={mobileMenuOpen}>
       <div className='header-content'>
 
         <div className='row'>

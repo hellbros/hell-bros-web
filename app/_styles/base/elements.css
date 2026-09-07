@@ -2,6 +2,18 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Scroll lock (lightbox / mobile menu): freeze the page without a layout
+   shift. --sbw is set by lockScroll() to the current scrollbar width, and we
+   pad both the page and the fixed header by it to replace the removed bar. */
+html.scroll-locked {
+  overflow: hidden;
+}
+
+html.scroll-locked body,
+html.scroll-locked .site-header {
+  padding-right: var(--sbw, 0px);
+}
+
 body {
   color: #000000;
   background-color: #F5F5F5;

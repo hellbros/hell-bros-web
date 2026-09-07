@@ -13,7 +13,7 @@ import Shot3 from "@/public/assets/images/3.png"
 import Shot4 from "@/public/assets/images/4.png"
 import Image from "next/image";
 import useMediaQuery from '@/app/hooks/useMediaQuery';
-import useScrollbarWidth from '@/app/hooks/useScrollbarWidth';
+import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
 
 // YouTube video ID of the trailer (the part after v= / youtu.be/).
 const TRAILER_ID = 'CY4mwk-rh30';
@@ -50,9 +50,8 @@ const HomeContent = () => {
   const sm = useMediaQuery('(max-width: 700px)');
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [zoom, setZoom] = useState<number | null>(null);
-  const scrollbarWidth = useScrollbarWidth();
 
-  // While the lightbox is open: lock body scroll and wire Esc / arrow keys.
+  // While the lightbox is open: lock scroll (no layout shift) + wire keys.
   useEffect(() => {
     if (zoom === null) return;
     const onKey = (e: KeyboardEvent) => {
@@ -60,17 +59,13 @@ const HomeContent = () => {
       else if (e.key === 'ArrowRight') setZoom((z) => (z === null ? z : (z + 1) % SHOTS.length));
       else if (e.key === 'ArrowLeft') setZoom((z) => (z === null ? z : (z - 1 + SHOTS.length) % SHOTS.length));
     };
-    // Lock scroll, but compensate the scrollbar width so the page behind
-    // doesn't shift (same fix as the mobile menu).
-    document.body.style.overflow = 'hidden';
-    document.body.style.paddingRight = `${scrollbarWidth}px`;
+    lockScroll();
     window.addEventListener('keydown', onKey);
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
+      unlockScroll();
       window.removeEventListener('keydown', onKey);
     };
-  }, [zoom, scrollbarWidth]);
+  }, [zoom]);
 
   return (
     <SectionContainer id="inicio" $headerHeight={headerHeight}>
