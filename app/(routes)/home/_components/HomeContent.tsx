@@ -70,10 +70,20 @@ const HomeContent = () => {
   return (
     <SectionContainer id="inicio" $headerHeight={headerHeight}>
 
-      {/* HOME: trailer + wishlist (first section clears header via the
-          container's padding-top, plus the section's own 40px top padding) */}
-      <Section id="home">
+      {/* LOOK OUT (first section — clears the header via the container's
+          padding-top plus its own 40px top padding):
+          logo -> tagline -> video + wishlist -> shots -> text -> shot -> text */}
+      <Hero id="lookout">
+        <HeroLogo>
+          <Image src={LookOutLogo} alt="Look Out" priority />
+        </HeroLogo>
+
+        <Text as="p" $styles="heroTagline">
+          An <span className="big">asymmetrical online co-op 3D platformer</span> where <span className="big">3 demons</span> are trying to escape the Demon World.
+        </Text>
+
         <TrailerEmbed videoId={TRAILER_ID} />
+
         <CtaCard>
           <WishlistRow>
             <div className="left">
@@ -95,17 +105,6 @@ const HomeContent = () => {
             </Button>
           </WishlistRow>
         </CtaCard>
-      </Section>
-
-      {/* LOOK OUT: logo + text + shots + text + full shot */}
-      <Hero id="lookout">
-        <HeroLogo>
-          <Image src={LookOutLogo} alt="Look Out" priority />
-        </HeroLogo>
-
-        <Text as="p" $styles="heroTagline">
-          An <span className="big">asymmetrical online co-op 3D platformer</span> where <span className="big">3 demons</span> are trying to escape the Demon World.
-        </Text>
 
         <ShotsGrid>
           {SHOTS.map((src, i) => (

@@ -23,7 +23,6 @@ const CloseIcon = () => (
 );
 
 const NAV: { id: string; label: string; scrollTo?: string }[] = [
-  { id: 'home', label: 'Home' },
   { id: 'lookout', label: 'Look Out' },
   { id: 'about', label: 'About Us' },
   { id: 'contact', label: 'Contact' },
