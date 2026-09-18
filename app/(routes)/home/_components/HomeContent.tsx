@@ -50,22 +50,36 @@ const HomeContent = () => {
   const sm = useMediaQuery('(max-width: 700px)');
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [zoom, setZoom] = useState<number | null>(null);
+  const lightboxOpen = zoom !== null;
 
-  // While the lightbox is open: lock scroll (no layout shift) + wire keys.
+  // While the lightbox is open: lock scroll (no layout shift), wire keys, and
+  // push a history entry so the phone's native back button / gesture closes
+  // the zoom instead of leaving the page. Depends on the open/closed flag (not
+  // the index) so switching shots doesn't stack history entries.
   useEffect(() => {
-    if (zoom === null) return;
+    if (!lightboxOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setZoom(null);
       else if (e.key === 'ArrowRight') setZoom((z) => (z === null ? z : (z + 1) % SHOTS.length));
       else if (e.key === 'ArrowLeft') setZoom((z) => (z === null ? z : (z - 1 + SHOTS.length) % SHOTS.length));
     };
+    const onPop = () => setZoom(null); // back button closes the lightbox
     lockScroll();
+    // Preserve Next's router state; just flag this entry as the lightbox's.
+    window.history.pushState({ ...window.history.state, __lightbox: true }, '');
     window.addEventListener('keydown', onKey);
+    window.addEventListener('popstate', onPop);
     return () => {
       unlockScroll();
       window.removeEventListener('keydown', onKey);
+      window.removeEventListener('popstate', onPop);
+      // Closed via X / Esc / backdrop: drop the entry we pushed. Closed via
+      // back: the browser already popped it (flag gone), so don't go back twice.
+      if (window.history.state && window.history.state.__lightbox) {
+        window.history.back();
+      }
     };
-  }, [zoom]);
+  }, [lightboxOpen]);
 
   return (
     <SectionContainer id="inicio" $headerHeight={headerHeight}>
