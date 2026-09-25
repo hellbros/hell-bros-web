@@ -566,6 +566,8 @@ export const Lightbox = styled.div`
   padding: 24px;
   background: rgba(0, 0, 0, 0.9);
   cursor: zoom-out;
+  /* Let horizontal swipes reach our JS (vertical stays with the browser). */
+  touch-action: pan-y;
   animation: ${lightboxFade} 0.2s ease-out;
 
   .frame {

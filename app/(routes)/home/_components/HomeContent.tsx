@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import Button from "@/app/_components/Button";
 import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox } from "../styles";
@@ -80,6 +80,32 @@ const HomeContent = () => {
       }
     };
   }, [lightboxOpen]);
+
+  // Swipe to change photo on touch (left -> next, right -> prev; both wrap).
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const swiped = useRef(false);
+
+  const onTouchStart = (e: ReactTouchEvent) => {
+    const t = e.touches[0];
+    touchStartX.current = t.clientX;
+    touchStartY.current = t.clientY;
+    swiped.current = false;
+  };
+  const onTouchMove = (e: ReactTouchEvent) => {
+    if (touchStartX.current === null) return;
+    if (Math.abs(e.touches[0].clientX - touchStartX.current) > 10) swiped.current = true;
+  };
+  const onTouchEnd = (e: ReactTouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      setZoom((z) => (z === null ? z : (z + (dx < 0 ? 1 : SHOTS.length - 1)) % SHOTS.length));
+    }
+  };
 
   return (
     <SectionContainer id="inicio" $headerHeight={headerHeight}>
@@ -262,7 +288,10 @@ const HomeContent = () => {
 
       {zoom !== null && (
         <Lightbox
-          onClick={() => setZoom(null)}
+          onClick={() => { if (swiped.current) { swiped.current = false; return; } setZoom(null); }}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
           role="dialog"
           aria-modal="true"
           aria-label="Look Out gameplay"
