@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { TrailerFrame } from '../styles';
+import { useDictionary } from '@/app/_i18n/LocaleProvider';
 
 type Props = {
   videoId?: string;
@@ -14,7 +15,9 @@ const PlayIcon = () => (
   </svg>
 );
 
-const TrailerEmbed = ({ videoId, title = 'Demo trailer' }: Props) => {
+const TrailerEmbed = ({ videoId, title: titleProp }: Props) => {
+  const t = useDictionary();
+  const title = titleProp ?? t.lookout.trailerTitle;
   const [playing, setPlaying] = useState(false);
 
   if (playing && videoId) {
@@ -36,7 +39,7 @@ const TrailerEmbed = ({ videoId, title = 'Demo trailer' }: Props) => {
         type="button"
         className="facade"
         onClick={() => videoId && setPlaying(true)}
-        aria-label={`Play ${title}`}
+        aria-label={t.lookout.play(title)}
       >
         {videoId ? (
           // eslint-disable-next-line @next/next/no-img-element

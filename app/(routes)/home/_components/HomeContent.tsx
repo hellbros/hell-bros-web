@@ -14,6 +14,7 @@ import Shot4 from "@/public/assets/images/4.png"
 import Image from "next/image";
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
+import { rich, useDictionary } from "@/app/_i18n/LocaleProvider";
 
 // YouTube video ID of the trailer (the part after v= / youtu.be/).
 const TRAILER_ID = 'CY4mwk-rh30';
@@ -47,6 +48,7 @@ const ChevronIcon = () => (
 );
 
 const HomeContent = () => {
+  const t = useDictionary();
   const sm = useMediaQuery('(max-width: 700px)');
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [zoom, setZoom] = useState<number | null>(null);
@@ -119,10 +121,10 @@ const HomeContent = () => {
         </HeroLogo>
 
         <Text as="p" $styles="heroTagline">
-          An <span className="big">asymmetrical online co-op 3D platformer</span> where <span className="big">3 demons</span> are trying to escape the Demon World.
+          {rich(t.lookout.tagline)}
         </Text>
 
-        <TrailerEmbed videoId={TRAILER_ID} />
+        <TrailerEmbed videoId={TRAILER_ID} title={t.lookout.trailerTitle} />
 
         <CtaCard>
           <WishlistRow>
@@ -131,7 +133,7 @@ const HomeContent = () => {
                 <SteamIcon />
               </span>
               <div>
-                <h2 className="title">Wishlist <span style={{ whiteSpace: 'nowrap' }}>Look Out</span></h2>
+                <h2 className="title">{t.lookout.wishlistTitle}</h2>
               </div>
             </div>
             <Button
@@ -141,7 +143,7 @@ const HomeContent = () => {
               rel="noopener noreferrer"
               $variant="solid"
               color={theme.colors.cyan}>
-              Add it on Steam
+              {t.lookout.wishlistButton}
             </Button>
           </WishlistRow>
         </CtaCard>
@@ -153,36 +155,36 @@ const HomeContent = () => {
               type="button"
               className="shot"
               onClick={() => setZoom(i)}
-              aria-label={`Ampliar captura ${i + 1} de ${SHOTS.length}`}
+              aria-label={t.lookout.enlargeShot(i + 1, SHOTS.length)}
             >
-              <Image src={src} alt="Look Out gameplay" fill sizes="(max-width: 700px) 31vw, 300px" />
+              <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 31vw, 300px" />
             </button>
           ))}
         </ShotsGrid>
 
         <Text as="p" $styles="heroTagline">
-          Every platform is one of three colors. You can see one of those colors, but you <span className="big">can&apos;t stand on it</span>, while you can stand on a different color that you <span className="big">can&apos;t see</span>.
+          {rich(t.lookout.platforms)}
         </Text>
 
         <FullShot>
-          <Image src={Shot4} alt="Look Out gameplay" sizes="(max-width: 1000px) 100vw, 920px" />
+          <Image src={Shot4} alt={t.lookout.shotAlt} sizes="(max-width: 1000px) 100vw, 920px" />
         </FullShot>
 
         <Text as="p" $styles="heroTagline">
-          Every player wears one of those colors. The color you see belongs to a teammate, so you <span className="big">guide them just as another guides you</span>. It&apos;s a circular chain of dependency where <span className="big">no one advances alone</span>, and progress depends on <span className="big">communication, trust, and coordination</span> between the three.
+          {rich(t.lookout.players)}
         </Text>
       </Hero>
 
       {/* OUR STUDIO */}
       <Section id="about">
         <Text as="h2" $styles="sectionTitle">
-          Our Studio
+          {t.studio.title}
         </Text>
         <StudioLogo>
           <Image src={HellBrosIso} alt="Hell Bros" />
         </StudioLogo>
         <Text as="p" $styles="studioIntro">
-          <span className="big">Hell Bros</span> is a <span className="big">Peruvian</span> indie game <span className="big">studio</span> with a lot of <span className="big">passion</span>. We love the games we make and we focus on developing online co-op experiences.
+          {rich(t.studio.intro)}
         </Text>
 
         <CtaCard>
@@ -192,7 +194,7 @@ const HomeContent = () => {
                 <DiscordIcon />
               </span>
               <div>
-                <h2 className="title">Join our Discord</h2>
+                <h2 className="title">{t.studio.discordTitle}</h2>
               </div>
             </div>
             <Button
@@ -202,7 +204,7 @@ const HomeContent = () => {
               rel="noopener noreferrer"
               $variant="solid"
               color="#5865F2">
-              Become a <span style={{ whiteSpace: 'nowrap' }}>Hell Bro!</span>
+              {t.studio.discordButton}
             </Button>
           </DiscordRow>
         </CtaCard>
@@ -211,19 +213,19 @@ const HomeContent = () => {
       {/* OUR HEADS */}
       <Section id="nosotros">
         <Text as="h2" $styles="sectionTitle">
-          Our Heads
+          {t.people.headsTitle}
         </Text>
         <HeadsGrid>
           <HeadCard $accent={theme.colors.red}>
             <Avatar $bg={theme.colors.red} aria-hidden="true">RJ</Avatar>
             <p className="name">Raúl Jeri</p>
-            <p className="role">Technical &amp; Creative Director</p>
+            <p className="role">{t.people.roles.technicalCreative}</p>
             <a
               className="linkedin"
               href="https://www.linkedin.com/in/rauljerilara/"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Raúl Jeri on LinkedIn"
+              aria-label={t.people.onLinkedin('Raúl Jeri')}
             >
               <LinkedinIcon />
             </a>
@@ -231,13 +233,13 @@ const HomeContent = () => {
           <HeadCard $accent={theme.colors.blue}>
             <Avatar $bg={theme.colors.blue} aria-hidden="true">IA</Avatar>
             <p className="name">Iván Aráoz</p>
-            <p className="role">Production &amp; Marketing</p>
+            <p className="role">{t.people.roles.productionMarketing}</p>
             <a
               className="linkedin"
               href="https://www.linkedin.com/in/iaraoz06/"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Iván Aráoz on LinkedIn"
+              aria-label={t.people.onLinkedin('Iván Aráoz')}
             >
               <LinkedinIcon />
             </a>
@@ -248,19 +250,19 @@ const HomeContent = () => {
       {/* OUR TEAM */}
       <Section id="team">
         <Text as="h2" $styles="sectionTitle">
-          Our Team
+          {t.people.teamTitle}
         </Text>
         <HeadsGrid>
           <HeadCard $accent={theme.colors.cyan}>
             <Avatar $bg={theme.colors.cyan} aria-hidden="true">AC</Avatar>
             <p className="name">Ariana Coronel</p>
-            <p className="role">Art Director</p>
+            <p className="role">{t.people.roles.art}</p>
             <a
               className="linkedin"
               href="https://www.linkedin.com/in/ariana-coronel-palma-48b653401/"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Ariana Coronel on LinkedIn"
+              aria-label={t.people.onLinkedin('Ariana Coronel')}
             >
               <LinkedinIcon />
             </a>
@@ -268,13 +270,13 @@ const HomeContent = () => {
           <HeadCard $accent="#7C3AED">
             <Avatar $bg="#7C3AED" aria-hidden="true">GB</Avatar>
             <p className="name">Gunter Brenner</p>
-            <p className="role">Sound &amp; Music Designer</p>
+            <p className="role">{t.people.roles.soundMusic}</p>
             <a
               className="linkedin"
               href="https://www.linkedin.com/in/gunterbrenner/"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Gunter Brenner on LinkedIn"
+              aria-label={t.people.onLinkedin('Gunter Brenner')}
             >
               <LinkedinIcon />
             </a>
@@ -294,26 +296,26 @@ const HomeContent = () => {
           onTouchEnd={onTouchEnd}
           role="dialog"
           aria-modal="true"
-          aria-label="Look Out gameplay"
+          aria-label={t.lookout.shotAlt}
         >
-          <button className="close" type="button" aria-label="Cerrar" onClick={() => setZoom(null)}>
+          <button className="close" type="button" aria-label={t.lookout.close} onClick={() => setZoom(null)}>
             <CloseIcon />
           </button>
           <button
             className="nav prev"
             type="button"
-            aria-label="Anterior"
+            aria-label={t.lookout.prev}
             onClick={(e) => { e.stopPropagation(); setZoom((z) => (z === null ? z : (z - 1 + SHOTS.length) % SHOTS.length)); }}
           >
             <ChevronIcon />
           </button>
           <div className="frame" onClick={(e) => e.stopPropagation()}>
-            <Image src={SHOTS[zoom]} alt="Look Out gameplay" sizes="90vw" priority />
+            <Image src={SHOTS[zoom]} alt={t.lookout.shotAlt} sizes="90vw" priority />
           </div>
           <button
             className="nav next"
             type="button"
-            aria-label="Siguiente"
+            aria-label={t.lookout.next}
             onClick={(e) => { e.stopPropagation(); setZoom((z) => (z === null ? z : (z + 1) % SHOTS.length)); }}
           >
             <ChevronIcon />

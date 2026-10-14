@@ -2,6 +2,8 @@ import "../_styles/base/globals.css";
 import StyledComponentsRegistry from "./registry";
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
+import { getLocale } from '../_i18n/getLocale'
+import { LocaleProvider } from '../_i18n/LocaleProvider'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 
@@ -17,10 +19,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const locale = getLocale()
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body className={montserrat.className}>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        <LocaleProvider locale={locale}>
+          <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        </LocaleProvider>
       </body>
     </html>
   )

@@ -9,6 +9,8 @@ import useMediaQuery from '@/app/hooks/useMediaQuery';
 import useActiveSection from '@/app/hooks/useActiveSection';
 import Image from 'next/image';
 import HellBrosLogo from '@/public/assets/brand/logo_hb_color02.svg';
+import { useDictionary } from '@/app/_i18n/LocaleProvider';
+import type { Dictionary } from '@/app/_i18n/dictionaries';
 
 const HamburgerIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -22,14 +24,15 @@ const CloseIcon = () => (
   </svg>
 );
 
-const NAV: { id: string; label: string; scrollTo?: string }[] = [
-  { id: 'lookout', label: 'Look Out' },
-  { id: 'about', label: 'About Us' },
-  { id: 'contact', label: 'Contact' },
+const NAV: { id: string; label: keyof Dictionary['nav']; scrollTo?: string }[] = [
+  { id: 'lookout', label: 'lookout' },
+  { id: 'about', label: 'about' },
+  { id: 'contact', label: 'contact' },
 ];
 const NAV_IDS = NAV.map((n) => n.id);
 
 const Header = () => {
+  const t = useDictionary();
   const sm = useMediaQuery('(max-width: 700px)');
   const hasScrolled = useScroll();
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
@@ -60,7 +63,7 @@ const Header = () => {
 
         <div className='row'>
           <div className='logo'>
-            <button type="button" aria-label="Home" onClick={() => scrollToSection('inicio', headerHeight)}>
+            <button type="button" aria-label={t.nav.home} onClick={() => scrollToSection('inicio', headerHeight)}>
               <Image src={HellBrosLogo} alt="Hell Bros" priority />
             </button>
           </div>
@@ -73,7 +76,7 @@ const Header = () => {
                 className={activeSection === id ? 'active' : undefined}
                 onClick={() => scrollToSection(scrollTo ?? id, headerHeight)}
               >
-                <Text $styles='link' as="span">{label}</Text>
+                <Text $styles='link' as="span">{t.nav[label]}</Text>
               </button>
             ))}
           </HeaderOptions>
@@ -81,7 +84,7 @@ const Header = () => {
           <MenuToggle
             className="menu-toggle"
             type="button"
-            aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-label={mobileMenuOpen ? t.nav.closeMenu : t.nav.openMenu}
             aria-expanded={mobileMenuOpen}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
@@ -98,7 +101,7 @@ const Header = () => {
                 className={activeSection === id ? 'active' : undefined}
                 onClick={() => ScrollMobile(scrollTo ?? id)}
               >
-                <Text as="span">{label}</Text>
+                <Text as="span">{t.nav[label]}</Text>
               </button>
             ))}
           </HeaderMobileOptions>

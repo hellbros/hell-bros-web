@@ -3,37 +3,40 @@ import Header from '@/app/_components/header/page'
 import Footer from '@/app/_components/footer/page'
 import { LayoutSection } from './home/styles'
 import HomeContent from './home/_components/HomeContent'
+import { dictionaries } from '@/app/_i18n/dictionaries'
+import { getLocale } from '@/app/_i18n/getLocale'
 
-export const metadata: Metadata = {
-  title: 'Hell Bros | Indie Game Studio',
-  description:
-    'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an asymmetrical online co-op 3D platformer for 3 players. Wishlist it on Steam and join our Discord.',
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: 'Hell Bros | Indie Game Studio',
-    description:
-      'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an asymmetrical online co-op 3D platformer for 3 players.',
-    url: '/',
-    siteName: 'Hell Bros',
-    type: 'website',
-    images: [
-      {
-        url: '/assets/brand/hellbros-og.png?v=2',
-        width: 1200,
-        height: 630,
-        alt: 'Hell Bros',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Hell Bros | Indie Game Studio',
-    description:
-      'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an asymmetrical online co-op 3D platformer for 3 players.',
-    images: ['/assets/brand/hellbros-og.png?v=2'],
-  },
+export const generateMetadata = (): Metadata => {
+  const { meta } = dictionaries[getLocale()]
+  return {
+    title: meta.title,
+    description: meta.description,
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title: meta.title,
+      description: meta.ogDescription,
+      url: '/',
+      siteName: 'Hell Bros',
+      type: 'website',
+      locale: meta.ogLocale,
+      images: [
+        {
+          url: '/assets/brand/hellbros-og.png?v=2',
+          width: 1200,
+          height: 630,
+          alt: 'Hell Bros',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: meta.title,
+      description: meta.ogDescription,
+      images: ['/assets/brand/hellbros-og.png?v=2'],
+    },
+  }
 }
 
 const organizationJsonLd = {
@@ -53,12 +56,11 @@ const organizationJsonLd = {
   ],
 }
 
-const videoGameJsonLd = {
+const videoGameJsonLd = (description: string) => ({
   '@context': 'https://schema.org',
   '@type': 'VideoGame',
   name: 'Look Out: Indie Game',
-  description:
-    'An asymmetrical online co-op 3D platformer where 3 demons are trying to escape the Demon World. Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.',
+  description,
   url: 'https://store.steampowered.com/app/4605750/',
   publisher: {
     '@type': 'Organization',
@@ -71,7 +73,7 @@ const videoGameJsonLd = {
   },
   genre: 'Platformer',
   playMode: 'CoOp',
-}
+})
 
 const Page = () => (
   <>
@@ -81,7 +83,7 @@ const Page = () => (
     />
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(videoGameJsonLd) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(videoGameJsonLd(dictionaries[getLocale()].meta.gameDescription)) }}
     />
     <LayoutSection>
       <Header />

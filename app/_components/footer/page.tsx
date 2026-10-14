@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
+import { useDictionary } from '@/app/_i18n/LocaleProvider';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
 
 const EMAIL = 'hello@hellbrosstudio.com';
@@ -60,6 +61,7 @@ const socials = [
 ];
 
 const Footer = () => {
+  const t = useDictionary();
   const [copied, setCopied] = useState(false);
 
   const handleEmailClick = () => {
@@ -82,24 +84,24 @@ const Footer = () => {
         <FooterGrid>
           <Brand>
             <Image src={HellBrosLogoWhite} alt="Hell Bros" />
-            <span>Lima, Peru</span>
+            <span>{t.footer.location}</span>
             <a
               className="email"
               href={`mailto:${EMAIL}`}
               onClick={handleEmailClick}
-              title={copied ? 'Copied!' : 'Click to copy'}
+              title={copied ? t.footer.copied : t.footer.clickToCopy}
             >
               {EMAIL}
               {copied && (
                 <span className="copied-badge" role="status">
-                  Copied!
+                  {t.footer.copied}
                 </span>
               )}
             </a>
           </Brand>
 
           <Col>
-            <p className="label">Follow us</p>
+            <p className="label">{t.footer.followUs}</p>
             <SocialRow>
               {socials.map(({ label, href, Icon }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
@@ -111,8 +113,8 @@ const Footer = () => {
         </FooterGrid>
 
         <FooterBottom>
-          <p className="slogan">Games from hell</p>
-          © {new Date().getFullYear()} Hell Bros. All rights reserved.
+          <p className="slogan">{t.footer.slogan}</p>
+          © {new Date().getFullYear()} Hell Bros. {t.footer.rights}
         </FooterBottom>
       </FooterInner>
     </FooterStyled>
