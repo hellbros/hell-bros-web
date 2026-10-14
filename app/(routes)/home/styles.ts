@@ -486,7 +486,8 @@ export const DiscordRow = styled.div`
 
   /* Button fills 90% of the right column, pinned right, so it's a long,
      easy-to-press target. */
-  & > a {
+  & > a,
+  & > button {
     width: 90%;
     justify-self: end;
   }
@@ -512,7 +513,8 @@ export const DiscordRow = styled.div`
       font-size: 15px;
     }
 
-    & > a {
+    & > a,
+    & > button {
       min-height: 40px;
       padding-left: 8px;
       padding-right: 8px;

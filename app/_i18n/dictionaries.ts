@@ -1,5 +1,5 @@
 // UI copy per locale. `**text**` marks an emphasized span (rendered as
-// <span className="big"> by `rich()`);   keeps words from wrapping apart.
+// <span className="big"> by `rich()`); \u00A0 keeps words from wrapping apart.
 
 export const LOCALES = ['en', 'es'] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -25,11 +25,12 @@ const en = {
     closeMenu: 'Close menu',
   },
   lookout: {
-    tagline: 'An **asymmetrical online co-op 3D platformer** where **3 demons** are trying to escape the Demon World.',
+    tagline: 'An **asymmetrical online co-op 3D platformer** where **3\u00A0demons** are trying to escape the Demon World.',
     trailerTitle: 'Demo trailer',
     play: (title: string) => `Play ${title}`,
-    wishlistTitle: 'Wishlist Look Out',
+    wishlistTitle: 'Wishlist Look\u00A0Out',
     wishlistButton: 'Add it on Steam',
+    comingSoon: 'Coming soon!',
     enlargeShot: (n: number, total: number) => `Enlarge screenshot ${n} of ${total}`,
     shotAlt: 'Look Out gameplay',
     platforms:
@@ -45,7 +46,7 @@ const en = {
     intro:
       '**Hell Bros** is a **Peruvian** indie game **studio** with a lot of **passion**. We love the games we make and we focus on developing online co-op experiences.',
     discordTitle: 'Join our Discord',
-    discordButton: 'Become a Hell Bro!',
+    discordButton: 'Become a Hell\u00A0Bro!',
   },
   people: {
     headsTitle: 'Our Heads',
@@ -93,11 +94,12 @@ const es: Dictionary = {
     closeMenu: 'Cerrar menú',
   },
   lookout: {
-    tagline: 'Un **juego de plataformas 3D cooperativo online y asimétrico** donde **3 demonios** intentan escapar del Mundo Demoníaco.',
+    tagline: 'Un **juego de plataformas 3D cooperativo online y asimétrico** donde **3\u00A0demonios** intentan escapar del Mundo Demoníaco.',
     trailerTitle: 'Tráiler de la demo',
     play: (title: string) => `Reproducir ${title}`,
-    wishlistTitle: 'Agrega Look Out a tu lista de deseados',
+    wishlistTitle: 'Agrega Look\u00A0Out a tu lista de deseados',
     wishlistButton: 'Agrégalo en Steam',
+    comingSoon: '¡Pronto!',
     enlargeShot: (n: number, total: number) => `Ampliar captura ${n} de ${total}`,
     shotAlt: 'Gameplay de Look Out',
     platforms:
@@ -113,7 +115,7 @@ const es: Dictionary = {
     intro:
       '**Hell Bros** es un **estudio** indie **peruano** de videojuegos con mucha **pasión**. Amamos los juegos que hacemos y nos enfocamos en desarrollar experiencias cooperativas online.',
     discordTitle: 'Únete a nuestro Discord',
-    discordButton: '¡Conviértete en un Hell Bro!',
+    discordButton: '¡Conviértete en un Hell\u00A0Bro!',
   },
   people: {
     headsTitle: 'Nuestros Líderes',

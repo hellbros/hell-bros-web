@@ -15,9 +15,15 @@ import Image from "next/image";
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
 import { rich, useDictionary } from "@/app/_i18n/LocaleProvider";
+import FloatingBadge from "@/app/_components/FloatingBadge";
 
 // YouTube video ID of the trailer (the part after v= / youtu.be/).
 const TRAILER_ID = 'CY4mwk-rh30';
+
+const STEAM_URL = 'https://store.steampowered.com/app/4605750/';
+// The Steam page isn't public yet: the Wishlist button shows a "Coming soon!"
+// badge instead of linking out. Flip to true once the store page is live.
+const STEAM_PAGE_LIVE = false;
 
 const LinkedinIcon = () => (
   <svg viewBox="0 0 448 512" aria-hidden="true">
@@ -52,6 +58,15 @@ const HomeContent = () => {
   const sm = useMediaQuery('(max-width: 700px)');
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [zoom, setZoom] = useState<number | null>(null);
+  const [comingSoon, setComingSoon] = useState(false);
+  const comingSoonTimer = useRef<number>();
+
+  const showComingSoon = () => {
+    setComingSoon(true);
+    window.clearTimeout(comingSoonTimer.current);
+    comingSoonTimer.current = window.setTimeout(() => setComingSoon(false), 1600);
+  };
+  useEffect(() => () => window.clearTimeout(comingSoonTimer.current), []);
   const lightboxOpen = zoom !== null;
 
   // While the lightbox is open: lock scroll (no layout shift), wire keys, and
@@ -136,15 +151,25 @@ const HomeContent = () => {
                 <h2 className="title">{t.lookout.wishlistTitle}</h2>
               </div>
             </div>
-            <Button
-              as="a"
-              href="https://store.steampowered.com/app/4605750/"
-              target="_blank"
-              rel="noopener noreferrer"
-              $variant="solid"
-              color={theme.colors.cyan}>
-              {t.lookout.wishlistButton}
-            </Button>
+            {STEAM_PAGE_LIVE ? (
+              <Button
+                as="a"
+                href={STEAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                $variant="solid"
+                color={theme.colors.cyan}>
+                {t.lookout.wishlistButton}
+              </Button>
+            ) : (
+              <Button
+                $variant="solid"
+                color={theme.colors.cyan}
+                onClick={showComingSoon}>
+                {t.lookout.wishlistButton}
+                {comingSoon && <FloatingBadge>{t.lookout.comingSoon}</FloatingBadge>}
+              </Button>
+            )}
           </WishlistRow>
         </CtaCard>
 

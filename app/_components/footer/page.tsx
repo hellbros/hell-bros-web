@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
 import { useDictionary } from '@/app/_i18n/LocaleProvider';
+import FloatingBadge from '@/app/_components/FloatingBadge';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
 
 const EMAIL = 'hello@hellbrosstudio.com';
@@ -92,11 +93,7 @@ const Footer = () => {
               title={copied ? t.footer.copied : t.footer.clickToCopy}
             >
               {EMAIL}
-              {copied && (
-                <span className="copied-badge" role="status">
-                  {t.footer.copied}
-                </span>
-              )}
+              {copied && <FloatingBadge>{t.footer.copied}</FloatingBadge>}
             </a>
           </Brand>
 

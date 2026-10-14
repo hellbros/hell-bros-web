@@ -59,21 +59,6 @@ export const Brand = styled.div`
     cursor: pointer;
   }
 
-  .copied-badge {
-    position: absolute;
-    right: 0;
-    bottom: calc(100% + 6px);
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: ${theme.colors.green};
-    color: ${theme.colors.black};
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
   /* Mobile: shown below Follow Us, left-aligned. */
   @media (max-width: 780px) {
     order: 2;
