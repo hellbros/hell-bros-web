@@ -113,7 +113,7 @@ const Footer = () => {
         </FooterGrid>
 
         <FooterBottom>
-          <p className="slogan">{t.footer.slogan}</p>
+          <p className="slogan">Games from hell</p>
           © {new Date().getFullYear()} Hell Bros. {t.footer.rights}
         </FooterBottom>
       </FooterInner>

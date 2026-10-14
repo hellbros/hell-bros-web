@@ -63,7 +63,6 @@ const en = {
     copied: 'Copied!',
     clickToCopy: 'Click to copy',
     followUs: 'Follow us',
-    slogan: 'Games from hell',
     rights: 'All rights reserved.',
   },
   error: {
@@ -132,7 +131,6 @@ const es: Dictionary = {
     copied: '¡Copiado!',
     clickToCopy: 'Clic para copiar',
     followUs: 'Síguenos',
-    slogan: 'Juegos del infierno',
     rights: 'Todos los derechos reservados.',
   },
   error: {
