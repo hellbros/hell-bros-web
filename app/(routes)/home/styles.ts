@@ -524,6 +524,51 @@ export const DiscordRow = styled.div`
   }
 `;
 
+// "Coming soon!" popup for the Wishlist button while the Steam page isn't
+// live: the Steam capsule under a green header, framed in the same green.
+// Pops above the button's right edge like a badge; always mounted (just
+// hidden) so the image is already loaded when it shows.
+export const CapsulePopup = styled.span<{ $visible: boolean }>`
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  z-index: 2;
+  display: block;
+  width: 300px;
+  max-width: 70vw;
+  border: 3px solid ${theme.colors.green};
+  border-radius: 10px;
+  overflow: hidden;
+  background: ${theme.colors.green};
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
+
+  .header {
+    display: block;
+    padding: 5px 8px 6px;
+    color: ${theme.colors.black};
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 640px) {
+    .header {
+      font-size: 13px;
+    }
+  }
+`;
+
 // Same black-card row as Discord, with a Steam-cyan icon tile.
 export const WishlistRow = styled(DiscordRow)`
   .icon {

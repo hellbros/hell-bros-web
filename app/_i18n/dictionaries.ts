@@ -44,7 +44,7 @@ const en = {
   studio: {
     title: 'Our Studio',
     intro:
-      '**Hell Bros** is a **Peruvian** indie game **studio** with a lot of **passion**. We love the games we make and we focus on developing online co-op experiences.',
+      "**Hell Bros** is a **Peruvian** indie game **studio** specializing in **online co-op experiences**. We're **burning** to have you play our games!",
     discordTitle: 'Join our Discord',
     discordButton: 'Become a Hell\u00A0Bro!',
   },
@@ -113,7 +113,7 @@ const es: Dictionary = {
   studio: {
     title: 'Nuestro Estudio',
     intro:
-      '**Hell Bros** es un **estudio** indie **peruano** de videojuegos con mucha **pasión**. Amamos los juegos que hacemos y nos enfocamos en desarrollar experiencias cooperativas online.',
+      '**Hell Bros** es un **estudio** indie **peruano** de videojuegos especializado en **experiencias cooperativas online**. ¡**Ardemos** en ganas de que juegues nuestros juegos!',
     discordTitle: 'Únete a nuestro Discord',
     discordButton: '¡Conviértete en un Hell\u00A0Bro!',
   },

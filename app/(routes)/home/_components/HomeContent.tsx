@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import Button from "@/app/_components/Button";
-import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox } from "../styles";
+import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox, CapsulePopup } from "../styles";
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from "@/app/_utils/constants";
 import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
@@ -11,18 +11,18 @@ import Shot1 from "@/public/assets/images/1.png"
 import Shot2 from "@/public/assets/images/2.png"
 import Shot3 from "@/public/assets/images/3.png"
 import Shot4 from "@/public/assets/images/4.png"
+import SteamCapsule from "@/public/assets/look-out/steam-capsule.webp"
 import Image from "next/image";
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
 import { rich, useDictionary } from "@/app/_i18n/LocaleProvider";
-import FloatingBadge from "@/app/_components/FloatingBadge";
 
 // YouTube video ID of the trailer (the part after v= / youtu.be/).
 const TRAILER_ID = 'CY4mwk-rh30';
 
 const STEAM_URL = 'https://store.steampowered.com/app/4605750/';
 // The Steam page isn't public yet: the Wishlist button shows a "Coming soon!"
-// badge instead of linking out. Flip to true once the store page is live.
+// capsule popup instead of linking out. Flip to true once the store page is live.
 const STEAM_PAGE_LIVE = false;
 
 const LinkedinIcon = () => (
@@ -167,7 +167,10 @@ const HomeContent = () => {
                 color={theme.colors.cyan}
                 onClick={showComingSoon}>
                 {t.lookout.wishlistButton}
-                {comingSoon && <FloatingBadge>{t.lookout.comingSoon}</FloatingBadge>}
+                <CapsulePopup $visible={comingSoon} role="status">
+                  <span className="header">{t.lookout.comingSoon}</span>
+                  <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
+                </CapsulePopup>
               </Button>
             )}
           </WishlistRow>
