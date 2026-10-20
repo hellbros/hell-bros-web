@@ -220,18 +220,18 @@ export const TrailerFrame = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    box-sizing: border-box;
     width: 68px;
     height: 68px;
     border-radius: 50%;
-    border: 2px solid ${theme.colors.primary};
     background: ${theme.colors.primary};
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Same hover as the Steam / Discord buttons: grows a bit and turns into
-       a red outline + red icon on black. */
-    transition: background-color 250ms ease, border-color 250ms ease, transform 200ms ease;
+    transition: transform 0.2s ease;
+  }
+
+  .facade:hover .play {
+    transform: translate(-50%, -50%) scale(1.08);
   }
 
   .facade .play svg {
@@ -239,18 +239,6 @@ export const TrailerFrame = styled.div`
     height: 30px;
     fill: ${theme.colors.white};
     margin-left: 3px;
-    transition: fill 250ms ease;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .facade:hover .play {
-      transform: translate(-50%, -50%) scale(1.04);
-      background: ${theme.colors.black};
-    }
-
-    .facade:hover .play svg {
-      fill: ${theme.colors.primary};
-    }
   }
 `;
 
@@ -499,22 +487,9 @@ export const DiscordRow = styled.div`
   /* Button fills 90% of the right column, pinned right, so it's a long,
      easy-to-press target. */
   & > a,
-  & > .cta {
+  & > button {
     width: 90%;
     justify-self: end;
-  }
-
-  /* Button + its popup: the popup sits outside the button so it doesn't
-     scale with the button's hover. */
-  .cta {
-    position: relative;
-    min-width: 0; /* keep the two grid columns equal */
-  }
-
-  .cta > button {
-    display: flex;
-    width: 100%;
-    white-space: normal; /* wrap like the <a> buttons (global button rule is nowrap) */
   }
 
   @media (max-width: 640px) {
@@ -539,7 +514,7 @@ export const DiscordRow = styled.div`
     }
 
     & > a,
-    .cta > button {
+    & > button {
       min-height: 40px;
       padding-left: 8px;
       padding-right: 8px;
@@ -551,7 +526,7 @@ export const DiscordRow = styled.div`
 
 // "Coming soon!" popup for the Wishlist button while the Steam page isn't
 // live: the Steam capsule under a green header, framed in the same green.
-// Pops above the button's right edge (inside .cta) like a badge; always mounted (just
+// Pops above the button's right edge like a badge; always mounted (just
 // hidden) so the image is already loaded when it shows.
 export const CapsulePopup = styled.span<{ $visible: boolean }>`
   position: absolute;
