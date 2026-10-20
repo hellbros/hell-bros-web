@@ -162,16 +162,18 @@ const HomeContent = () => {
                 {t.lookout.wishlistButton}
               </Button>
             ) : (
-              <Button
-                $variant="solid"
-                color={theme.colors.cyan}
-                onClick={showComingSoon}>
-                {t.lookout.wishlistButton}
+              <div className="cta">
+                <Button
+                  $variant="solid"
+                  color={theme.colors.cyan}
+                  onClick={showComingSoon}>
+                  {t.lookout.wishlistButton}
+                </Button>
                 <CapsulePopup $visible={comingSoon} role="status">
                   <span className="header">{t.lookout.comingSoon}</span>
                   <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
                 </CapsulePopup>
-              </Button>
+              </div>
             )}
           </WishlistRow>
         </CtaCard>
