@@ -6,8 +6,8 @@ import HomeContent from './home/_components/HomeContent'
 import { dictionaries } from '@/app/_i18n/dictionaries'
 import { getLocale } from '@/app/_i18n/getLocale'
 
-export const generateMetadata = (): Metadata => {
-  const { meta } = dictionaries[getLocale()]
+export const generateMetadata = async (): Promise<Metadata> => {
+  const { meta } = dictionaries[await getLocale()]
   return {
     title: meta.title,
     description: meta.description,
@@ -75,22 +75,25 @@ const videoGameJsonLd = (description: string) => ({
   playMode: 'CoOp',
 })
 
-const Page = () => (
-  <>
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-    />
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(videoGameJsonLd(dictionaries[getLocale()].meta.gameDescription)) }}
-    />
-    <LayoutSection>
-      <Header />
-      <HomeContent />
-      <Footer />
-    </LayoutSection>
-  </>
-)
+const Page = async () => {
+  const { meta } = dictionaries[await getLocale()]
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoGameJsonLd(meta.gameDescription)) }}
+      />
+      <LayoutSection>
+        <Header />
+        <HomeContent />
+        <Footer />
+      </LayoutSection>
+    </>
+  )
+}
 
 export default Page

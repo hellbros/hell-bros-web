@@ -60,7 +60,7 @@ const HomeContent = () => {
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [zoom, setZoom] = useState<number | null>(null);
   const [comingSoon, setComingSoon] = useState(false);
-  const comingSoonTimer = useRef<number>();
+  const comingSoonTimer = useRef<number | undefined>(undefined);
 
   const showComingSoon = () => {
     setComingSoon(true);

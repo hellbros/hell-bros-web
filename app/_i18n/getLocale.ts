@@ -18,6 +18,6 @@ export function parseAcceptLanguage(header: string | null): Locale {
   return preferred.tag === 'es' || preferred.tag.startsWith('es-') ? 'es' : 'en';
 }
 
-export function getLocale(): Locale {
-  return parseAcceptLanguage(headers().get('accept-language'));
+export async function getLocale(): Promise<Locale> {
+  return parseAcceptLanguage((await headers()).get('accept-language'));
 }

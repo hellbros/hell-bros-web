@@ -14,12 +14,12 @@ export const metadata: Metadata = {
     'An independent Peruvian game studio focused on online cooperative experiences — makers of Look Out: Indie Game, a 3-player co-op platformer.',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const locale = getLocale()
+  const locale = await getLocale()
   return (
     <html lang={locale}>
       <body className={montserrat.className}>
