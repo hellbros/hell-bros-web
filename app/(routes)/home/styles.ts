@@ -242,6 +242,16 @@ export const TrailerFrame = styled.div`
   }
 `;
 
+// Same frame as the trailer, so the art matches the video's exact size.
+export const StudioArt = styled(TrailerFrame)`
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+`;
+
 export const HeroLeft = styled.div`
   display: flex;
   flex-direction: column;

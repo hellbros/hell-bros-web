@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import Button from "@/app/_components/Button";
-import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox, CapsulePopup } from "../styles";
+import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox, CapsulePopup, StudioArt } from "../styles";
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from "@/app/_utils/constants";
 import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
@@ -202,10 +202,6 @@ const HomeContent = () => {
         <Text as="p" $styles="heroTagline">
           {rich(t.lookout.players)}
         </Text>
-
-        <FullShot>
-          <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} sizes="(max-width: 1000px) 100vw, 920px" />
-        </FullShot>
       </Hero>
 
       {/* OUR STUDIO */}
@@ -219,6 +215,10 @@ const HomeContent = () => {
         <Text as="p" $styles="studioIntro">
           {rich(t.studio.intro)}
         </Text>
+
+        <StudioArt>
+          <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} sizes="(max-width: 1000px) 100vw, 920px" />
+        </StudioArt>
 
         <CtaCard>
           <DiscordRow>
