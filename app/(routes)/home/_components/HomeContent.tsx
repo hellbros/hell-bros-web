@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, type TouchEvent as ReactTouchEvent } from 
 import TrailerEmbed from "./TrailerEmbed";
 import Button from "@/app/_components/Button";
 import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox, CapsulePopup, StudioArt } from "../styles";
-import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
+import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
 import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
 import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
@@ -14,7 +14,6 @@ import Shot4 from "@/public/assets/images/4.png"
 import SteamCapsule from "@/public/assets/look-out/steam-capsule.webp"
 import DemonsInWater from "@/public/assets/look-out/demons-in-water.webp"
 import Image from "next/image";
-import useMediaQuery from '@/app/hooks/useMediaQuery';
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
 import { trapTab } from "@/app/_utils/focus";
 import { rich, useDictionary } from "@/app/_i18n/LocaleProvider";
@@ -52,8 +51,6 @@ const ChevronIcon = () => (
 
 const HomeContent = () => {
   const t = useDictionary();
-  const sm = useMediaQuery('(max-width: 700px)');
-  const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [zoom, setZoom] = useState<number | null>(null);
   const [comingSoon, setComingSoon] = useState(false);
   const comingSoonTimer = useRef<number | undefined>(undefined);
@@ -129,7 +126,7 @@ const HomeContent = () => {
   };
 
   return (
-    <SectionContainer id="inicio" tabIndex={-1} $headerHeight={headerHeight}>
+    <SectionContainer id="inicio" tabIndex={-1}>
 
       {/* LOOK OUT (first section — clears the header via the container's
           padding-top plus its own 40px top padding):

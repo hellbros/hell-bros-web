@@ -3,7 +3,7 @@
 import styled, { css, keyframes } from 'styled-components';
 import { LayoutProps, SpaceProps, layout, space, variant } from 'styled-system';
 import TextGlobal from '../../_components/Text';
-import { MAX_WIDTH, SECTION_PADDING } from '../../_utils/constants';
+import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, MAX_WIDTH, SECTION_PADDING } from '../../_utils/constants';
 import { theme } from '@/app/_styles/theme';
 
 export type StyledProps = SpaceProps & LayoutProps;
@@ -67,12 +67,8 @@ export const Section = styled.section<SectionProps & StyledProps>`
   ${layout};
 `;
 
-interface SectionContainerProps {
-  $headerHeight?: number;
-}
-
-export const SectionContainer = styled.main<SectionContainerProps>`
-  padding-top: ${(props) => (props.$headerHeight)}px;
+export const SectionContainer = styled.main`
+  padding-top: ${HEADER_HEIGHT}px;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -80,6 +76,11 @@ export const SectionContainer = styled.main<SectionContainerProps>`
   /* Focusable only as the skip link's target; a ring around the page is noise. */
   &:focus {
     outline: none;
+  }
+
+  /* In CSS, not from useMediaQuery, so phones don't shift 16px on hydration. */
+  @media (max-width: 700px) {
+    padding-top: ${HEADER_HEIGHT_MOBILE}px;
   }
 `;
 
