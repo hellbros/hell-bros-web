@@ -4,6 +4,24 @@ html {
   scroll-padding-top: 80px;
 }
 
+/* Reduced motion: everything lands instantly. The durations are near zero, not
+   `none`, because the mobile menu items start at opacity 0 and rely on their
+   animation finishing. Hover scales are switched off where they are declared. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
 /* Scroll lock (lightbox / mobile menu): freeze the page without a layout
    shift. --sbw is set by lockScroll() to the current scrollbar width, and we
    pad both the page and the fixed header by it to replace the removed bar. */

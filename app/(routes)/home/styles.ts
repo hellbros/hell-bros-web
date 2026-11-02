@@ -230,8 +230,10 @@ export const TrailerFrame = styled.div`
     transition: transform 0.2s ease;
   }
 
-  .facade:hover .play {
-    transform: translate(-50%, -50%) scale(1.08);
+  @media (prefers-reduced-motion: no-preference) {
+    .facade:hover .play {
+      transform: translate(-50%, -50%) scale(1.08);
+    }
   }
 
   .facade .play svg {
@@ -325,7 +327,7 @@ export const ShotsGrid = styled.div`
     transition: transform 0.3s ease;
   }
 
-  @media (hover: hover) {
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .shot:hover img {
       transform: scale(1.12);
     }
@@ -410,7 +412,7 @@ export const HeadCard = styled.div<{ $accent?: string }>`
     transition: transform 0.2s ease;
   }
 
-  @media (hover: hover) {
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .linkedin:hover {
       transform: scale(1.15);
     }

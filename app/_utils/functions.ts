@@ -4,7 +4,8 @@ export default function scrollToSection(sectionId: string, offset: number = 0) {
       const gap = 5; // breathing room below the fixed header when navigating
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const top = Math.min(Math.max(section.offsetTop - offset - gap, 0), maxScroll);
-      window.scrollTo({ top, behavior: 'smooth' });
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
       return top;
     }
   }

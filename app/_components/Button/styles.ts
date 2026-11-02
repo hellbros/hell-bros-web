@@ -104,6 +104,11 @@ export const StyledButton = styled.button<ButtonProps>`
         '@media (hover: none) and (pointer: coarse)': { //MOBILES
           color: `${theme.colors.white}`,
         },
+        '@media (prefers-reduced-motion: reduce)': {
+          '&:hover': {
+            transform: 'none',
+          },
+        },
       },
       justIcon: {
       },

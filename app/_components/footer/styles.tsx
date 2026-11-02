@@ -152,6 +152,11 @@ export const SocialRow = styled.div`
   @media (hover: hover) {
     a:hover {
       color: ${theme.colors.red};
+    }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    a:hover {
       transform: scale(1.1);
     }
   }
