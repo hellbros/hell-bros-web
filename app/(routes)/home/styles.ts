@@ -410,7 +410,10 @@ export const HeadCard = styled.div<{ $accent?: string }>`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: 0.35rem;
+    /* 44px touch target around the 22px icon; the margins keep the layout as
+       if it were still 22px. */
+    padding: 11px;
+    margin: calc(0.35rem - 11px) 0 -11px;
     color: ${({ $accent }) => $accent || theme.colors.primary};
     transition: transform 0.2s ease;
   }

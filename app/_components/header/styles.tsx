@@ -59,6 +59,7 @@ export const HeaderStyled = styled.header<HeaderStyledProps>`
     .logo button {
       display: flex;
       align-items: center;
+      min-height: 44px;
       cursor: pointer;
     }
 
@@ -99,8 +100,10 @@ export const HeaderStyled = styled.header<HeaderStyledProps>`
 `;
 
 export const MenuToggle = styled.button`
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  /* Grows outward so the icon stays where it was. */
+  margin-right: -2px;
   padding: 0;
   border: 0;
   background: transparent;
