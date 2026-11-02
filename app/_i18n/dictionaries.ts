@@ -33,6 +33,7 @@ const en = {
     comingSoon: 'Coming soon!',
     enlargeShot: (n: number, total: number) => `Enlarge screenshot ${n} of ${total}`,
     shotAlt: 'Look Out gameplay',
+    demonsArtAlt: "Look Out's three demons floating in the water, each with a teammate's eye color",
     platforms:
       "Every platform is one of three colors. You can see one of those colors, but you **can't stand on it**, while you can stand on a different color that you **can't see**.",
     players:
@@ -102,6 +103,7 @@ const es: Dictionary = {
     comingSoon: '¡Pronto!',
     enlargeShot: (n: number, total: number) => `Ampliar captura ${n} de ${total}`,
     shotAlt: 'Gameplay de Look Out',
+    demonsArtAlt: 'Los tres demonios de Look Out flotando en el agua, cada uno con el color de ojo de un compañero',
     platforms:
       'Cada plataforma es de uno de tres colores. Puedes ver uno de esos colores, pero **no puedes pararte sobre él**, mientras que sí puedes pararte sobre otro color que **no puedes ver**.',
     players:

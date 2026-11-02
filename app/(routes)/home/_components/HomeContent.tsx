@@ -12,6 +12,7 @@ import Shot2 from "@/public/assets/images/2.png"
 import Shot3 from "@/public/assets/images/3.png"
 import Shot4 from "@/public/assets/images/4.png"
 import SteamCapsule from "@/public/assets/look-out/steam-capsule.webp"
+import DemonsInWater from "@/public/assets/look-out/demons-in-water.webp"
 import Image from "next/image";
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
@@ -201,6 +202,10 @@ const HomeContent = () => {
         <Text as="p" $styles="heroTagline">
           {rich(t.lookout.players)}
         </Text>
+
+        <FullShot>
+          <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} sizes="(max-width: 1000px) 100vw, 920px" />
+        </FullShot>
       </Hero>
 
       {/* OUR STUDIO */}
