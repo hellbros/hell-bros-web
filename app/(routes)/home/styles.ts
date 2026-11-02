@@ -716,9 +716,12 @@ export const Lightbox = styled.div`
   }
 
   @media (max-width: 640px) {
+    /* The photo fills the width here, so the arrows sit on top of it and the
+       translucent white disappears over the bright shots. */
     .nav {
       width: 40px;
       height: 40px;
+      background: rgba(0, 0, 0, 0.55);
     }
     .nav.prev {
       left: 8px;
