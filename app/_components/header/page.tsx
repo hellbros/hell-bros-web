@@ -66,6 +66,13 @@ const Header = () => {
     setMobileMenuOpen(false);
   }
 
+  // Moves focus without adding #inicio to the URL: the lightbox closes with
+  // history.back(), and a fragment there sends the page back to the top.
+  function skipToContent(e: React.MouseEvent): void {
+    e.preventDefault();
+    document.getElementById('inicio')?.focus();
+  }
+
   useEffect(() => {
     // Lock background scroll while the mobile menu is open (no layout shift).
     if (sm && mobileMenuOpen) {
@@ -96,7 +103,7 @@ const Header = () => {
 
   return (
     <HeaderStyled ref={headerRef} className="site-header" $hasScrolled={hasScrolled} $mobileMenuOpen={mobileMenuOpen}>
-      <a className="skip-link" href="#inicio">{t.nav.skip}</a>
+      <a className="skip-link" href="#inicio" onClick={skipToContent}>{t.nav.skip}</a>
       <div className='header-content'>
 
         <div className='row'>
