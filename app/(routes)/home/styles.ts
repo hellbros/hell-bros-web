@@ -120,6 +120,9 @@ export const Text = styled(TextGlobal)`
       marginBottom: '0px',
       textAlign: 'center',
       fontWeight: 500,
+      '@media (max-width: 700px)': {
+        fontSize: '32px',
+      },
     },
     sectionTitle2: {
       color: theme.colors.tercerary,
