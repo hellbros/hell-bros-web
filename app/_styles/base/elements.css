@@ -1,5 +1,7 @@
 html {
   scroll-behavior: smooth;
+  /* Keyboard focus stops below the fixed header instead of under it. */
+  scroll-padding-top: 80px;
 }
 
 /* Scroll lock (lightbox / mobile menu): freeze the page without a layout
