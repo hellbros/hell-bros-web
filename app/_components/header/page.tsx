@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react'
 import { HeaderMobileOptions, HeaderOptions, HeaderStyled, MenuToggle, Text } from './styles'
 import useScroll from '@/app/hooks/useScroll';
-import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from '@/app/_utils/constants';
-import scrollToSection from '@/app/_utils/functions';
+import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
+import scrollToSection, { onScrollSettled } from '@/app/_utils/functions';
 import { lockScroll, unlockScroll } from '@/app/_utils/scrollLock';
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 import useActiveSection from '@/app/hooks/useActiveSection';
@@ -39,8 +39,15 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const activeSection = useActiveSection(NAV_IDS, headerHeight);
 
-  function ScrollMobile(sectionId: string): void {
+  function goToSection(sectionId: string): void {
     scrollToSection(sectionId, headerHeight);
+    if (sectionId === 'contact') {
+      onScrollSettled(() => window.dispatchEvent(new Event(HIGHLIGHT_EMAIL_EVENT)));
+    }
+  }
+
+  function ScrollMobile(sectionId: string): void {
+    goToSection(sectionId);
     setMobileMenuOpen(false);
   }
 
@@ -74,7 +81,7 @@ const Header = () => {
                 key={id}
                 type="button"
                 className={activeSection === id ? 'active' : undefined}
-                onClick={() => scrollToSection(scrollTo ?? id, headerHeight)}
+                onClick={() => goToSection(scrollTo ?? id)}
               >
                 <Text $styles='link' as="span">{t.nav[label]}</Text>
               </button>

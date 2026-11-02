@@ -57,6 +57,12 @@ export const Brand = styled.div`
   a.email {
     position: relative;
     cursor: pointer;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  a.email.highlight {
+    color: ${theme.colors.green};
+    text-shadow: 0 0 12px ${theme.colors.green};
   }
 
   .copied-badge {

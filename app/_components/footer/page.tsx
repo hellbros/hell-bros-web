@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
 import FooterClaw from '@/public/assets/look-out/footer-hand.webp';
 import { useDictionary } from '@/app/_i18n/LocaleProvider';
+import { HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
 
 const EMAIL = 'hello@hellbrosstudio.com';
@@ -64,6 +65,22 @@ const socials = [
 const Footer = () => {
   const t = useDictionary();
   const [copied, setCopied] = useState(false);
+  const [highlighted, setHighlighted] = useState(false);
+
+  // The header's Contact link lights the email up once it lands here.
+  useEffect(() => {
+    let timer: number;
+    const highlight = () => {
+      setHighlighted(true);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setHighlighted(false), 2000);
+    };
+    window.addEventListener(HIGHLIGHT_EMAIL_EVENT, highlight);
+    return () => {
+      window.removeEventListener(HIGHLIGHT_EMAIL_EVENT, highlight);
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   const handleEmailClick = () => {
     // Copy the address too — useful on desktop where no default mail client is
@@ -87,7 +104,7 @@ const Footer = () => {
             <Image src={HellBrosLogoWhite} alt="Hell Bros" />
             <span>{t.footer.location}</span>
             <a
-              className="email"
+              className={highlighted ? 'email highlight' : 'email'}
               href={`mailto:${EMAIL}`}
               onClick={handleEmailClick}
               title={copied ? t.footer.copied : t.footer.clickToCopy}
