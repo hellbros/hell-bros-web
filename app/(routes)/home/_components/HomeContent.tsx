@@ -16,6 +16,7 @@ import DemonsInWater from "@/public/assets/look-out/demons-in-water.webp"
 import Image from "next/image";
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
+import { trapTab } from "@/app/_utils/focus";
 import { rich, useDictionary } from "@/app/_i18n/LocaleProvider";
 
 // YouTube video ID of the trailer (the part after v= / youtu.be/).
@@ -69,20 +70,26 @@ const HomeContent = () => {
   };
   useEffect(() => () => window.clearTimeout(comingSoonTimer.current), []);
   const lightboxOpen = zoom !== null;
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  // The thumbnail that opened the lightbox, so focus can return to it on close.
+  const zoomTrigger = useRef<HTMLElement | null>(null);
 
-  // While the lightbox is open: lock scroll (no layout shift), wire keys, and
-  // push a history entry so the phone's native back button / gesture closes
-  // the zoom instead of leaving the page. Depends on the open/closed flag (not
-  // the index) so switching shots doesn't stack history entries.
+  // While the lightbox is open: lock scroll (no layout shift), wire keys, keep
+  // focus inside, and push a history entry so the phone's native back button /
+  // gesture closes the zoom instead of leaving the page. Depends on the
+  // open/closed flag (not the index) so switching shots doesn't stack history
+  // entries.
   useEffect(() => {
     if (!lightboxOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setZoom(null);
       else if (e.key === 'ArrowRight') setZoom((z) => (z === null ? z : (z + 1) % SHOTS.length));
       else if (e.key === 'ArrowLeft') setZoom((z) => (z === null ? z : (z - 1 + SHOTS.length) % SHOTS.length));
+      else if (e.key === 'Tab') trapTab(e, lightboxRef.current);
     };
     const onPop = () => setZoom(null); // back button closes the lightbox
     lockScroll();
+    lightboxRef.current?.querySelector<HTMLElement>('.close')?.focus({ preventScroll: true });
     // Preserve Next's router state; just flag this entry as the lightbox's.
     window.history.pushState({ ...window.history.state, __lightbox: true }, '');
     window.addEventListener('keydown', onKey);
@@ -96,6 +103,7 @@ const HomeContent = () => {
       if (window.history.state && window.history.state.__lightbox) {
         window.history.back();
       }
+      zoomTrigger.current?.focus({ preventScroll: true });
     };
   }, [lightboxOpen]);
 
@@ -183,7 +191,7 @@ const HomeContent = () => {
               key={i}
               type="button"
               className="shot"
-              onClick={() => setZoom(i)}
+              onClick={(e) => { zoomTrigger.current = e.currentTarget; setZoom(i); }}
               aria-label={t.lookout.enlargeShot(i + 1, SHOTS.length)}
             >
               <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 31vw, 300px" />
@@ -323,6 +331,7 @@ const HomeContent = () => {
 
       {zoom !== null && (
         <Lightbox
+          ref={lightboxRef}
           onClick={() => { if (swiped.current) { swiped.current = false; return; } setZoom(null); }}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
