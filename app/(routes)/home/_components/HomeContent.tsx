@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, type TouchEvent as ReactTouchEvent } from 
 import TrailerEmbed from "./TrailerEmbed";
 import Button from "@/app/_components/Button";
 import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox, CapsulePopup, StudioArt } from "../styles";
-import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from "@/app/_utils/constants";
+import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
 import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
 import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
@@ -21,11 +21,6 @@ import { rich, useDictionary } from "@/app/_i18n/LocaleProvider";
 
 // YouTube video ID of the trailer (the part after v= / youtu.be/).
 const TRAILER_ID = 'CY4mwk-rh30';
-
-const STEAM_URL = 'https://store.steampowered.com/app/4605750/';
-// The Steam page isn't public yet: the Wishlist button shows a "Coming soon!"
-// capsule popup instead of linking out. Flip to true once the store page is live.
-const STEAM_PAGE_LIVE = false;
 
 const LinkedinIcon = () => (
   <svg viewBox="0 0 448 512" aria-hidden="true">

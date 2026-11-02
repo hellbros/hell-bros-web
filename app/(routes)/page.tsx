@@ -4,6 +4,7 @@ import Footer from '@/app/_components/footer/page'
 import HomeContent from './home/_components/HomeContent'
 import { dictionaries } from '@/app/_i18n/dictionaries'
 import { getLocale } from '@/app/_i18n/getLocale'
+import { SITE_URL, STEAM_PAGE_LIVE, STEAM_URL } from '@/app/_utils/constants'
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const { meta } = dictionaries[await getLocale()]
@@ -60,7 +61,7 @@ const videoGameJsonLd = (description: string) => ({
   '@type': 'VideoGame',
   name: 'Look Out: Indie Game',
   description,
-  url: 'https://store.steampowered.com/app/4605750/',
+  url: STEAM_PAGE_LIVE ? STEAM_URL : SITE_URL,
   publisher: {
     '@type': 'Organization',
     name: 'Hell Bros',
