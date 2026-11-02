@@ -216,10 +216,6 @@ const HomeContent = () => {
           {rich(t.studio.intro)}
         </Text>
 
-        <StudioArt>
-          <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} sizes="(max-width: 1000px) 100vw, 920px" />
-        </StudioArt>
-
         <CtaCard>
           <DiscordRow>
             <div className="left">
@@ -241,6 +237,10 @@ const HomeContent = () => {
             </Button>
           </DiscordRow>
         </CtaCard>
+
+        <StudioArt>
+          <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} sizes="(max-width: 1000px) 100vw, 920px" />
+        </StudioArt>
       </Section>
 
       {/* OUR HEADS */}
