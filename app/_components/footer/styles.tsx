@@ -164,6 +164,25 @@ export const FooterBottom = styled.div`
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);
 
+  /* The claw reaches down from the separator (no gap above it) and the art
+     bleeds past the footer's side padding, melting into black at the sides
+     and bottom so it has no visible frame. */
+  .claw {
+    display: block;
+    width: calc(100% + 2 * ${SECTION_PADDING});
+    max-width: none;
+    height: auto;
+    margin: -24px calc(-1 * ${SECTION_PADDING}) 12px;
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, #000 6%, #000 94%, transparent),
+      linear-gradient(to bottom, #000 72%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent, #000 6%, #000 94%, transparent),
+      linear-gradient(to bottom, #000 72%, transparent);
+    mask-composite: intersect;
+  }
+
   .slogan {
     margin: 0 0 10px;
     font-size: 13px;

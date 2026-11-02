@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
+import FooterClaw from '@/public/assets/look-out/footer-hand.webp';
 import { useDictionary } from '@/app/_i18n/LocaleProvider';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
 
@@ -113,6 +114,7 @@ const Footer = () => {
         </FooterGrid>
 
         <FooterBottom>
+          <Image className="claw" src={FooterClaw} alt="" sizes="(max-width: 1000px) 100vw, 1000px" />
           <p className="slogan">Games from hell</p>
           © {new Date().getFullYear()} Hell Bros. {t.footer.rights}
         </FooterBottom>
