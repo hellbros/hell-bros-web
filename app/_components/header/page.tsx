@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { HeaderMobileOptions, HeaderOptions, HeaderStyled, MenuToggle, Text } from './styles'
 import useScroll from '@/app/hooks/useScroll';
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
 import scrollToSection, { onScrollNear } from '@/app/_utils/functions';
 import { lockScroll, unlockScroll } from '@/app/_utils/scrollLock';
+import { trapTab } from '@/app/_utils/focus';
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 import useActiveSection from '@/app/hooks/useActiveSection';
 import Image from 'next/image';
@@ -41,6 +42,8 @@ const Header = () => {
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const activeSection = useActiveSection(NAV_IDS, headerHeight);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   function goToSection(sectionId: string): void {
     const from = window.scrollY;
@@ -58,6 +61,11 @@ const Header = () => {
     setMobileMenuOpen(false);
   }
 
+  function goHome(): void {
+    scrollToSection('inicio', headerHeight);
+    setMobileMenuOpen(false);
+  }
+
   useEffect(() => {
     // Lock background scroll while the mobile menu is open (no layout shift).
     if (sm && mobileMenuOpen) {
@@ -71,13 +79,28 @@ const Header = () => {
     };
   }, [mobileMenuOpen, sm]);
 
+  // The open menu covers the page: Esc closes it and Tab stays inside.
+  useEffect(() => {
+    if (!sm || !mobileMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        toggleRef.current?.focus();
+      } else if (e.key === 'Tab') {
+        trapTab(e, headerRef.current);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mobileMenuOpen, sm]);
+
   return (
-    <HeaderStyled className="site-header" $hasScrolled={hasScrolled} $mobileMenuOpen={mobileMenuOpen}>
+    <HeaderStyled ref={headerRef} className="site-header" $hasScrolled={hasScrolled} $mobileMenuOpen={mobileMenuOpen}>
       <div className='header-content'>
 
         <div className='row'>
           <div className='logo'>
-            <button type="button" aria-label={t.nav.home} onClick={() => scrollToSection('inicio', headerHeight)}>
+            <button type="button" aria-label={t.nav.home} onClick={goHome}>
               <Image src={HellBrosLogo} alt="Hell Bros" priority />
             </button>
           </div>
@@ -96,10 +119,12 @@ const Header = () => {
           </HeaderOptions>
 
           <MenuToggle
+            ref={toggleRef}
             className="menu-toggle"
             type="button"
             aria-label={mobileMenuOpen ? t.nav.closeMenu : t.nav.openMenu}
             aria-expanded={mobileMenuOpen}
+            aria-controls={mobileMenuOpen ? 'mobile-menu' : undefined}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -107,7 +132,7 @@ const Header = () => {
         </div>
 
         {mobileMenuOpen &&
-          <HeaderMobileOptions>
+          <HeaderMobileOptions id="mobile-menu">
             {NAV.map(({ id, label, scrollTo }) => (
               <button
                 key={id}
