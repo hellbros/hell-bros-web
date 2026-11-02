@@ -228,7 +228,7 @@ const HomeContent = () => {
             </div>
             <Button
               as="a"
-              href="https://discord.gg/5yXsbXfKM"
+              href="https://discord.gg/mtfxz4WXS"
               target="_blank"
               rel="noopener noreferrer"
               $variant="solid"

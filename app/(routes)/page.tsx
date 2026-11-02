@@ -46,7 +46,7 @@ const organizationJsonLd = {
   url: 'https://www.hellbrosstudio.com',
   logo: 'https://www.hellbrosstudio.com/assets/brand/logo_hb_color02.svg',
   sameAs: [
-    'https://discord.gg/5yXsbXfKM',
+    'https://discord.gg/mtfxz4WXS',
     'https://www.instagram.com/hellbrosstudio',
     'https://www.tiktok.com/@hellbrosstudio',
     'https://www.linkedin.com/company/hellbrosstudio/',
