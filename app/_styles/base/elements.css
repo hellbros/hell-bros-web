@@ -43,7 +43,6 @@ body {
 button {
   padding: 0;
   border: 0;
-  outline: 0;
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
@@ -52,9 +51,11 @@ button {
   background-color: transparent;
 }
 
-button:focus {
-  outline: 0;
-  box-shadow: none;
+/* One focus ring for the whole site, keyboard only. The brand red clears 3:1 on
+   both the light page and the black cards. */
+:focus-visible {
+  outline: 2px solid #D62828;
+  outline-offset: 2px;
 }
 
 ul,

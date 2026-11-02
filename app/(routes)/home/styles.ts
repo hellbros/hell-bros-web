@@ -210,6 +210,11 @@ export const TrailerFrame = styled.div`
     display: block;
   }
 
+  /* The frame's overflow would clip a ring drawn outside the button. */
+  .facade:focus-visible {
+    outline-offset: -4px;
+  }
+
   .facade img {
     width: 100%;
     height: 100%;
