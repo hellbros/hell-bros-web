@@ -515,8 +515,11 @@ export const DiscordRow = styled.div`
     justify-self: end;
   }
 
+  /* Phones stack the card: side by side, the button's label can't wrap and
+     squeezes the title into a one-word column. */
   @media (max-width: 640px) {
-    gap: 8px;
+    grid-template-columns: 1fr;
+    gap: 14px;
 
     .left {
       gap: 10px;
@@ -533,15 +536,14 @@ export const DiscordRow = styled.div`
     }
 
     .title {
-      font-size: 15px;
+      font-size: 18px;
     }
 
     & > a,
     & > button {
-      min-height: 40px;
-      padding-left: 8px;
-      padding-right: 8px;
-      font-size: 12px;
+      width: 100%;
+      justify-self: stretch;
+      font-size: 15px;
       line-height: 1.2;
     }
   }
