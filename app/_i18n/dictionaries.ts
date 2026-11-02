@@ -73,6 +73,10 @@ const en = {
     title: 'Something went wrong!',
     retry: 'Try again',
   },
+  notFound: {
+    message: 'This page got lost in the Demon World.',
+    back: 'Back to home',
+  },
 };
 
 export type Dictionary = typeof en;
@@ -146,6 +150,10 @@ const es: Dictionary = {
   error: {
     title: '¡Algo salió mal!',
     retry: 'Intentar de nuevo',
+  },
+  notFound: {
+    message: 'Esta página se perdió en el Mundo Demoníaco.',
+    back: 'Volver al inicio',
   },
 };
 

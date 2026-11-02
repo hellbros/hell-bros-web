@@ -86,6 +86,30 @@ export const SectionContainer = styled.main`
   }
 `;
 
+export const NotFoundPage = styled.main`
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: ${SECTION_PADDING};
+  text-align: center;
+
+  img {
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1;
+  }
+`;
+
 export const Text = styled(TextGlobal)`
    ${variant({
   prop: '$styles',
