@@ -10,8 +10,9 @@ import useMediaQuery from '@/app/hooks/useMediaQuery';
 import useActiveSection from '@/app/hooks/useActiveSection';
 import Image from 'next/image';
 import HellBrosLogo from '@/public/assets/brand/logo_hb_color02.svg';
-import { useDictionary } from '@/app/_i18n/LocaleProvider';
+import { useDictionary, useLocale } from '@/app/_i18n/LocaleProvider';
 import type { Dictionary } from '@/app/_i18n/dictionaries';
+import { LOCALE_COOKIE, localePath, otherLocale } from '@/app/_i18n/locales';
 
 const HamburgerIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -37,6 +38,7 @@ const EMAIL_HIGHLIGHT_MS = { min: 500, max: 1300 };
 
 const Header = () => {
   const t = useDictionary();
+  const nextLocale = otherLocale(useLocale());
   const sm = useMediaQuery('(max-width: 700px)');
   const hasScrolled = useScroll();
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
@@ -64,6 +66,11 @@ const Header = () => {
   function goHome(): void {
     scrollToSection('inicio', headerHeight);
     setMobileMenuOpen(false);
+  }
+
+  // Beats the browser's language on later visits to the root.
+  function rememberLanguage(): void {
+    document.cookie = `${LOCALE_COOKIE}=${nextLocale}; path=/; max-age=31536000; samesite=lax`;
   }
 
   // Moves focus without adding #inicio to the URL: the lightbox closes with
@@ -124,6 +131,15 @@ const Header = () => {
                 <Text $styles='link' as="span">{t.nav[label]}</Text>
               </button>
             ))}
+            <a
+              href={localePath(nextLocale)}
+              hrefLang={nextLocale}
+              lang={nextLocale}
+              aria-label={t.nav.language}
+              onClick={rememberLanguage}
+            >
+              <Text $styles='link' as="span">{t.nav.languageShort}</Text>
+            </a>
           </HeaderOptions>
 
           <MenuToggle
@@ -151,6 +167,9 @@ const Header = () => {
                 <Text as="span">{t.nav[label]}</Text>
               </button>
             ))}
+            <a href={localePath(nextLocale)} hrefLang={nextLocale} lang={nextLocale} onClick={rememberLanguage}>
+              <Text as="span">{t.nav.language}</Text>
+            </a>
           </HeaderMobileOptions>
         }
 

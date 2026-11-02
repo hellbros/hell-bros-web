@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useDictionary } from '../_i18n/LocaleProvider'
+import { useDictionary } from '@/app/_i18n/LocaleProvider'
 
 export default function Error({
   error,

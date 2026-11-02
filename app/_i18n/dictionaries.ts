@@ -1,9 +1,7 @@
 // UI copy per locale. `**text**` marks an emphasized span (rendered as
 // <span className="big"> by `rich()`); \u00A0 keeps words from wrapping apart.
 
-export const LOCALES = ['en', 'es'] as const;
-export type Locale = (typeof LOCALES)[number];
-export const DEFAULT_LOCALE: Locale = 'en';
+import type { Locale } from './locales';
 
 const en = {
   meta: {
@@ -25,6 +23,8 @@ const en = {
     closeMenu: 'Close menu',
     label: 'Main navigation',
     skip: 'Skip to content',
+    language: 'Español',
+    languageShort: 'ES',
   },
   lookout: {
     tagline: 'An **asymmetrical online co-op 3D platformer** where **3\u00A0demons** are trying to escape the Demon World.',
@@ -97,6 +97,8 @@ const es: Dictionary = {
     closeMenu: 'Cerrar menú',
     label: 'Navegación principal',
     skip: 'Saltar al contenido',
+    language: 'English',
+    languageShort: 'EN',
   },
   lookout: {
     tagline: 'Un **juego de plataformas 3D cooperativo online y asimétrico** donde **3\u00A0demonios** intentan escapar del Mundo Demoníaco.',

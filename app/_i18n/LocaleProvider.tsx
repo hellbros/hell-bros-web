@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext, type ReactNode } from 'react';
-import { DEFAULT_LOCALE, dictionaries, type Locale } from './dictionaries';
+import { dictionaries } from './dictionaries';
+import { DEFAULT_LOCALE, type Locale } from './locales';
 
 const LocaleContext = createContext<Locale>(DEFAULT_LOCALE);
 

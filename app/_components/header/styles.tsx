@@ -132,7 +132,8 @@ export const HeaderOptions = styled.nav`
     display: none;
   }
 
-  button {
+  button,
+  a {
     margin: 0.95rem;
     padding: 0.5rem;
     text-decoration: none;
@@ -188,7 +189,9 @@ export const HeaderMobileOptions = styled.nav`
     display: none;
   }
 
-  button {
+  button,
+  a {
+    display: block;
     margin: 0.95rem;
     padding: 1.2rem;
     text-decoration: none;
@@ -226,12 +229,24 @@ export const HeaderMobileOptions = styled.nav`
     }
   }
 
+  /* A phone held sideways can't fit four options at the default spacing, and
+     the page behind is locked, so the last one would be out of reach. */
+  @media (max-height: 460px) {
+    button,
+    a {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: 0.7rem;
+      padding-bottom: 0.7rem;
+    }
+  }
+
   /* Stagger: options appear one after another, not all at once, and start
      early (no need to wait for the panel to finish dropping). */
-  button:nth-child(1) { animation-delay: 0.05s; }
-  button:nth-child(2) { animation-delay: 0.13s; }
-  button:nth-child(3) { animation-delay: 0.21s; }
-  button:nth-child(4) { animation-delay: 0.29s; }
+  > :nth-child(1) { animation-delay: 0.05s; }
+  > :nth-child(2) { animation-delay: 0.13s; }
+  > :nth-child(3) { animation-delay: 0.21s; }
+  > :nth-child(4) { animation-delay: 0.29s; }
 `;
 
 export const Text = styled(TextGlobal)`
