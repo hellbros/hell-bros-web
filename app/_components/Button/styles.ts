@@ -14,6 +14,8 @@ type ButtonProps = {
   fullWidth?: boolean;
   loading?: string;
   color?: string;
+  // Label color at rest, for fills too light to carry the default white.
+  $labelColor?: string;
   justIcon?: boolean;
 } & StyledProps;
 
@@ -114,6 +116,18 @@ export const StyledButton = styled.button<ButtonProps>`
       },
     },
   })}
+
+  ${({ $labelColor }) => $labelColor && css`
+    @media (hover: hover) and (pointer: fine) {
+      &:not(:hover) {
+        color: ${$labelColor};
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      color: ${$labelColor};
+    }
+  `}
 
   ${space};
   ${layout};

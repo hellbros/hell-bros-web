@@ -445,7 +445,8 @@ export const Avatar = styled.div<{ $bg?: string }>`
   justify-content: center;
   margin-bottom: 0.5rem;
   background-color: ${({ $bg }) => $bg || theme.colors.primary};
-  color: ${theme.colors.white};
+  /* White is too faint on cyan (2.75:1); black gives 7.62:1. */
+  color: ${({ $bg }) => ($bg === theme.colors.cyan ? theme.colors.black : theme.colors.white)};
   font-size: 38px;
   font-weight: 700;
   user-select: none;

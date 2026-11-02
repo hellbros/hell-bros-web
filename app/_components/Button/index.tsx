@@ -9,6 +9,7 @@ type DefaultProps = {
   fullWidth?: boolean;
   loading?: boolean;
   color?: string,
+  $labelColor?: string,
   onClick?: any;
   className?: string;
   as?: 'a' | 'button';

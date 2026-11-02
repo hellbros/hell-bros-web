@@ -159,13 +159,15 @@ const HomeContent = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 $variant="solid"
-                color={theme.colors.cyan}>
+                color={theme.colors.cyan}
+                $labelColor={theme.colors.black}>
                 {t.lookout.wishlistButton}
               </Button>
             ) : (
               <Button
                 $variant="solid"
                 color={theme.colors.cyan}
+                $labelColor={theme.colors.black}
                 onClick={showComingSoon}>
                 {t.lookout.wishlistButton}
                 <CapsulePopup $visible={comingSoon} role="status">
