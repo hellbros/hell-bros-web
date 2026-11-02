@@ -73,7 +73,7 @@ const Footer = () => {
     const highlight = () => {
       setHighlighted(true);
       window.clearTimeout(timer);
-      timer = window.setTimeout(() => setHighlighted(false), 2000);
+      timer = window.setTimeout(() => setHighlighted(false), 1300);
     };
     window.addEventListener(HIGHLIGHT_EMAIL_EVENT, highlight);
     return () => {

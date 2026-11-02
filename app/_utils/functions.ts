@@ -7,16 +7,16 @@ export default function scrollToSection(sectionId: string, offset: number = 0) {
     }
   }
 
-// Calls `done` once the page has stopped moving: the smooth scroll finished, or
-// there was nothing to scroll. Polls instead of using `scrollend`, which doesn't
+// Calls `done` once the page has all but stopped moving (the crawl at the end of
+// a smooth scroll counts as stopped), or there was nothing to scroll. Polls instead of using `scrollend`, which doesn't
 // fire when the page is already in place and is missing on older Safari.
-export function onScrollSettled(done: () => void, quietMs: number = 120) {
+export function onScrollSettled(done: () => void, quietMs: number = 60) {
   const startGrace = 500; // the scroll may take a moment to begin
   let lastY = window.scrollY;
   let lastChange = performance.now();
   let moved = false;
   const tick = (now: number) => {
-    if (window.scrollY !== lastY) {
+    if (Math.abs(window.scrollY - lastY) > 3) {
       lastY = window.scrollY;
       lastChange = now;
       moved = true;
