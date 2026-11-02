@@ -288,7 +288,7 @@ const HomeContent = () => {
           {t.people.teamTitle}
         </Text>
         <HeadsGrid>
-          <HeadCard $accent={theme.colors.cyan}>
+          <HeadCard $accent="#0D86BB">
             <Avatar $bg={theme.colors.cyan} aria-hidden="true">AC</Avatar>
             <p className="name">Ariana Coronel</p>
             <p className="role">{t.people.roles.art}</p>
