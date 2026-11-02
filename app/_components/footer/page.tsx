@@ -70,10 +70,10 @@ const Footer = () => {
   // The header's Contact link lights the email up once it lands here.
   useEffect(() => {
     let timer: number;
-    const highlight = () => {
+    const highlight = (e: Event) => {
       setHighlighted(true);
       window.clearTimeout(timer);
-      timer = window.setTimeout(() => setHighlighted(false), 1300);
+      timer = window.setTimeout(() => setHighlighted(false), (e as CustomEvent<number>).detail);
     };
     window.addEventListener(HIGHLIGHT_EMAIL_EVENT, highlight);
     return () => {

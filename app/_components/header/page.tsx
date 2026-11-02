@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { HeaderMobileOptions, HeaderOptions, HeaderStyled, MenuToggle, Text } from './styles'
 import useScroll from '@/app/hooks/useScroll';
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
-import scrollToSection, { onScrollSettled } from '@/app/_utils/functions';
+import scrollToSection, { onScrollNear } from '@/app/_utils/functions';
 import { lockScroll, unlockScroll } from '@/app/_utils/scrollLock';
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 import useActiveSection from '@/app/hooks/useActiveSection';
@@ -31,6 +31,9 @@ const NAV: { id: string; label: keyof Dictionary['nav']; scrollTo?: string }[] =
 ];
 const NAV_IDS = NAV.map((n) => n.id);
 
+// How long the email stays lit: scales with the share of the page travelled.
+const EMAIL_HIGHLIGHT_MS = { min: 500, max: 1300 };
+
 const Header = () => {
   const t = useDictionary();
   const sm = useMediaQuery('(max-width: 700px)');
@@ -40,9 +43,13 @@ const Header = () => {
   const activeSection = useActiveSection(NAV_IDS, headerHeight);
 
   function goToSection(sectionId: string): void {
-    scrollToSection(sectionId, headerHeight);
-    if (sectionId === 'contact') {
-      onScrollSettled(() => window.dispatchEvent(new Event(HIGHLIGHT_EMAIL_EVENT)));
+    const from = window.scrollY;
+    const top = scrollToSection(sectionId, headerHeight);
+    if (sectionId === 'contact' && top !== undefined) {
+      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const { min, max } = EMAIL_HIGHLIGHT_MS;
+      const duration = min + (max - min) * (Math.abs(top - from) / maxScroll);
+      onScrollNear(top, () => window.dispatchEvent(new CustomEvent(HIGHLIGHT_EMAIL_EVENT, { detail: duration })));
     }
   }
 
