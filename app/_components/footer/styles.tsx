@@ -158,28 +158,25 @@ export const SocialRow = styled.div`
 
 export const FooterBottom = styled.div`
   margin-top: 48px;
-  padding-top: 24px;
-  border-top: 1px solid #333;
   text-align: center;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);
 
-  /* The claw reaches down from the separator (no gap above it) and the art
-     bleeds past the footer's side padding, melting into black at the sides
-     and bottom so it has no visible frame. */
+  /* The art bleeds past the footer's side padding and melts into black on
+     every edge, so the claw reaches out of the dark with no visible frame. */
   .claw {
     display: block;
     width: calc(100% + 2 * ${SECTION_PADDING});
     max-width: none;
     height: auto;
-    margin: -24px calc(-1 * ${SECTION_PADDING}) 12px;
+    margin: 0 calc(-1 * ${SECTION_PADDING}) 12px;
     -webkit-mask-image:
       linear-gradient(to right, transparent, #000 6%, #000 94%, transparent),
-      linear-gradient(to bottom, #000 72%, transparent);
+      linear-gradient(to bottom, transparent, #000 14%, #000 72%, transparent);
     -webkit-mask-composite: source-in;
     mask-image:
       linear-gradient(to right, transparent, #000 6%, #000 94%, transparent),
-      linear-gradient(to bottom, #000 72%, transparent);
+      linear-gradient(to bottom, transparent, #000 14%, #000 72%, transparent);
     mask-composite: intersect;
   }
 
