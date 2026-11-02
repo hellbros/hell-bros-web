@@ -11,7 +11,7 @@ interface HeaderStyledProps {
   $mobileMenuOpen?: boolean;
 }
 
-export const HeaderStyled = styled.div<HeaderStyledProps>`
+export const HeaderStyled = styled.header<HeaderStyledProps>`
   width: 100%;
   height: ${HEADER_HEIGHT}px;
   position: fixed;
@@ -20,6 +20,26 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
   transition: background 0.3s ease-out, box-shadow 0.3s ease-out,
     height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 9999;
+
+  /* First Tab stop; stays off-screen until it has keyboard focus. */
+  .skip-link {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 1;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: ${theme.colors.black};
+    color: ${theme.colors.white};
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus {
+    transform: none;
+  }
 
   .header-content {
     margin: auto;
@@ -100,7 +120,7 @@ export const MenuToggle = styled.button`
   }
 `;
 
-export const HeaderOptions = styled.div`
+export const HeaderOptions = styled.nav`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -155,7 +175,7 @@ const fadeIn = keyframes`
   }
 `;
 
-export const HeaderMobileOptions = styled.div`
+export const HeaderMobileOptions = styled.nav`
   display: flex;
   flex-direction: column;
   justify-content: center;

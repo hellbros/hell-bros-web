@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Header from '@/app/_components/header/page'
 import Footer from '@/app/_components/footer/page'
-import { LayoutSection } from './home/styles'
 import HomeContent from './home/_components/HomeContent'
 import { dictionaries } from '@/app/_i18n/dictionaries'
 import { getLocale } from '@/app/_i18n/getLocale'
@@ -87,11 +86,9 @@ const Page = async () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(videoGameJsonLd(meta.gameDescription)) }}
       />
-      <LayoutSection>
-        <Header />
-        <HomeContent />
-        <Footer />
-      </LayoutSection>
+      <Header />
+      <HomeContent />
+      <Footer />
     </>
   )
 }

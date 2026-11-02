@@ -42,7 +42,7 @@ const Header = () => {
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const activeSection = useActiveSection(NAV_IDS, headerHeight);
-  const headerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
   function goToSection(sectionId: string): void {
@@ -96,6 +96,7 @@ const Header = () => {
 
   return (
     <HeaderStyled ref={headerRef} className="site-header" $hasScrolled={hasScrolled} $mobileMenuOpen={mobileMenuOpen}>
+      <a className="skip-link" href="#inicio">{t.nav.skip}</a>
       <div className='header-content'>
 
         <div className='row'>
@@ -105,7 +106,7 @@ const Header = () => {
             </button>
           </div>
 
-          <HeaderOptions>
+          <HeaderOptions aria-label={t.nav.label}>
             {NAV.map(({ id, label, scrollTo }) => (
               <button
                 key={id}
@@ -132,7 +133,7 @@ const Header = () => {
         </div>
 
         {mobileMenuOpen &&
-          <HeaderMobileOptions id="mobile-menu">
+          <HeaderMobileOptions id="mobile-menu" aria-label={t.nav.label}>
             {NAV.map(({ id, label, scrollTo }) => (
               <button
                 key={id}

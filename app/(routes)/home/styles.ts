@@ -6,10 +6,6 @@ import TextGlobal from '../../_components/Text';
 import { MAX_WIDTH, SECTION_PADDING } from '../../_utils/constants';
 import { theme } from '@/app/_styles/theme';
 
-export const LayoutSection = styled.section`
-
-`;
-
 export type StyledProps = SpaceProps & LayoutProps;
 
 interface SectionProps {
@@ -75,11 +71,16 @@ interface SectionContainerProps {
   $headerHeight?: number;
 }
 
-export const SectionContainer = styled.div<SectionContainerProps>`
+export const SectionContainer = styled.main<SectionContainerProps>`
   padding-top: ${(props) => (props.$headerHeight)}px;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+
+  /* Focusable only as the skip link's target; a ring around the page is noise. */
+  &:focus {
+    outline: none;
+  }
 `;
 
 export const Text = styled(TextGlobal)`
@@ -275,9 +276,10 @@ export const HeroRight = styled.div`
   gap: 1.5rem;
 `;
 
-export const HeroLogo = styled.div`
+export const HeroLogo = styled.h1`
   width: 100%;
   max-width: 360px;
+  margin: 0;
 
   img {
     width: 100%;

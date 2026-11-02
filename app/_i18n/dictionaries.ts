@@ -23,6 +23,8 @@ const en = {
     home: 'Home',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
+    label: 'Main navigation',
+    skip: 'Skip to content',
   },
   lookout: {
     tagline: 'An **asymmetrical online co-op 3D platformer** where **3\u00A0demons** are trying to escape the Demon World.',
@@ -93,6 +95,8 @@ const es: Dictionary = {
     home: 'Inicio',
     openMenu: 'Abrir menú',
     closeMenu: 'Cerrar menú',
+    label: 'Navegación principal',
+    skip: 'Saltar al contenido',
   },
   lookout: {
     tagline: 'Un **juego de plataformas 3D cooperativo online y asimétrico** donde **3\u00A0demonios** intentan escapar del Mundo Demoníaco.',

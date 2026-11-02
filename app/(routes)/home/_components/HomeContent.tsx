@@ -134,14 +134,14 @@ const HomeContent = () => {
   };
 
   return (
-    <SectionContainer id="inicio" $headerHeight={headerHeight}>
+    <SectionContainer id="inicio" tabIndex={-1} $headerHeight={headerHeight}>
 
       {/* LOOK OUT (first section — clears the header via the container's
           padding-top plus its own 40px top padding):
           logo -> tagline -> video + wishlist -> shots -> text -> shot -> text */}
       <Hero id="lookout">
         <HeroLogo>
-          <Image src={LookOutLogo} alt="Look Out" sizes="(max-width: 700px) 300px, 360px" priority />
+          <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="(max-width: 700px) 300px, 360px" priority />
         </HeroLogo>
 
         <Text as="p" $styles="heroTagline">
