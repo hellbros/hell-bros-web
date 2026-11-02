@@ -133,7 +133,7 @@ const HomeContent = () => {
           logo -> tagline -> video + wishlist -> shots -> text -> shot -> text */}
       <Hero id="lookout">
         <HeroLogo>
-          <Image src={LookOutLogo} alt="Look Out" priority />
+          <Image src={LookOutLogo} alt="Look Out" sizes="(max-width: 700px) 300px, 360px" priority />
         </HeroLogo>
 
         <Text as="p" $styles="heroTagline">
