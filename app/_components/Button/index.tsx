@@ -1,6 +1,5 @@
 import React from 'react';
-import SVG from 'react-inlinesvg';
-import { StyledButton, StyledProps, SVGContainer } from './styles';
+import { StyledButton, StyledProps } from './styles';
 
 type DefaultProps = {
   children?: React.ReactNode;
@@ -9,9 +8,7 @@ type DefaultProps = {
   disabled?: boolean;
   fullWidth?: boolean;
   loading?: boolean;
-  icon?: string;
   color?: string,
-  iconColor?: string,
   onClick?: any;
   className?: string;
   as?: 'a' | 'button';
@@ -25,8 +22,6 @@ const Button: React.FC<DefaultProps> = ({
   color,
   type = 'button',
   loading,
-  icon,
-  iconColor,
   disabled = false,
   as,
   ...restProps
@@ -40,16 +35,6 @@ const Button: React.FC<DefaultProps> = ({
     color={color}
     justIcon={!children}
   >
-    {icon ? (
-      <SVGContainer aria-hidden="true">
-        <SVG
-          src={icon}
-          width="100%"
-          height="30px"
-          fill={iconColor ? iconColor : color}
-        />
-      </SVGContainer>
-    ) : null}
     <span>{children}</span>
   </StyledButton>
 );

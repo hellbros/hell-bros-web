@@ -14,7 +14,6 @@ type ButtonProps = {
   fullWidth?: boolean;
   loading?: string;
   color?: string;
-  iconColor?: string;
   justIcon?: boolean;
 } & StyledProps;
 
@@ -27,13 +26,6 @@ const spinnerAnimation = keyframes`
     -webkit-transform: translate(-50%) rotate(360deg);
     transform: translate(-50%, -50%) rotate(360deg);
   }
-`;
-
-export const SVGContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
 `;
 
 export const StyledButton = styled.button<ButtonProps>`
