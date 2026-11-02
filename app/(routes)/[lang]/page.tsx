@@ -60,7 +60,7 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/assets/brand/logo_hb_color02.svg`,
   sameAs: [
-    'https://discord.gg/mtfxz4WXS',
+    'https://discord.gg/mSYYyGs5Yd',
     'https://www.instagram.com/hellbrosstudio',
     'https://www.tiktok.com/@hellbrosstudio',
     'https://www.linkedin.com/company/hellbrosstudio/',

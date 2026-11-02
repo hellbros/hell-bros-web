@@ -53,7 +53,7 @@ const RedditIcon = () => (
 );
 
 const socials = [
-  { label: 'Discord', href: 'https://discord.gg/mtfxz4WXS', Icon: DiscordIcon },
+  { label: 'Discord', href: 'https://discord.gg/mSYYyGs5Yd', Icon: DiscordIcon },
   { label: 'Instagram', href: 'https://www.instagram.com/hellbrosstudio', Icon: IgIcon },
   { label: 'TikTok', href: 'https://www.tiktok.com/@hellbrosstudio', Icon: TiktokIcon },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/company/hellbrosstudio/', Icon: LinkedinIcon },
