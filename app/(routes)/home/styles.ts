@@ -6,6 +6,8 @@ import TextGlobal from '../../_components/Text';
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, MAX_WIDTH, SECTION_PADDING } from '../../_utils/constants';
 import { theme } from '@/app/_styles/theme';
 
+export const CAPSULE_POPUP_GAP = 6;
+
 export type StyledProps = SpaceProps & LayoutProps;
 
 interface SectionProps {
@@ -370,6 +372,10 @@ export const CtaCard = styled.div`
   background-color: ${theme.colors.black};
   color: ${theme.colors.white};
   border-radius: 24px;
+  /* The button's hover scale traps the popup's z-index, so the card itself has
+     to sit above the shots when the popup opens downward. */
+  position: relative;
+  z-index: 1;
 `;
 
 export const CtaRow = styled.div`
@@ -552,12 +558,13 @@ export const DiscordRow = styled.div`
 
 // "Coming soon!" popup for the Wishlist button while the Steam page isn't
 // live: the Steam capsule under a green header, framed in the same green.
-// Pops above the button's right edge like a badge; always mounted (just
-// hidden) so the image is already loaded when it shows.
-export const CapsulePopup = styled.span<{ $visible: boolean }>`
+// Pops above the button's right edge like a badge, or below it when there's no
+// room under the fixed header; always mounted (just hidden) so the image is
+// already loaded when it shows.
+export const CapsulePopup = styled.span<{ $visible: boolean; $below: boolean }>`
   position: absolute;
   right: 0;
-  bottom: calc(100% + 6px);
+  ${({ $below }) => ($below ? 'top' : 'bottom')}: calc(100% + ${CAPSULE_POPUP_GAP}px);
   z-index: 2;
   display: block;
   width: 300px;

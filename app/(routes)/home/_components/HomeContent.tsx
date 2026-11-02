@@ -1,8 +1,8 @@
 'use client'
-import { useState, useEffect, useRef, type TouchEvent as ReactTouchEvent } from "react";
+import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import Button from "@/app/_components/Button";
-import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox, CapsulePopup, StudioArt } from "../styles";
+import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP, StudioArt } from "../styles";
 import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
 import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
@@ -53,9 +53,14 @@ const HomeContent = () => {
   const t = useDictionary();
   const [zoom, setZoom] = useState<number | null>(null);
   const [comingSoon, setComingSoon] = useState(false);
+  const [popupBelow, setPopupBelow] = useState(false);
   const comingSoonTimer = useRef<number | undefined>(undefined);
+  const popupRef = useRef<HTMLSpanElement>(null);
 
-  const showComingSoon = () => {
+  const showComingSoon = (e: ReactMouseEvent<HTMLElement>) => {
+    const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
+    const popupHeight = popupRef.current?.offsetHeight ?? 0;
+    setPopupBelow(e.currentTarget.getBoundingClientRect().top - popupHeight - CAPSULE_POPUP_GAP < headerBottom);
     setComingSoon(true);
     window.clearTimeout(comingSoonTimer.current);
     comingSoonTimer.current = window.setTimeout(() => setComingSoon(false), 1600);
@@ -170,7 +175,7 @@ const HomeContent = () => {
                 $labelColor={theme.colors.black}
                 onClick={showComingSoon}>
                 {t.lookout.wishlistButton}
-                <CapsulePopup $visible={comingSoon} role="status">
+                <CapsulePopup ref={popupRef} $visible={comingSoon} $below={popupBelow} role="status">
                   <span className="header">{t.lookout.comingSoon}</span>
                   <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
                 </CapsulePopup>
