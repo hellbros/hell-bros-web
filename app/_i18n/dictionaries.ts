@@ -5,9 +5,9 @@ import type { Locale } from './locales';
 
 const en = {
   meta: {
-    title: 'Hell Bros | Indie Game Studio',
+    title: 'Look Out: 3-Player Co-op Platformer | Hell Bros',
     description:
-      'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an asymmetrical online co-op 3D platformer for 3 players. Wishlist it on Steam and join our Discord.',
+      'An online co-op 3D platformer where 3 demons rely on each other to escape the Demon World. A game by Hell Bros, an indie studio from Peru.',
     ogDescription:
       'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an asymmetrical online co-op 3D platformer for 3 players.',
     ogLocale: 'en_US',
@@ -83,9 +83,9 @@ export type Dictionary = typeof en;
 
 const es: Dictionary = {
   meta: {
-    title: 'Hell Bros | Estudio de videojuegos indie',
+    title: 'Look Out: juego cooperativo para 3 jugadores | Hell Bros',
     description:
-      'Hell Bros es un estudio independiente peruano de videojuegos que está creando Look Out: Indie Game, un juego de plataformas 3D cooperativo online y asimétrico para 3 jugadores. Agrégalo a tu lista de deseados en Steam y únete a nuestro Discord.',
+      'Plataformas 3D cooperativo online donde 3 demonios dependen uno del otro para escapar del Mundo Demoníaco. Un juego de Hell Bros, estudio indie peruano.',
     ogDescription:
       'Hell Bros es un estudio independiente peruano de videojuegos que está creando Look Out: Indie Game, un juego de plataformas 3D cooperativo online y asimétrico para 3 jugadores.',
     ogLocale: 'es_PE',
