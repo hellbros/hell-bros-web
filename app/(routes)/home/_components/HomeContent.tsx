@@ -1,8 +1,8 @@
 'use client'
-import { useState, useEffect, useRef, type CSSProperties, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
+import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import EyePicker, { IRIS_INK, type Iris } from "./EyePicker";
-import { SectionContainer, Brand, Board, HeroGrid, HeroLogo, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
+import { SectionContainer, Brand, Act, Studio, Card, Story, HeroLogo, Tagline, Mark, WishNote, Pill, Lanes, Lane, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
 import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
 import LookOutLogo from "@/public/assets/look-out/look-out-logo-hell-bros.png"
 import HellBrosLogo from "@/public/assets/brand/logo_hb_color02.svg"
@@ -32,17 +32,16 @@ const DiscordIcon = () => (
   </svg>
 );
 
-// The three Look Out gameplay shots, in order (used by the grid + lightbox),
-// each pinned with its own tape.
-const SHOTS = [Shot1, Shot2, Shot3];
-const SHOT_PINS: { tilt: number; tape: Iris; tapeTilt: number }[] = [
-  { tilt: -1.6, tape: 'blue', tapeTilt: -4 },
-  { tilt: 1, tape: 'green', tapeTilt: 3 },
-  { tilt: -0.8, tape: 'red', tapeTilt: -2 },
+// The three Look Out gameplay shots, in order (used by the screens + lightbox),
+// each seen through one eye.
+const SHOTS: { src: StaticImageData; eye: Iris }[] = [
+  { src: Shot1, eye: 'blue' },
+  { src: Shot2, eye: 'green' },
+  { src: Shot3, eye: 'red' },
 ];
 
 // Each teammate as a demon of the game in their own colors. They aren't part
-// of the board's colors, so the eyes leave them alone.
+// of the page's colors, so the eyes leave them alone.
 const TEAM: { name: string; role: keyof Dictionary['people']['roles']; demon: StaticImageData; linkedin: string }[] = [
   { name: 'Raúl Jeri', role: 'technicalCreative', demon: RaulDemon, linkedin: 'https://www.linkedin.com/in/rauljerilara/' },
   { name: 'Iván Aráoz', role: 'productionMarketing', demon: IvanDemon, linkedin: 'https://www.linkedin.com/in/iaraoz06/' },
@@ -62,7 +61,7 @@ const plain = (text: string) => text.replace(/\*\*/g, '');
 
 const HomeContent = () => {
   const t = useDictionary();
-  // The eye the visitor picked: only its iris color stays on the board.
+  // The eye the visitor picked: only its iris color stays on the page.
   const [iris, setIris] = useState<Iris | null>(null);
   const [zoom, setZoom] = useState<number | null>(null);
   const [comingSoon, setComingSoon] = useState(false);
@@ -80,10 +79,6 @@ const HomeContent = () => {
       const color = colors[((i - 1) / 2) % colors.length];
       return <Mark key={i} $color={IRIS_INK[color].mark} $seen={seen(color)}>{part}</Mark>;
     });
-
-  const tape = (color: Iris, style: CSSProperties) => (
-    <Tape aria-hidden="true" $color={IRIS_INK[color].tape} $seen={seen(color)} style={style} />
-  );
 
   const showComingSoon = (e: ReactMouseEvent<HTMLElement>) => {
     const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
@@ -170,71 +165,89 @@ const HomeContent = () => {
 
       <EyePicker iris={iris} onPick={pickIris} />
 
-      {/* LOOK OUT: logo + tagline, trailer, wishlist note, shots, how it plays */}
-      <Board id="lookout">
-        <HeroGrid>
-          <HeroLogo>
-            <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="(max-width: 700px) 90vw, 460px" priority />
-          </HeroLogo>
-          <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
-        </HeroGrid>
+      {/* LOOK OUT, part 1: the three demons, trapped. Their art, the game's
+          logo and its tagline. */}
+      <Act id="lookout">
+        <h2>{t.lookout.trappedTitle}</h2>
+        <Story>
+          <Card className="art">
+            <ArtFrame>
+              <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} fill sizes="(max-width: 860px) 90vw, 520px" />
+            </ArtFrame>
+          </Card>
+          <div>
+            <HeroLogo>
+              <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="300px" priority />
+            </HeroLogo>
+            <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
+          </div>
+        </Story>
+      </Act>
 
-        <Print $tilt={-0.7} $width="min(880px, 100%)">
-          {tape('red', { left: -18, top: -12, transform: 'rotate(-24deg)' })}
-          {tape('blue', { right: -18, top: -12, transform: 'rotate(22deg)' })}
-          <TrailerEmbed videoId={TRAILER_ID} title={t.lookout.trailerTitle} />
-        </Print>
-
-        <WishNote>
-          {tape('green', { left: '50%', top: -14, width: 120, height: 32, marginLeft: -60, transform: 'rotate(-3deg)' })}
-          <h2>{t.lookout.wishlistTitle}</h2>
-          {STEAM_PAGE_LIVE ? (
-            <Pill as="a" href={STEAM_URL} target="_blank" rel="noopener noreferrer">
-              {t.lookout.wishlistButton}
-            </Pill>
-          ) : (
-            <Pill type="button" onClick={showComingSoon}>
-              {t.lookout.wishlistButton}
-              <CapsulePopup ref={popupRef} $visible={comingSoon} $below={popupBelow} role="status">
-                <span className="header">{t.lookout.comingSoon}</span>
-                <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
-              </CapsulePopup>
-            </Pill>
-          )}
-        </WishNote>
-
-        <Shots>
-          {SHOTS.map((src, i) => (
-            <Print key={i} $tilt={SHOT_PINS[i].tilt}>
-              {tape(SHOT_PINS[i].tape, { left: '50%', top: -13, width: 100, height: 28, marginLeft: -50, transform: `rotate(${SHOT_PINS[i].tapeTilt}deg)` })}
-              <button
-                type="button"
-                className="shot"
-                onClick={(e) => { zoomTrigger.current = e.currentTarget; setZoom(i); }}
-                aria-label={t.lookout.enlargeShot(i + 1, SHOTS.length)}
-              >
-                <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 90vw, 300px" />
-              </button>
-            </Print>
+      {/* Part 2: no one sees their own path. One screen per eye, then how
+          it plays. */}
+      <Act>
+        <h2>{t.lookout.pathTitle}</h2>
+        <Lanes>
+          {SHOTS.map(({ src, eye }, i) => (
+            <Lane
+              key={eye}
+              type="button"
+              $color={IRIS_INK[eye].solid}
+              $seen={seen(eye)}
+              $open={iris === eye}
+              onClick={(e) => { zoomTrigger.current = e.currentTarget; setZoom(i); }}
+              aria-label={`${t.lookout.eyeView[eye]}. ${t.lookout.enlargeShot(i + 1, SHOTS.length)}`}
+            >
+              <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 90vw, 600px" />
+              <span className="label" aria-hidden="true">{t.lookout.eyeView[eye]}</span>
+            </Lane>
           ))}
-        </Shots>
+        </Lanes>
 
         <Mechanics>
-          <Print as="figure" $tilt={-1.2}>
-            {tape('green', { left: -16, top: 16, width: 96, height: 28, transform: 'rotate(-38deg)' })}
+          <Card as="figure">
             <ChainArt>
-              <Image src={Shot4} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 90vw, 460px" />
+              <Image src={Shot4} alt={t.lookout.shotAlt} fill sizes="(max-width: 860px) 90vw, 380px" />
             </ChainArt>
             <figcaption>{t.lookout.chainCaption}</figcaption>
-          </Print>
+          </Card>
           <div className="copy">
             <p>{marked(t.lookout.mechanic, ['red', 'blue', 'green'])}</p>
           </div>
         </Mechanics>
-      </Board>
+      </Act>
 
-      {/* OUR STUDIO: intro + Discord, the demons' art, the team */}
-      <Board id="about">
+      {/* Part 3: escape together. The trailer, then Steam's note. */}
+      <Act>
+        <h2>{t.lookout.escapeTitle}</h2>
+        <Card>
+          <TrailerEmbed videoId={TRAILER_ID} title={t.lookout.trailerTitle} />
+        </Card>
+
+        <WishNote>
+          <Image src={SteamCapsule} alt="Look Out" sizes="(max-width: 700px) 90vw, 300px" />
+          <div>
+            <h3>{t.lookout.wishlistTitle}</h3>
+            {STEAM_PAGE_LIVE ? (
+              <Pill as="a" href={STEAM_URL} target="_blank" rel="noopener noreferrer">
+                {t.lookout.wishlistButton}
+              </Pill>
+            ) : (
+              <Pill type="button" onClick={showComingSoon}>
+                {t.lookout.wishlistButton}
+                <CapsulePopup ref={popupRef} $visible={comingSoon} $below={popupBelow} role="status">
+                  <span className="header">{t.lookout.comingSoon}</span>
+                  <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
+                </CapsulePopup>
+              </Pill>
+            )}
+          </div>
+        </WishNote>
+      </Act>
+
+      {/* OUR STUDIO: intro + Discord, the team */}
+      <Studio id="about">
         <StudioGrid>
           <div className="intro">
             <h2>{t.studio.title}</h2>
@@ -246,14 +259,6 @@ const HomeContent = () => {
           </div>
           <Image className="iso" src={HellBrosIso} alt="Hell Bros" />
         </StudioGrid>
-
-        <Print $tilt={0.7} $width="min(880px, 100%)">
-          {tape('blue', { left: -18, bottom: 18, width: 120, height: 32, transform: 'rotate(32deg)' })}
-          {tape('red', { right: -18, top: 18, width: 120, height: 32, transform: 'rotate(32deg)' })}
-          <ArtFrame>
-            <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} fill sizes="(max-width: 1000px) 100vw, 856px" />
-          </ArtFrame>
-        </Print>
 
         <Team id="team">
           {TEAM.map(({ name, role, demon, linkedin }, i) => (
@@ -271,7 +276,7 @@ const HomeContent = () => {
             </Member>
           ))}
         </Team>
-      </Board>
+      </Studio>
 
       {zoom !== null && (
         <Lightbox
@@ -296,7 +301,7 @@ const HomeContent = () => {
             <ChevronIcon />
           </button>
           <div className="frame" onClick={(e) => e.stopPropagation()}>
-            <Image src={SHOTS[zoom]} alt={t.lookout.shotAlt} sizes="90vw" priority />
+            <Image src={SHOTS[zoom].src} alt={t.lookout.shotAlt} sizes="90vw" priority />
           </div>
           <button
             className="nav next"

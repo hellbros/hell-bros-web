@@ -27,7 +27,11 @@ const en = {
     languageShort: 'ES',
   },
   lookout: {
+    trappedTitle: 'Three trapped demons',
+    pathTitle: 'No one sees their own path',
+    escapeTitle: 'Escape together',
     tagline: 'An **asymmetrical online co-op 3D platformer** where **3\u00A0demons** are trying to escape the Demon World.',
+    eyeView: { red: 'Red eye', blue: 'Blue eye', green: 'Green eye' },
     trailerTitle: 'Demo trailer',
     play: (title: string) => `Play ${title}`,
     wishlistTitle: 'Wishlist Look\u00A0Out',
@@ -108,7 +112,11 @@ const es: Dictionary = {
     languageShort: 'EN',
   },
   lookout: {
+    trappedTitle: 'Tres demonios atrapados',
+    pathTitle: 'Nadie ve su propio camino',
+    escapeTitle: 'Escapen juntos',
     tagline: 'Un **juego de plataformas 3D cooperativo online y asimétrico** donde **3\u00A0demonios** intentan escapar del Mundo Demoníaco.',
+    eyeView: { red: 'Ojo rojo', blue: 'Ojo azul', green: 'Ojo verde' },
     trailerTitle: 'Tráiler de la demo',
     play: (title: string) => `Reproducir ${title}`,
     wishlistTitle: 'Agrega Look\u00A0Out a tu lista de deseados',

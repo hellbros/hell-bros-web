@@ -10,12 +10,11 @@ export const CAPSULE_POPUP_GAP = 6;
 
 const PHONE = '@media (max-width: 700px)';
 const PHONE_PADDING = '20px';
+// Where the side-by-side pairs of a part stack up.
+const NARROW = '@media (max-width: 860px)';
 
 // Hand-drawn box: each corner bulges a little differently.
 const ROUGH_RADIUS = '255px 15px 225px 15px / 15px 225px 15px 255px';
-
-// Tape ends cut in a zigzag.
-const ZIGZAG = 'polygon(0 0, 100% 0, 96% 25%, 100% 50%, 96% 75%, 100% 100%, 0 100%, 4% 75%, 0 50%, 4% 25%)';
 
 // No top padding: the brand section sits under the header, which is see-through
 // up there.
@@ -23,7 +22,7 @@ export const SectionContainer = styled.main`
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  /* Tape that sticks out past a tilted print must not widen the page. */
+  /* A tilted card must not widen the page. */
   overflow-x: clip;
 
   /* Focusable only as the skip link's target; a ring around the page is noise. */
@@ -106,32 +105,80 @@ export const Text = styled(TextGlobal)`
 })}
 `;
 
-/* One column for the whole board, on the header's 1000px grid. */
-export const Board = styled.section`
+/* One of the page's three parts: a title, then its pictures and text, on the
+   header's 1000px grid. */
+export const Act = styled.section`
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 32px;
   width: 100%;
   max-width: ${MAX_WIDTH};
   margin: 0 auto;
-  padding: 36px ${SECTION_PADDING} 48px;
+  padding: 64px ${SECTION_PADDING} 0;
   box-sizing: border-box;
 
+  & > h2 {
+    margin: 0;
+    font-family: ${theme.fonts.hand};
+    font-size: clamp(34px, 4.6vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
   ${PHONE} {
-    padding: 28px ${PHONE_PADDING} 40px;
+    gap: 24px;
+    padding: 48px ${PHONE_PADDING} 0;
   }
 `;
 
-export const HeroGrid = styled.div`
+/* The studio and its team, after the three parts. */
+export const Studio = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  width: 100%;
+  max-width: ${MAX_WIDTH};
+  margin: 0 auto;
+  padding: 88px ${SECTION_PADDING} 72px;
+  box-sizing: border-box;
+
+  ${PHONE} {
+    gap: 36px;
+    padding: 64px ${PHONE_PADDING} 40px;
+  }
+`;
+
+// A white card for a photo or a note: thick black border, round corners.
+export const Card = styled.div`
+  position: relative;
+  margin: 0;
+  padding: 10px;
+  box-sizing: border-box;
+  background: ${theme.colors.white};
+  border: 3px solid ${theme.colors.black};
+  border-radius: 18px;
+`;
+
+// Part 1: the demons' art beside the game's logo and tagline.
+export const Story = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
-  gap: 28px;
+  grid-template-columns: 7fr 5fr;
+  gap: 36px;
   align-items: center;
+
+  .art {
+    transform: rotate(-1deg);
+  }
+
+  ${NARROW} {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
 `;
 
 export const HeroLogo = styled.h1`
-  width: min(460px, 100%);
-  margin: 0;
+  width: min(300px, 100%);
+  margin: 0 0 12px;
   transform: rotate(-3deg);
 
   img {
@@ -142,8 +189,8 @@ export const HeroLogo = styled.h1`
 
 export const Tagline = styled.p`
   margin: 0;
-  font-size: clamp(23px, 2.7vw, 30px);
-  line-height: 1.32;
+  font-size: 23px;
+  line-height: 1.35;
 `;
 
 // Highlighter over the key phrases. A color you can't see leaves only a dashed
@@ -157,80 +204,43 @@ export const Mark = styled.mark<{ $color: string; $seen: boolean }>`
   box-decoration-break: clone;
 `;
 
-// A photo pinned to the board: white border, a slight tilt.
-export const Print = styled.div<{ $tilt?: number; $width?: string }>`
-  position: relative;
-  align-self: center;
-  width: ${({ $width }) => $width ?? '100%'};
-  margin: 0;
-  padding: 12px;
-  box-sizing: border-box;
-  background: ${theme.colors.white};
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  transform: rotate(${({ $tilt }) => $tilt ?? 0}deg);
+// Steam's note under the trailer: the game's capsule beside the button.
+export const WishNote = styled(Card)`
+  /* Above the trailer, so the coming-soon popup can open over it. */
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 28px;
+  align-items: center;
+  padding: 20px;
 
   & > img {
     width: 100%;
     height: auto;
+    border-radius: 8px;
   }
 
-  figcaption {
-    margin-top: 4px;
-    font-family: ${theme.fonts.hand};
-    font-size: 24px;
-    font-weight: 800;
-    text-align: center;
-  }
-`;
-
-// Colored tape holding a print. Its size and angle come from the inline style.
-// A color you can't see leaves its dashed outline.
-export const Tape = styled.span<{ $color: string; $seen: boolean }>`
-  position: absolute;
-  z-index: 1;
-  width: 130px;
-  height: 34px;
-  box-sizing: border-box;
-  background: ${({ $color, $seen }) => ($seen ? $color : 'transparent')};
-  border: ${({ $seen }) => ($seen ? '0' : '3px dashed #000000')};
-  clip-path: ${({ $seen }) => ($seen ? ZIGZAG : 'none')};
-  pointer-events: none;
-`;
-
-// Steam's note, taped to the board.
-export const WishNote = styled.div`
-  position: relative;
-  /* Above the shots, so the coming-soon popup can open over them. */
-  z-index: 1;
-  align-self: center;
-  width: min(760px, 100%);
-  box-sizing: border-box;
-  padding: 26px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px 26px;
-  flex-wrap: wrap;
-  background: ${theme.colors.white};
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  transform: rotate(0.8deg);
-
-  h2 {
-    flex: 1 1 280px;
-    margin: 0;
+  h3 {
+    margin: 0 0 14px;
     font-family: ${theme.fonts.hand};
     font-size: clamp(26px, 3vw, 32px);
     font-weight: 800;
     line-height: 1.15;
   }
+
+  ${PHONE} {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 16px;
+  }
 `;
 
-// The board's buttons: black pills lettered by hand. On hover they empty out,
+// The page's buttons: black pills lettered by hand. On hover they empty out,
 // like the site's other solid buttons.
 export const Pill = styled.button`
   position: relative;
-  /* Over the note's tape: the hover scale wraps the coming-soon popup in the
-     button's own layer, so the button has to sit above the tape. */
+  /* The hover scale wraps the coming-soon popup in the button's own layer, so
+     the button has to sit above the cards around it. */
   z-index: 2;
   display: inline-flex;
   align-items: center;
@@ -275,35 +285,80 @@ export const Pill = styled.button`
   }
 `;
 
-/* The three gameplay shots, each pinned with its own tape. */
-export const Shots = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-  gap: 30px 24px;
-  padding-top: 10px;
+/* Part 2: three screens side by side, one per eye. On phones they stack. */
+export const Lanes = styled.div`
+  container-type: inline-size;
+  display: flex;
+  gap: 14px;
+  height: clamp(220px, 33vw, 330px);
 
-  .shot {
-    position: relative;
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    padding: 0;
-    border: 0;
-    background: ${theme.colors.black};
-    cursor: zoom-in;
-  }
-
-  .shot img {
-    object-fit: cover;
+  ${PHONE} {
+    flex-direction: column;
+    height: auto;
   }
 `;
 
+// One eye's screen, in its color. The eye you pick opens its screen wide; the
+// ones you can't see go grey behind a dashed border. On phones the open one
+// keeps its full height and the others shrink to a strip.
+export const Lane = styled.button<{ $color: string; $seen: boolean; $open: boolean }>`
+  position: relative;
+  flex: ${({ $open }) => ($open ? 2.6 : 1)} 1 0;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0;
+  box-sizing: border-box;
+  background: ${theme.colors.black};
+  border: 4px ${({ $seen }) => ($seen ? 'solid' : 'dashed')} ${({ $color, $seen }) => ($seen ? $color : theme.colors.black)};
+  border-radius: 16px;
+  filter: ${({ $seen }) => ($seen ? 'none' : 'grayscale(1)')};
+  opacity: ${({ $seen }) => ($seen ? 1 : 0.45)};
+  cursor: zoom-in;
+  transition: flex-grow 0.3s ease-out, height 0.3s ease-out, filter 0.3s ease-out, opacity 0.3s ease-out;
+
+  img {
+    object-fit: cover;
+  }
+
+  .label {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    padding: 4px 16px;
+    border: 3px solid ${theme.colors.black};
+    border-radius: 30px;
+    background: ${({ $color, $seen }) => ($seen ? $color : theme.colors.white)};
+    color: ${theme.colors.black};
+    font-family: ${theme.fonts.hand};
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  ${PHONE} {
+    flex: none;
+    height: ${({ $seen }) => ($seen ? 'calc(100cqw * 9 / 16)' : '96px')};
+  }
+`;
+
+// The demons' diagram beside how the game plays.
 export const Mechanics = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  grid-template-columns: 5fr 7fr;
   gap: 24px 40px;
   align-items: center;
+
+  figcaption {
+    margin-top: 6px;
+    font-family: ${theme.fonts.hand};
+    font-size: 24px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  ${NARROW} {
+    grid-template-columns: 1fr;
+  }
 
   .copy {
     display: flex;
@@ -360,6 +415,8 @@ export const StudioGrid = styled.div`
 export const ChainArt = styled.div`
   position: relative;
   aspect-ratio: 1659 / 1080;
+  overflow: hidden;
+  border-radius: 10px;
 
   img {
     object-fit: cover;
@@ -370,6 +427,8 @@ export const ChainArt = styled.div`
 export const ArtFrame = styled.div`
   position: relative;
   aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 10px;
 
   img {
     object-fit: cover;
@@ -513,6 +572,8 @@ export const EyeDock = styled.div`
 export const TrailerFrame = styled.div`
   width: 100%;
   aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 10px;
   background: ${theme.colors.black};
 
   iframe {

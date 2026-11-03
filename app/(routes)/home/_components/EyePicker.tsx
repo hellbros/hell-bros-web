@@ -10,11 +10,11 @@ const IRISES: Iris[] = ['red', 'green', 'blue'];
 
 const EYE_SIZE = 46;
 
-// The colors of the logo's eyes, solid and as tape or highlighter on the board.
-export const IRIS_INK: Record<Iris, { solid: string; tape: string; mark: string }> = {
-  red: { solid: '#ED1B24', tape: 'rgba(237, 27, 36, 0.8)', mark: 'rgba(237, 27, 36, 0.35)' },
-  blue: { solid: '#00A2EA', tape: 'rgba(0, 162, 234, 0.8)', mark: 'rgba(0, 162, 234, 0.35)' },
-  green: { solid: '#B5E51D', tape: 'rgba(181, 229, 29, 0.85)', mark: 'rgba(181, 229, 29, 0.6)' },
+// The colors of the logo's eyes, solid and as highlighter on the page.
+export const IRIS_INK: Record<Iris, { solid: string; mark: string }> = {
+  red: { solid: '#ED1B24', mark: 'rgba(237, 27, 36, 0.35)' },
+  blue: { solid: '#00A2EA', mark: 'rgba(0, 162, 234, 0.35)' },
+  green: { solid: '#B5E51D', mark: 'rgba(181, 229, 29, 0.6)' },
 };
 
 type Props = {
