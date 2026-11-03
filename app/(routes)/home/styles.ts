@@ -52,7 +52,7 @@ export const Brand = styled.section`
   p {
     margin: 0;
     font-family: ${theme.fonts.hand};
-    font-size: clamp(36px, 6vw, 64px);
+    font-size: clamp(30px, 5vw, 52px);
     font-weight: 800;
     line-height: 1.05;
   }
