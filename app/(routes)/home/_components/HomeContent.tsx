@@ -37,9 +37,9 @@ const DiscordIcon = () => (
 // each pinned with its own tape.
 const SHOTS = [Shot1, Shot2, Shot3];
 const SHOT_PINS: { tilt: number; tape: Iris; tapeTilt: number }[] = [
-  { tilt: -1.6, tape: 'red', tapeTilt: -4 },
-  { tilt: 1, tape: 'blue', tapeTilt: 3 },
-  { tilt: -0.8, tape: 'green', tapeTilt: -2 },
+  { tilt: -1.6, tape: 'blue', tapeTilt: -4 },
+  { tilt: 1, tape: 'green', tapeTilt: 3 },
+  { tilt: -0.8, tape: 'red', tapeTilt: -2 },
 ];
 
 // Only the game's three colors, so the cards follow the eye like the rest of
