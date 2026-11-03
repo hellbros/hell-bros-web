@@ -125,6 +125,12 @@ export const Act = styled.section`
     line-height: 1.1;
   }
 
+  & > p {
+    margin: 0;
+    font-size: 21px;
+    line-height: 1.45;
+  }
+
   ${PHONE} {
     gap: 24px;
     padding: 48px ${PHONE_PADDING} 0;
@@ -159,38 +165,70 @@ export const Card = styled.div`
   border-radius: 18px;
 `;
 
-// Part 1: the demons' art beside the game's logo and tagline.
-export const Story = styled.div`
+// Look Out up front, before its three parts: the logo, what the game is, and
+// the Steam button.
+export const Intro = styled.section`
   display: grid;
-  grid-template-columns: 7fr 5fr;
-  gap: 36px;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 28px 40px;
   align-items: center;
+  width: 100%;
+  max-width: ${MAX_WIDTH};
+  margin: 0 auto;
+  padding: 32px ${SECTION_PADDING} 0;
+  box-sizing: border-box;
 
-  .art {
-    transform: rotate(-1deg);
+  .pitch {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
   }
 
-  ${NARROW} {
-    grid-template-columns: 1fr;
-    gap: 28px;
+  /* Phones: the button spans the width, so the coming-soon popup that hangs
+     from its right edge stays on screen. */
+  ${PHONE} {
+    gap: 12px;
+    padding: 16px ${PHONE_PADDING} 0;
+
+    .pitch {
+      gap: 16px;
+    }
+
+    .pitch > * {
+      align-self: stretch;
+    }
   }
 `;
 
+// Smaller on phones, so the Steam button clears the floating eyes on the first
+// screen.
 export const HeroLogo = styled.h1`
-  width: min(300px, 100%);
-  margin: 0 0 12px;
+  width: min(460px, 100%);
+  margin: 0;
   transform: rotate(-3deg);
 
   img {
     width: 100%;
     height: auto;
   }
+
+  ${PHONE} {
+    width: 240px;
+  }
 `;
 
 export const Tagline = styled.p`
   margin: 0;
-  font-size: 23px;
-  line-height: 1.35;
+  font-size: clamp(23px, 2.7vw, 30px);
+  line-height: 1.32;
+`;
+
+// Part 1: the three demons in the water, a little tilted.
+export const StoryArt = styled(Card)`
+  align-self: center;
+  width: min(880px, 100%);
+  transform: rotate(-1deg);
 `;
 
 // Highlighter over the key phrases. A color you can't see leaves only a dashed

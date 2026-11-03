@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import EyePicker, { IRIS_INK, type Iris } from "./EyePicker";
-import { SectionContainer, Brand, Act, Studio, Card, Story, HeroLogo, Tagline, Mark, WishNote, Pill, Lanes, Lane, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
+import { SectionContainer, Brand, Intro, Act, Studio, Card, StoryArt, HeroLogo, Tagline, Mark, WishNote, Pill, Lanes, Lane, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
 import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
 import LookOutLogo from "@/public/assets/look-out/look-out-logo-hell-bros.png"
 import HellBrosLogo from "@/public/assets/brand/logo_hb_color02.svg"
@@ -59,15 +59,48 @@ const ChevronIcon = () => (
 // Text without its `**emphasis**` markers.
 const plain = (text: string) => text.replace(/\*\*/g, '');
 
+// Steam's button, up top and again under the trailer. While the store page
+// isn't live, it shows its own "Coming soon!" capsule instead of linking out.
+const WishlistButton = () => {
+  const t = useDictionary();
+  const [comingSoon, setComingSoon] = useState(false);
+  const [popupBelow, setPopupBelow] = useState(false);
+  const comingSoonTimer = useRef<number | undefined>(undefined);
+  const popupRef = useRef<HTMLSpanElement>(null);
+
+  const showComingSoon = (e: ReactMouseEvent<HTMLElement>) => {
+    const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
+    const popupHeight = popupRef.current?.offsetHeight ?? 0;
+    setPopupBelow(e.currentTarget.getBoundingClientRect().top - popupHeight - CAPSULE_POPUP_GAP < headerBottom);
+    setComingSoon(true);
+    window.clearTimeout(comingSoonTimer.current);
+    comingSoonTimer.current = window.setTimeout(() => setComingSoon(false), 1600);
+  };
+  useEffect(() => () => window.clearTimeout(comingSoonTimer.current), []);
+
+  if (STEAM_PAGE_LIVE) {
+    return (
+      <Pill as="a" href={STEAM_URL} target="_blank" rel="noopener noreferrer">
+        {t.lookout.wishlistButton}
+      </Pill>
+    );
+  }
+  return (
+    <Pill type="button" onClick={showComingSoon}>
+      {t.lookout.wishlistButton}
+      <CapsulePopup ref={popupRef} $visible={comingSoon} $below={popupBelow} role="status">
+        <span className="header">{t.lookout.comingSoon}</span>
+        <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
+      </CapsulePopup>
+    </Pill>
+  );
+};
+
 const HomeContent = () => {
   const t = useDictionary();
   // The eye the visitor picked: only its iris color stays on the page.
   const [iris, setIris] = useState<Iris | null>(null);
   const [zoom, setZoom] = useState<number | null>(null);
-  const [comingSoon, setComingSoon] = useState(false);
-  const [popupBelow, setPopupBelow] = useState(false);
-  const comingSoonTimer = useRef<number | undefined>(undefined);
-  const popupRef = useRef<HTMLSpanElement>(null);
 
   const seen = (color: Iris) => iris === null || iris === color;
   const pickIris = (color: Iris) => setIris((current) => (current === color ? null : color));
@@ -80,15 +113,6 @@ const HomeContent = () => {
       return <Mark key={i} $color={IRIS_INK[color].mark} $seen={seen(color)}>{part}</Mark>;
     });
 
-  const showComingSoon = (e: ReactMouseEvent<HTMLElement>) => {
-    const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
-    const popupHeight = popupRef.current?.offsetHeight ?? 0;
-    setPopupBelow(e.currentTarget.getBoundingClientRect().top - popupHeight - CAPSULE_POPUP_GAP < headerBottom);
-    setComingSoon(true);
-    window.clearTimeout(comingSoonTimer.current);
-    comingSoonTimer.current = window.setTimeout(() => setComingSoon(false), 1600);
-  };
-  useEffect(() => () => window.clearTimeout(comingSoonTimer.current), []);
   const lightboxOpen = zoom !== null;
   const lightboxRef = useRef<HTMLDivElement>(null);
   // The thumbnail that opened the lightbox, so focus can return to it on close.
@@ -165,29 +189,32 @@ const HomeContent = () => {
 
       <EyePicker iris={iris} onPick={pickIris} />
 
-      {/* LOOK OUT, part 1: the three demons, trapped. Their art, the game's
-          logo and its tagline. */}
-      <Act id="lookout">
+      {/* LOOK OUT first says what it is: logo, tagline and Steam's button. */}
+      <Intro id="lookout">
+        <HeroLogo>
+          <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="(max-width: 700px) 90vw, 460px" priority />
+        </HeroLogo>
+        <div className="pitch">
+          <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
+          <WishlistButton />
+        </div>
+      </Intro>
+
+      {/* Part 1: the three demons, trapped. */}
+      <Act>
         <h2>{t.lookout.trappedTitle}</h2>
-        <Story>
-          <Card className="art">
-            <ArtFrame>
-              <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} fill sizes="(max-width: 860px) 90vw, 520px" />
-            </ArtFrame>
-          </Card>
-          <div>
-            <HeroLogo>
-              <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="300px" priority />
-            </HeroLogo>
-            <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
-          </div>
-        </Story>
+        <StoryArt>
+          <ArtFrame>
+            <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} fill sizes="(max-width: 1000px) 90vw, 856px" />
+          </ArtFrame>
+        </StoryArt>
       </Act>
 
-      {/* Part 2: no one sees their own path. One screen per eye, then how
-          it plays. */}
+      {/* Part 2: no one sees their own path. What each eye can do over its
+          screen, then what that means beside the diagram. */}
       <Act>
         <h2>{t.lookout.pathTitle}</h2>
+        <p>{marked(t.lookout.mechanicPaths, ['red', 'blue'])}</p>
         <Lanes>
           {SHOTS.map(({ src, eye }, i) => (
             <Lane
@@ -213,7 +240,7 @@ const HomeContent = () => {
             <figcaption>{t.lookout.chainCaption}</figcaption>
           </Card>
           <div className="copy">
-            <p>{marked(t.lookout.mechanic, ['red', 'blue', 'green'])}</p>
+            <p>{marked(t.lookout.mechanicChain, ['green'])}</p>
           </div>
         </Mechanics>
       </Act>
@@ -229,19 +256,7 @@ const HomeContent = () => {
           <Image src={SteamCapsule} alt="Look Out" sizes="(max-width: 700px) 90vw, 300px" />
           <div>
             <h3>{t.lookout.wishlistTitle}</h3>
-            {STEAM_PAGE_LIVE ? (
-              <Pill as="a" href={STEAM_URL} target="_blank" rel="noopener noreferrer">
-                {t.lookout.wishlistButton}
-              </Pill>
-            ) : (
-              <Pill type="button" onClick={showComingSoon}>
-                {t.lookout.wishlistButton}
-                <CapsulePopup ref={popupRef} $visible={comingSoon} $below={popupBelow} role="status">
-                  <span className="header">{t.lookout.comingSoon}</span>
-                  <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
-                </CapsulePopup>
-              </Pill>
-            )}
+            <WishlistButton />
           </div>
         </WishNote>
       </Act>

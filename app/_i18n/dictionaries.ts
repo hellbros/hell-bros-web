@@ -40,8 +40,12 @@ const en = {
     enlargeShot: (n: number, total: number) => `Enlarge screenshot ${n} of ${total}`,
     shotAlt: 'Look Out gameplay',
     demonsArtAlt: "Look Out's three demons, by Hell Bros, floating in the water, each with a teammate's eye color",
-    mechanic:
-      "Each player must **travel a path of their own that they can't see**, and can **watch another player's path, but not travel it**. This takes away a player's self-sufficiency: **no one advances alone**, and progress depends on communication, trust and coordination between the three, forming a circular structure of dependency.",
+    // The user's text on how it plays, in two halves: one over the three
+    // screens, one beside the diagram.
+    mechanicPaths:
+      "Each player must **travel a path of their own that they can't see**, and can **watch another player's path, but not travel it**.",
+    mechanicChain:
+      "This takes away a player's self-sufficiency: **no one advances alone**, and progress depends on communication, trust and coordination between the three, forming a circular structure of dependency.",
     chainCaption: 'No one advances alone!',
     eyesGroup: 'Choose the color of your iris',
     iris: { red: 'Red iris', blue: 'Blue iris', green: 'Green iris' },
@@ -125,8 +129,10 @@ const es: Dictionary = {
     enlargeShot: (n: number, total: number) => `Ampliar captura ${n} de ${total}`,
     shotAlt: 'Gameplay de Look Out',
     demonsArtAlt: 'Los tres demonios de Look Out, de Hell Bros, flotando en el agua, cada uno con el color de ojo de un compañero',
-    mechanic:
-      'Cada jugador debe **recorrer un camino particular que no puede ver** y puede **observar el camino de otro jugador, pero no recorrerlo**. Esto elimina la autosuficiencia del jugador: **nadie avanza solo** y el progreso depende de la comunicación, la confianza y la coordinación entre los tres, formando una estructura de dependencia circular.',
+    mechanicPaths:
+      'Cada jugador debe **recorrer un camino particular que no puede ver** y puede **observar el camino de otro jugador, pero no recorrerlo**.',
+    mechanicChain:
+      'Esto elimina la autosuficiencia del jugador: **nadie avanza solo** y el progreso depende de la comunicación, la confianza y la coordinación entre los tres, formando una estructura de dependencia circular.',
     chainCaption: '¡Nadie avanza solo!',
     eyesGroup: 'Elige el color de tu iris',
     iris: { red: 'Iris rojo', blue: 'Iris azul', green: 'Iris verde' },
