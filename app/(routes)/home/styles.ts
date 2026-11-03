@@ -461,7 +461,7 @@ export const EyePupil = styled.span<{ $size: number }>`
   border-radius: 50%;
 `;
 
-// The eyes wait in the top-left corner (top center on phones), under the
+// The eyes wait in the top-left corner (bottom center on phones), under the
 // header whenever the header is showing (also when keyboard focus calls it
 // back while scrolled away).
 export const EyeDock = styled.div<{ $docked: boolean; $belowHeader: boolean }>`
@@ -479,13 +479,16 @@ export const EyeDock = styled.div<{ $docked: boolean; $belowHeader: boolean }>`
     transform: translateY(${HEADER_HEIGHT}px);
   }
 
-  /* Phones: top center. */
+  /* Phones: one row at the bottom center, within thumb reach and clear of the
+     header, lifted above the iPhone's home indicator. */
   ${PHONE} {
+    top: auto;
     left: 50%;
-    transform: translate(-50%, ${({ $belowHeader }) => ($belowHeader ? HEADER_HEIGHT_MOBILE : 0)}px);
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
 
     .site-header:has(:focus-visible) ~ main & {
-      transform: translate(-50%, ${HEADER_HEIGHT_MOBILE}px);
+      transform: translateX(-50%);
     }
   }
 `;

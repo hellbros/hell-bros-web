@@ -15,6 +15,12 @@ export const FooterInner = styled.div`
   max-width: ${MAX_WIDTH};
   margin: 0 auto;
   padding: 64px ${SECTION_PADDING} 32px;
+
+  /* On phones the home page's eyes float at the bottom center (46px tall,
+     16px up): leave room so they don't cover the copyright line. */
+  @media (max-width: 700px) {
+    padding-bottom: calc(94px + env(safe-area-inset-bottom, 0px));
+  }
 `;
 
 export const FooterGrid = styled.div`

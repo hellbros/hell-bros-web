@@ -1,6 +1,6 @@
 import "@/app/_styles/base/globals.css";
 import StyledComponentsRegistry from "./registry";
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Figtree, Shantell_Sans } from 'next/font/google'
 import { LOCALES, toLocale } from '@/app/_i18n/locales'
 import { LocaleProvider } from '@/app/_i18n/LocaleProvider'
@@ -15,6 +15,14 @@ export const metadata: Metadata = {
   title: 'Hell Bros | Indie Game Studio',
   description:
     'An independent Peruvian game studio focused on online cooperative experiences — makers of Look Out: Indie Game, a 3-player co-op platformer.',
+}
+
+// Full-screen on notched phones, so env(safe-area-inset-*) reports the home
+// indicator and the floating eyes can stay above it.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 }
 
 export const generateStaticParams = () => LOCALES.map((lang) => ({ lang }))
