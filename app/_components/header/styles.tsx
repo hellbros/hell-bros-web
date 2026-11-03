@@ -8,27 +8,25 @@ import { theme } from '@/app/_styles/theme';
 
 interface HeaderStyledProps {
   $hasScrolled?: boolean;
-  $hidden?: boolean;
+  $expanded?: boolean;
   $mobileMenuOpen?: boolean;
 }
 
+// While the page's big logo shows, the header is just the links over the page;
+// once it scrolls away the bar fills in with its own small logo.
 export const HeaderStyled = styled.header<HeaderStyledProps>`
   width: 100%;
   height: ${HEADER_HEIGHT}px;
   position: fixed;
-  background: ${(props) => (props.$hasScrolled ? theme.colors.white : theme.colors.whiteSmoke)};
-  box-shadow: ${(props) => (props.$hasScrolled ? '0 2px 5px rgba(0,0,0,.05), 0 8px 40px rgba(0,0,0,.04), 0 0 2px rgba(0,0,0,.15)' : 'unset')};
-  /* Out of the way while scrolling down; back on a small scroll up. */
-  transform: ${(props) => (props.$hidden ? 'translateY(-100%)' : 'none')};
+  background: ${({ $expanded, $hasScrolled }) =>
+    $expanded ? 'transparent' : $hasScrolled ? theme.colors.white : theme.colors.whiteSmoke};
+  box-shadow: ${({ $expanded, $hasScrolled }) =>
+    !$expanded && $hasScrolled
+      ? '0 2px 5px rgba(0,0,0,.05), 0 8px 40px rgba(0,0,0,.04), 0 0 2px rgba(0,0,0,.15)'
+      : 'unset'};
   transition: background 0.3s ease-out, box-shadow 0.3s ease-out,
-    height 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s ease-out;
+    height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 9999;
-
-  /* Tabbing into it brings it back. Keyboard focus only: a clicked menu button
-     keeps focus while the page scrolls, and the header would never leave. */
-  &:has(:focus-visible) {
-    transform: none;
-  }
 
   /* First Tab stop; stays off-screen until it has keyboard focus. */
   .skip-link {
@@ -63,6 +61,9 @@ export const HeaderStyled = styled.header<HeaderStyledProps>`
     .logo {
       display: flex;
       align-items: center;
+      opacity: ${({ $expanded }) => ($expanded ? 0 : 1)};
+      visibility: ${({ $expanded }) => ($expanded ? 'hidden' : 'visible')};
+      transition: opacity 0.3s ease-out, visibility 0.3s;
     }
 
     .logo button {

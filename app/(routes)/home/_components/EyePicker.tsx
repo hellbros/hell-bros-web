@@ -1,7 +1,6 @@
 'use client';
 
 import { EyeButton, EyeDock, EyeGroup, EyeIris, EyePupil } from '../styles';
-import useHeaderHidden from '@/app/hooks/useHeaderHidden';
 import { useDictionary } from '@/app/_i18n/LocaleProvider';
 
 export type Iris = 'red' | 'blue' | 'green';
@@ -23,15 +22,13 @@ type Props = {
   onPick: (iris: Iris) => void;
 };
 
-// The three eyes, always on screen: in a triangle in the top-left corner,
-// below the header whenever the header is showing, or in a row at the bottom
-// center on phones.
+// The three eyes, always on screen: in a triangle in the top-left corner
+// under the header, or in a row at the bottom center on phones.
 const EyePicker = ({ iris, onPick }: Props) => {
   const t = useDictionary();
-  const headerHidden = useHeaderHidden();
 
   return (
-    <EyeDock $belowHeader={!headerHidden}>
+    <EyeDock>
       <EyeGroup role="group" aria-label={t.lookout.eyesGroup} $size={EYE_SIZE}>
         {IRISES.map((id) => (
           <EyeButton

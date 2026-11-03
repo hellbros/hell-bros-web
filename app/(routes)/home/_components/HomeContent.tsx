@@ -2,17 +2,22 @@
 import { useState, useEffect, useRef, type CSSProperties, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import EyePicker, { IRIS_INK, type Iris } from "./EyePicker";
-import { SectionContainer, Board, HeroGrid, HeroLogo, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
+import { SectionContainer, Brand, Board, HeroGrid, HeroLogo, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
 import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
 import LookOutLogo from "@/public/assets/look-out/look-out-logo-hell-bros.png"
+import HellBrosLogo from "@/public/assets/brand/logo_hb_color02.svg"
 import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
+import RaulDemon from "@/public/assets/team/hell-bros-raul-jeri.webp"
+import IvanDemon from "@/public/assets/team/hell-bros-ivan-araoz.webp"
+import ArianaDemon from "@/public/assets/team/hell-bros-ariana-coronel.webp"
+import GunterDemon from "@/public/assets/team/hell-bros-gunter-brenner.webp"
 import Shot1 from "@/public/assets/images/1.png"
 import Shot2 from "@/public/assets/images/2.png"
 import Shot3 from "@/public/assets/images/3.png"
 import Shot4 from "@/public/assets/images/4.png"
 import SteamCapsule from "@/public/assets/look-out/steam-capsule.webp"
 import DemonsInWater from "@/public/assets/look-out/hell-bros-look-out-demons-in-water.webp"
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
 import { trapTab } from "@/app/_utils/focus";
 import { useDictionary } from "@/app/_i18n/LocaleProvider";
@@ -36,13 +41,13 @@ const SHOT_PINS: { tilt: number; tape: Iris; tapeTilt: number }[] = [
   { tilt: -0.8, tape: 'red', tapeTilt: -2 },
 ];
 
-// Only the game's three colors, so the cards follow the eye like the rest of
-// the board.
-const TEAM: { name: string; role: keyof Dictionary['people']['roles']; color: Iris; linkedin: string }[] = [
-  { name: 'Raúl Jeri', role: 'technicalCreative', color: 'red', linkedin: 'https://www.linkedin.com/in/rauljerilara/' },
-  { name: 'Iván Aráoz', role: 'productionMarketing', color: 'blue', linkedin: 'https://www.linkedin.com/in/iaraoz06/' },
-  { name: 'Ariana Coronel', role: 'art', color: 'red', linkedin: 'https://www.linkedin.com/in/ariana-coronel-palma-48b653401/' },
-  { name: 'Gunter Brenner', role: 'soundMusic', color: 'green', linkedin: 'https://www.linkedin.com/in/gunterbrenner/' },
+// Each teammate as a demon of the game in their own colors. They aren't part
+// of the board's colors, so the eyes leave them alone.
+const TEAM: { name: string; role: keyof Dictionary['people']['roles']; demon: StaticImageData; linkedin: string }[] = [
+  { name: 'Raúl Jeri', role: 'technicalCreative', demon: RaulDemon, linkedin: 'https://www.linkedin.com/in/rauljerilara/' },
+  { name: 'Iván Aráoz', role: 'productionMarketing', demon: IvanDemon, linkedin: 'https://www.linkedin.com/in/iaraoz06/' },
+  { name: 'Ariana Coronel', role: 'art', demon: ArianaDemon, linkedin: 'https://www.linkedin.com/in/ariana-coronel-palma-48b653401/' },
+  { name: 'Gunter Brenner', role: 'soundMusic', demon: GunterDemon, linkedin: 'https://www.linkedin.com/in/gunterbrenner/' },
 ];
 
 const CloseIcon = () => (
@@ -156,6 +161,13 @@ const HomeContent = () => {
   return (
     <SectionContainer id="inicio" tabIndex={-1}>
 
+      {/* The studio first: its logo big and the slogan under it. Once this
+          leaves the screen, the header shows the logo small. */}
+      <Brand id="marca">
+        <Image src={HellBrosLogo} alt="Hell Bros" sizes="(max-width: 700px) 82vw, 560px" priority />
+        <p>Games from hell</p>
+      </Brand>
+
       <EyePicker iris={iris} onPick={pickIris} />
 
       {/* LOOK OUT: logo + tagline, trailer, wishlist note, shots, how it plays */}
@@ -244,17 +256,16 @@ const HomeContent = () => {
         </Print>
 
         <Team id="team">
-          {TEAM.map(({ name, role, color, linkedin }, i) => (
+          {TEAM.map(({ name, role, demon, linkedin }, i) => (
             <Member
               key={name}
               href={linkedin}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={t.people.onLinkedin(name)}
-              $bg={IRIS_INK[color].solid}
-              $seen={seen(color)}
               $low={i % 2 === 1}
             >
+              <Image src={demon} alt="" sizes="(max-width: 700px) 40vw, 200px" />
               <p className="name">{name}</p>
               <p className="role">{t.people.roles[role]}</p>
             </Member>

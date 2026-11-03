@@ -17,8 +17,9 @@ const ROUGH_RADIUS = '255px 15px 225px 15px / 15px 225px 15px 255px';
 // Tape ends cut in a zigzag.
 const ZIGZAG = 'polygon(0 0, 100% 0, 96% 25%, 100% 50%, 96% 75%, 100% 100%, 0 100%, 4% 75%, 0 50%, 4% 25%)';
 
+// No top padding: the brand section sits under the header, which is see-through
+// up there.
 export const SectionContainer = styled.main`
-  padding-top: ${HEADER_HEIGHT}px;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -29,10 +30,36 @@ export const SectionContainer = styled.main`
   &:focus {
     outline: none;
   }
+`;
 
-  /* In CSS, not from useMediaQuery, so phones don't shift 16px on hydration. */
+// The studio up top, like Evil Empire: the logo big, the slogan under it.
+export const Brand = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: min(70vh, 560px);
+  padding: ${HEADER_HEIGHT + 24}px ${SECTION_PADDING} 32px;
+  box-sizing: border-box;
+  text-align: center;
+
+  img {
+    width: min(560px, 82vw);
+    height: auto;
+  }
+
+  p {
+    margin: 0;
+    font-family: ${theme.fonts.hand};
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
   ${PHONE} {
-    padding-top: ${HEADER_HEIGHT_MOBILE}px;
+    min-height: 0;
+    padding: ${HEADER_HEIGHT_MOBILE + 32}px ${PHONE_PADDING} 24px;
   }
 `;
 
@@ -351,23 +378,20 @@ export const ArtFrame = styled.div`
 
 export const Team = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
   gap: 30px 22px;
   padding-bottom: 16px;
 `;
 
-// Each teammate on a hand-drawn card in one of the game's colors, linking to
-// their LinkedIn; every other card sits a little lower and each one lifts on
-// hover. A color you can't see leaves the dashed outline.
-export const Member = styled.a<{ $bg: string; $seen: boolean; $low?: boolean }>`
-  position: relative;
-  display: block;
-  padding: 16px 18px;
+// Each teammate as a demon of the game, linking to their LinkedIn; every other
+// one stands a little lower and each one hops on hover.
+export const Member = styled.a<{ $low?: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   color: ${theme.colors.black};
   text-decoration: none;
-  background: ${({ $bg, $seen }) => ($seen ? $bg : 'transparent')};
-  border: 3px ${({ $seen }) => ($seen ? 'solid' : 'dashed')} ${theme.colors.black};
-  border-radius: ${ROUGH_RADIUS};
   transform: translateY(${({ $low }) => ($low ? 14 : 0)}px);
   transition: transform 0.15s ease-out;
 
@@ -375,6 +399,12 @@ export const Member = styled.a<{ $bg: string; $seen: boolean; $low?: boolean }>`
     &:hover {
       transform: translateY(${({ $low }) => ($low ? 10 : -4)}px);
     }
+  }
+
+  img {
+    width: min(200px, 100%);
+    height: auto;
+    margin-bottom: 10px;
   }
 
   .name {
@@ -391,7 +421,7 @@ export const Member = styled.a<{ $bg: string; $seen: boolean; $low?: boolean }>`
     line-height: 1.25;
   }
 
-  /* Stacked in one column there's nothing to stagger against. */
+  /* Two to a row on phones: no staggering. */
   ${PHONE} {
     transform: none;
 
@@ -461,20 +491,12 @@ export const EyePupil = styled.span<{ $size: number }>`
   border-radius: 50%;
 `;
 
-// The eyes wait in the top-left corner (bottom center on phones), under the
-// header whenever the header is showing (also when keyboard focus calls it
-// back while scrolled away).
-export const EyeDock = styled.div<{ $belowHeader: boolean }>`
+// The eyes wait in the top-left corner, just under the header.
+export const EyeDock = styled.div`
   position: fixed;
-  top: 12px;
+  top: ${HEADER_HEIGHT + 12}px;
   left: 12px;
   z-index: 9998;
-  transform: translateY(${({ $belowHeader }) => ($belowHeader ? HEADER_HEIGHT : 0)}px);
-  transition: transform 0.35s ease-out;
-
-  .site-header:has(:focus-visible) ~ main & {
-    transform: translateY(${HEADER_HEIGHT}px);
-  }
 
   /* Phones: one row at the bottom center, within thumb reach and clear of the
      header, lifted above the iPhone's home indicator. */
@@ -483,10 +505,6 @@ export const EyeDock = styled.div<{ $belowHeader: boolean }>`
     left: 50%;
     bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     transform: translateX(-50%);
-
-    .site-header:has(:focus-visible) ~ main & {
-      transform: translateX(-50%);
-    }
   }
 `;
 

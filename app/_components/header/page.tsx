@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { HeaderMobileOptions, HeaderOptions, HeaderStyled, MenuToggle, Text } from './styles'
 import useScroll from '@/app/hooks/useScroll';
-import useHeaderHidden from '@/app/hooks/useHeaderHidden';
+import useInView from '@/app/hooks/useInView';
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
 import scrollToSection, { onScrollNear } from '@/app/_utils/functions';
 import { lockScroll, unlockScroll } from '@/app/_utils/scrollLock';
@@ -42,8 +42,10 @@ const Header = () => {
   const nextLocale = otherLocale(useLocale());
   const sm = useMediaQuery('(max-width: 700px)');
   const hasScrolled = useScroll();
-  const scrolledAway = useHeaderHidden();
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
+  // Up top the page shows the studio's logo big; the header only brings its
+  // own small one once that has scrolled away.
+  const brandInView = useInView('marca', headerHeight);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const activeSection = useActiveSection(NAV_IDS, headerHeight);
   const headerRef = useRef<HTMLElement>(null);
@@ -115,7 +117,7 @@ const Header = () => {
       ref={headerRef}
       className="site-header"
       $hasScrolled={hasScrolled}
-      $hidden={scrolledAway && !mobileMenuOpen}
+      $expanded={brandInView && !mobileMenuOpen}
       $mobileMenuOpen={mobileMenuOpen}
     >
       <a className="skip-link" href="#inicio" onClick={skipToContent}>{t.nav.skip}</a>
