@@ -414,7 +414,7 @@ export const Member = styled.div<{ $bg: string; $seen: boolean; $low?: boolean }
 const LID_OPEN = 'polygon(0 0, 50% 0, 100% 0, 100% 100%, 0 100%)';
 const LID_V = 'polygon(0 12%, 50% 41%, 100% 12%, 100% 100%, 0 100%)';
 
-/* Two eyes below, one on top, like the game's eye counter. */
+/* Two eyes below, one on top; on phones, one row. */
 export const EyeGroup = styled.div<{ $size: number }>`
   display: grid;
   grid-template-columns: repeat(2, ${({ $size }) => $size + 2}px);
@@ -423,6 +423,11 @@ export const EyeGroup = styled.div<{ $size: number }>`
   & > :first-child {
     grid-column: 1 / span 2;
     justify-self: center;
+  }
+
+  ${PHONE} {
+    display: flex;
+    gap: 8px;
   }
 `;
 
@@ -460,8 +465,9 @@ export const EyePupil = styled.span<{ $size: number }>`
   border-radius: 50%;
 `;
 
-// The eyes wait in the top-left corner, under the header whenever the header
-// is showing (also when keyboard focus calls it back while scrolled away).
+// The eyes wait in the top-left corner (top center on phones), under the
+// header whenever the header is showing (also when keyboard focus calls it
+// back while scrolled away).
 export const EyeDock = styled.div<{ $docked: boolean; $belowHeader: boolean }>`
   position: fixed;
   top: 12px;
@@ -477,12 +483,13 @@ export const EyeDock = styled.div<{ $docked: boolean; $belowHeader: boolean }>`
     transform: translateY(${HEADER_HEIGHT}px);
   }
 
+  /* Phones: top center. */
   ${PHONE} {
-    left: 8px;
-    transform: translateY(${({ $belowHeader }) => ($belowHeader ? HEADER_HEIGHT_MOBILE : 0)}px);
+    left: 50%;
+    transform: translate(-50%, ${({ $belowHeader }) => ($belowHeader ? HEADER_HEIGHT_MOBILE : 0)}px);
 
     .site-header:has(:focus-visible) ~ main & {
-      transform: translateY(${HEADER_HEIGHT_MOBILE}px);
+      transform: translate(-50%, ${HEADER_HEIGHT_MOBILE}px);
     }
   }
 `;
