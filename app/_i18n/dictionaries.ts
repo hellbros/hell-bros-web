@@ -41,7 +41,7 @@ const en = {
     players:
       "Every player wears one of those colors. The color you see belongs to a teammate, so you **guide them just as another guides you**. It's a circular chain of dependency where **no one advances alone**, and progress depends on **communication, trust, and coordination** between the three.",
     chainCaption: 'No one advances alone!',
-    eyesHint: "Pick an eye: you'll only see the color of its iris.",
+    eyesHint: "Pick an eye: its color is the only one you'll see.",
     eyesGroup: 'Choose the color of your iris',
     iris: { red: 'Red iris', blue: 'Blue iris', green: 'Green iris' },
     close: 'Close',
@@ -123,7 +123,7 @@ const es: Dictionary = {
     players:
       'Cada jugador viste uno de esos colores. El color que ves pertenece a un compañero, así que **lo guías tal como otro te guía a ti**. Es una cadena circular de dependencia donde **nadie avanza solo**, y el progreso depende de la **comunicación, la confianza y la coordinación** entre los tres.',
     chainCaption: '¡Nadie avanza solo!',
-    eyesHint: 'Elige un ojo: solo verás el color de su iris.',
+    eyesHint: 'Elige un ojo: su color es el único que verás.',
     eyesGroup: 'Elige el color de tu iris',
     iris: { red: 'Iris rojo', blue: 'Iris azul', green: 'Iris verde' },
     close: 'Cerrar',

@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, type CSSProperties, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import EyePicker, { IRIS_INK, type Iris } from "./EyePicker";
-import { SectionContainer, Board, HeroGrid, HeroLogo, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
+import { SectionContainer, Board, HeroGrid, HeroLogo, HeroText, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
 import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
 import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
@@ -65,6 +65,7 @@ const HomeContent = () => {
   const t = useDictionary();
   // The eye the visitor picked: only its iris color stays on the board.
   const [iris, setIris] = useState<Iris | null>(null);
+  const logoRef = useRef<HTMLHeadingElement>(null);
   const [zoom, setZoom] = useState<number | null>(null);
   const [comingSoon, setComingSoon] = useState(false);
   const [popupBelow, setPopupBelow] = useState(false);
@@ -162,15 +163,18 @@ const HomeContent = () => {
   return (
     <SectionContainer id="inicio" tabIndex={-1}>
 
-      <EyePicker iris={iris} onPick={pickIris} />
+      <EyePicker iris={iris} onPick={pickIris} logo={logoRef} />
 
       {/* LOOK OUT: logo + tagline, trailer, wishlist note, shots, how it plays */}
       <Board id="lookout">
         <HeroGrid>
-          <HeroLogo>
+          <HeroLogo ref={logoRef}>
             <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="(max-width: 700px) 90vw, 460px" priority />
           </HeroLogo>
-          <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
+          <HeroText>
+            <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
+            <p className="hint">{t.lookout.eyesHint}</p>
+          </HeroText>
         </HeroGrid>
 
         <Print $tilt={-0.7} $width="min(880px, 100%)">

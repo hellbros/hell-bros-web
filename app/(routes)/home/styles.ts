@@ -1,6 +1,6 @@
 "use client"
 
-import styled, { css, keyframes } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { variant } from 'styled-system';
 import TextGlobal from '../../_components/Text';
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, MAX_WIDTH, SECTION_PADDING } from '../../_utils/constants';
@@ -110,6 +110,20 @@ export const HeroLogo = styled.h1`
   img {
     width: 100%;
     height: auto;
+  }
+`;
+
+export const HeroText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  /* The eyes' legend, written by hand under the tagline. */
+  .hint {
+    margin: 0;
+    font-family: ${theme.fonts.hand};
+    font-size: 20px;
+    line-height: 1.3;
   }
 `;
 
@@ -400,22 +414,16 @@ export const Member = styled.div<{ $bg: string; $seen: boolean; $low?: boolean }
 const LID_OPEN = 'polygon(0 0, 50% 0, 100% 0, 100% 100%, 0 100%)';
 const LID_V = 'polygon(0 12%, 50% 41%, 100% 12%, 100% 100%, 0 100%)';
 
-export const EyeGroup = styled.div<{ $size: number; $triangle?: boolean }>`
-  display: flex;
-  flex: none;
-  gap: 12px;
+/* Two eyes below, one on top, like the game's eye counter. */
+export const EyeGroup = styled.div<{ $size: number }>`
+  display: grid;
+  grid-template-columns: repeat(2, ${({ $size }) => $size + 2}px);
+  gap: 2px 4px;
 
-  /* Two eyes below, one on top, like the game's eye counter. */
-  ${({ $size, $triangle }) => $triangle && css`
-    display: grid;
-    grid-template-columns: repeat(2, ${$size + 2}px);
-    gap: 2px 4px;
-
-    & > :first-child {
-      grid-column: 1 / span 2;
-      justify-self: center;
-    }
-  `}
+  & > :first-child {
+    grid-column: 1 / span 2;
+    justify-self: center;
+  }
 `;
 
 export const EyeButton = styled.button<{ $size: number }>`
@@ -452,41 +460,8 @@ export const EyePupil = styled.span<{ $size: number }>`
   border-radius: 50%;
 `;
 
-// The eyes and their legend, part of the page under the header, straight on
-// the board.
-export const EyeBar = styled.div`
-  .inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px 20px;
-    max-width: ${MAX_WIDTH};
-    margin: 0 auto;
-    padding: 20px ${SECTION_PADDING} 0;
-    box-sizing: border-box;
-  }
-
-  p {
-    margin: 0;
-    font-family: ${theme.fonts.hand};
-    font-size: 20px;
-    line-height: 1.3;
-  }
-
-  ${PHONE} {
-    .inner {
-      padding: 16px ${PHONE_PADDING} 0;
-    }
-
-    p {
-      font-size: 18px;
-    }
-  }
-`;
-
-// Once the bar scrolls away, its eyes wait in the top-left corner, under the
-// header whenever the header is showing (also when keyboard focus calls it
-// back while scrolled away).
+// The eyes wait in the top-left corner, under the header whenever the header
+// is showing (also when keyboard focus calls it back while scrolled away).
 export const EyeDock = styled.div<{ $docked: boolean; $belowHeader: boolean }>`
   position: fixed;
   top: 12px;

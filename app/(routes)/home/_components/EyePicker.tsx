@@ -1,13 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { EyeBar, EyeButton, EyeDock, EyeGroup, EyeIris, EyePupil } from '../styles';
+import { useEffect, useState, type RefObject } from 'react';
+import { EyeButton, EyeDock, EyeGroup, EyeIris, EyePupil } from '../styles';
 import useHeaderHidden from '@/app/hooks/useHeaderHidden';
+import useMediaQuery from '@/app/hooks/useMediaQuery';
 import { useDictionary } from '@/app/_i18n/LocaleProvider';
 
 export type Iris = 'red' | 'blue' | 'green';
 
 const IRISES: Iris[] = ['red', 'blue', 'green'];
+
+const EYE_SIZE = 46;
 
 // The colors of the logo's eyes, solid and as tape or highlighter on the board.
 export const IRIS_INK: Record<Iris, { solid: string; tape: string; mark: string }> = {
@@ -16,69 +19,51 @@ export const IRIS_INK: Record<Iris, { solid: string; tape: string; mark: string 
   green: { solid: '#B5E51D', tape: 'rgba(181, 229, 29, 0.85)', mark: 'rgba(181, 229, 29, 0.6)' },
 };
 
-type EyesProps = {
-  iris: Iris | null;
-  onPick: (iris: Iris) => void;
-  size: number;
-  triangle?: boolean;
-};
-
-const Eyes = ({ iris, onPick, size, triangle }: EyesProps) => {
-  const t = useDictionary();
-  return (
-    <EyeGroup role="group" aria-label={t.lookout.eyesGroup} $size={size} $triangle={triangle}>
-      {IRISES.map((id) => (
-        <EyeButton
-          key={id}
-          type="button"
-          $size={size}
-          aria-pressed={iris === id}
-          aria-label={t.lookout.iris[id]}
-          onClick={() => onPick(id)}
-        >
-          <EyeIris aria-hidden="true" $size={Math.round(size * 0.62)} $color={IRIS_INK[id].solid} $chosen={iris === id} />
-          <EyePupil aria-hidden="true" $size={Math.round(size * 0.3)} />
-        </EyeButton>
-      ))}
-    </EyeGroup>
-  );
-};
-
 type Props = {
   iris: Iris | null;
   onPick: (iris: Iris) => void;
+  // The hero logo: on screens without room beside it, the eyes wait until it
+  // has scrolled away so they never sit on top of it.
+  logo: RefObject<HTMLElement | null>;
 };
 
-// The eyes with their legend sit in the page under the header. Once that bar
-// scrolls off the top, the same eyes wait in a corner, without the legend.
-const EyePicker = ({ iris, onPick }: Props) => {
+// The three eyes, in a triangle in the top-left corner, below the header
+// whenever the header is showing. Their legend lives in the hero text.
+const EyePicker = ({ iris, onPick, logo }: Props) => {
   const t = useDictionary();
-  const barRef = useRef<HTMLDivElement>(null);
-  const [docked, setDocked] = useState(false);
   const headerHidden = useHeaderHidden();
+  // From here up, the margin beside the 1000px column fits the eyes.
+  const roomBeside = useMediaQuery('(min-width: 1200px)');
+  const [logoPassed, setLogoPassed] = useState(false);
 
   useEffect(() => {
-    const bar = barRef.current;
-    if (!bar) return;
+    const target = logo.current;
+    if (!target) return;
     const observer = new IntersectionObserver(([entry]) => {
-      setDocked(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+      setLogoPassed(!entry.isIntersecting && entry.boundingClientRect.top < 0);
     });
-    observer.observe(bar);
+    observer.observe(target);
     return () => observer.disconnect();
-  }, []);
+  }, [logo]);
 
   return (
-    <>
-      <EyeBar ref={barRef}>
-        <div className="inner">
-          <Eyes iris={iris} onPick={onPick} size={52} />
-          <p>{t.lookout.eyesHint}</p>
-        </div>
-      </EyeBar>
-      <EyeDock $docked={docked} $belowHeader={!headerHidden}>
-        <Eyes iris={iris} onPick={onPick} size={46} triangle />
-      </EyeDock>
-    </>
+    <EyeDock $docked={roomBeside || logoPassed} $belowHeader={!headerHidden}>
+      <EyeGroup role="group" aria-label={t.lookout.eyesGroup} $size={EYE_SIZE}>
+        {IRISES.map((id) => (
+          <EyeButton
+            key={id}
+            type="button"
+            $size={EYE_SIZE}
+            aria-pressed={iris === id}
+            aria-label={t.lookout.iris[id]}
+            onClick={() => onPick(id)}
+          >
+            <EyeIris aria-hidden="true" $size={Math.round(EYE_SIZE * 0.62)} $color={IRIS_INK[id].solid} $chosen={iris === id} />
+            <EyePupil aria-hidden="true" $size={Math.round(EYE_SIZE * 0.3)} />
+          </EyeButton>
+        ))}
+      </EyeGroup>
+    </EyeDock>
   );
 };
 
