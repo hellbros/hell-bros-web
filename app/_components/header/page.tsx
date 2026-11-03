@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { HeaderMobileOptions, HeaderOptions, HeaderStyled, MenuToggle, Text } from './styles'
 import useScroll from '@/app/hooks/useScroll';
+import useHeaderHidden from '@/app/hooks/useHeaderHidden';
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
 import scrollToSection, { onScrollNear } from '@/app/_utils/functions';
 import { lockScroll, unlockScroll } from '@/app/_utils/scrollLock';
@@ -41,6 +42,7 @@ const Header = () => {
   const nextLocale = otherLocale(useLocale());
   const sm = useMediaQuery('(max-width: 700px)');
   const hasScrolled = useScroll();
+  const scrolledAway = useHeaderHidden();
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const activeSection = useActiveSection(NAV_IDS, headerHeight);
@@ -109,7 +111,13 @@ const Header = () => {
   }, [mobileMenuOpen, sm]);
 
   return (
-    <HeaderStyled ref={headerRef} className="site-header" $hasScrolled={hasScrolled} $mobileMenuOpen={mobileMenuOpen}>
+    <HeaderStyled
+      ref={headerRef}
+      className="site-header"
+      $hasScrolled={hasScrolled}
+      $hidden={scrolledAway && !mobileMenuOpen}
+      $mobileMenuOpen={mobileMenuOpen}
+    >
       <a className="skip-link" href="#inicio" onClick={skipToContent}>{t.nav.skip}</a>
       <div className='header-content'>
 

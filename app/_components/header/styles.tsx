@@ -8,6 +8,7 @@ import { theme } from '@/app/_styles/theme';
 
 interface HeaderStyledProps {
   $hasScrolled?: boolean;
+  $hidden?: boolean;
   $mobileMenuOpen?: boolean;
 }
 
@@ -17,9 +18,16 @@ export const HeaderStyled = styled.header<HeaderStyledProps>`
   position: fixed;
   background: ${(props) => (props.$hasScrolled ? theme.colors.white : theme.colors.whiteSmoke)};
   box-shadow: ${(props) => (props.$hasScrolled ? '0 2px 5px rgba(0,0,0,.05), 0 8px 40px rgba(0,0,0,.04), 0 0 2px rgba(0,0,0,.15)' : 'unset')};
+  /* Out of the way while scrolling down; back on a small scroll up. */
+  transform: ${(props) => (props.$hidden ? 'translateY(-100%)' : 'none')};
   transition: background 0.3s ease-out, box-shadow 0.3s ease-out,
-    height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    height 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s ease-out;
   z-index: 9999;
+
+  /* Tabbing into it brings it back. */
+  &:focus-within {
+    transform: none;
+  }
 
   /* First Tab stop; stays off-screen until it has keyboard focus. */
   .skip-link {
@@ -138,9 +146,9 @@ export const HeaderOptions = styled.nav`
     padding: 0.5rem;
     text-decoration: none;
     color: #393939;
-    font-weight: 600;
+    font-family: ${theme.fonts.hand};
+    font-weight: 800;
     font-size: 17px;
-    letter-spacing: 1px;
     transition: color 0.4s ease-out;
     cursor: pointer;
     user-select: none;
@@ -196,8 +204,8 @@ export const HeaderMobileOptions = styled.nav`
     padding: 1.2rem;
     text-decoration: none;
     color: #393939;
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-family: ${theme.fonts.hand};
+    font-weight: 800;
     transition: color 0.4s ease-out;
     cursor: pointer;
     user-select: none;

@@ -1,12 +1,14 @@
 import "@/app/_styles/base/globals.css";
 import StyledComponentsRegistry from "./registry";
 import type { Metadata } from 'next'
-import { Montserrat } from 'next/font/google'
+import { Figtree, Shantell_Sans } from 'next/font/google'
 import { LOCALES, toLocale } from '@/app/_i18n/locales'
 import { LocaleProvider } from '@/app/_i18n/LocaleProvider'
 import { SITE_URL } from '@/app/_utils/constants'
 
-const montserrat = Montserrat({ subsets: ['latin'] })
+const figtree = Figtree({ subsets: ['latin'], weight: ['400', '700'] })
+// Hand lettering, read through theme.fonts.hand.
+const shantell = Shantell_Sans({ subsets: ['latin'], weight: ['400', '800'], variable: '--font-hand' })
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -26,8 +28,8 @@ export default async function RootLayout({
 }) {
   const locale = toLocale((await params).lang)
   return (
-    <html lang={locale}>
-      <body className={montserrat.className}>
+    <html lang={locale} className={shantell.variable}>
+      <body className={figtree.className}>
         <LocaleProvider locale={locale}>
           <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
         </LocaleProvider>

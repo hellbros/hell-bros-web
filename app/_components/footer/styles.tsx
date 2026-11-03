@@ -98,10 +98,9 @@ export const Col = styled.div`
 
   .label {
     margin: 0 0 0.3rem;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    font-family: ${theme.fonts.hand};
+    font-size: 20px;
+    font-weight: 800;
     color: ${theme.colors.white};
   }
 
@@ -194,7 +193,8 @@ export const FooterBottom = styled.div`
 
   .slogan {
     margin: 0 0 10px;
-    font-size: 13px;
+    font-family: ${theme.fonts.hand};
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;

@@ -1,10 +1,9 @@
 'use client'
-import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent, type TouchEvent as ReactTouchEvent } from "react";
+import { useState, useEffect, useRef, type CSSProperties, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
-import Button from "@/app/_components/Button";
-import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP, StudioArt } from "../styles";
+import EyePicker, { IRIS_INK, type Iris } from "./EyePicker";
+import { SectionContainer, Board, HeroGrid, HeroLogo, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
 import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
-import { theme } from "@/app/_styles/theme";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
 import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
 import Shot1 from "@/public/assets/images/1.png"
@@ -16,7 +15,8 @@ import DemonsInWater from "@/public/assets/look-out/demons-in-water.webp"
 import Image from "next/image";
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
 import { trapTab } from "@/app/_utils/focus";
-import { rich, useDictionary } from "@/app/_i18n/LocaleProvider";
+import { useDictionary } from "@/app/_i18n/LocaleProvider";
+import type { Dictionary } from "@/app/_i18n/dictionaries";
 
 // YouTube video ID of the trailer (the part after v= / youtu.be/).
 const TRAILER_ID = 'CY4mwk-rh30';
@@ -33,14 +33,21 @@ const DiscordIcon = () => (
   </svg>
 );
 
-const SteamIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z" />
-  </svg>
-);
-
-// The three Look Out gameplay shots, in order (used by the grid + lightbox).
+// The three Look Out gameplay shots, in order (used by the grid + lightbox),
+// each pinned with its own tape.
 const SHOTS = [Shot1, Shot2, Shot3];
+const SHOT_PINS: { tilt: number; tape: Iris; tapeTilt: number }[] = [
+  { tilt: -1.6, tape: 'red', tapeTilt: -4 },
+  { tilt: 1, tape: 'blue', tapeTilt: 3 },
+  { tilt: -0.8, tape: 'green', tapeTilt: -2 },
+];
+
+const TEAM: { name: string; role: keyof Dictionary['people']['roles']; color: string; linkedin: string }[] = [
+  { name: 'Raúl Jeri', role: 'technicalCreative', color: IRIS_INK.red.solid, linkedin: 'https://www.linkedin.com/in/rauljerilara/' },
+  { name: 'Iván Aráoz', role: 'productionMarketing', color: IRIS_INK.blue.solid, linkedin: 'https://www.linkedin.com/in/iaraoz06/' },
+  { name: 'Ariana Coronel', role: 'art', color: '#F98DC0', linkedin: 'https://www.linkedin.com/in/ariana-coronel-palma-48b653401/' },
+  { name: 'Gunter Brenner', role: 'soundMusic', color: IRIS_INK.green.solid, linkedin: 'https://www.linkedin.com/in/gunterbrenner/' },
+];
 
 const CloseIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6L18 18M18 6L6 18" /></svg>
@@ -49,13 +56,33 @@ const ChevronIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5L8 12l7 7" /></svg>
 );
 
+// Text without its `**emphasis**` markers.
+const plain = (text: string) => text.replace(/\*\*/g, '');
+
 const HomeContent = () => {
   const t = useDictionary();
+  // The eye the visitor picked: only its iris color stays on the board.
+  const [iris, setIris] = useState<Iris | null>(null);
   const [zoom, setZoom] = useState<number | null>(null);
   const [comingSoon, setComingSoon] = useState(false);
   const [popupBelow, setPopupBelow] = useState(false);
   const comingSoonTimer = useRef<number | undefined>(undefined);
   const popupRef = useRef<HTMLSpanElement>(null);
+
+  const seen = (color: Iris) => iris === null || iris === color;
+  const pickIris = (color: Iris) => setIris((current) => (current === color ? null : color));
+
+  // `**text**` becomes highlighter, taking the colors in order.
+  const marked = (text: string, colors: Iris[]): ReactNode =>
+    text.split(/\*\*(.+?)\*\*/g).map((part, i) => {
+      if (i % 2 === 0) return part;
+      const color = colors[((i - 1) / 2) % colors.length];
+      return <Mark key={i} $color={IRIS_INK[color].mark} $seen={seen(color)}>{part}</Mark>;
+    });
+
+  const tape = (color: Iris, style: CSSProperties) => (
+    <Tape aria-hidden="true" $color={IRIS_INK[color].tape} $seen={seen(color)} style={style} />
+  );
 
   const showComingSoon = (e: ReactMouseEvent<HTMLElement>) => {
     const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
@@ -133,200 +160,110 @@ const HomeContent = () => {
   return (
     <SectionContainer id="inicio" tabIndex={-1}>
 
-      {/* LOOK OUT (first section — clears the header via the container's
-          padding-top plus its own 40px top padding):
-          logo -> tagline -> video + wishlist -> shots -> text -> shot -> text */}
-      <Hero id="lookout">
-        <HeroLogo>
-          <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="(max-width: 700px) 300px, 360px" priority />
-        </HeroLogo>
+      <EyePicker iris={iris} onPick={pickIris} />
 
-        <Text as="p" $styles="heroTagline">
-          {rich(t.lookout.tagline)}
-        </Text>
+      {/* LOOK OUT: logo + tagline, trailer, wishlist note, shots, how it plays */}
+      <Board id="lookout">
+        <HeroGrid>
+          <HeroLogo>
+            <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="(max-width: 700px) 90vw, 460px" priority />
+          </HeroLogo>
+          <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
+        </HeroGrid>
 
-        <TrailerEmbed videoId={TRAILER_ID} title={t.lookout.trailerTitle} />
+        <Print $tilt={-0.7} $width="min(880px, 100%)">
+          {tape('red', { left: -18, top: -12, transform: 'rotate(-24deg)' })}
+          {tape('blue', { right: -18, top: -12, transform: 'rotate(22deg)' })}
+          <TrailerEmbed videoId={TRAILER_ID} title={t.lookout.trailerTitle} />
+        </Print>
 
-        <CtaCard>
-          <WishlistRow>
-            <div className="left">
-              <span className="icon" aria-hidden="true">
-                <SteamIcon />
-              </span>
-              <div>
-                <h2 className="title">{t.lookout.wishlistTitle}</h2>
-              </div>
-            </div>
-            {STEAM_PAGE_LIVE ? (
-              <Button
-                as="a"
-                href={STEAM_URL}
+        <WishNote>
+          {tape('green', { left: '50%', top: -14, width: 120, height: 32, marginLeft: -60, transform: 'rotate(-3deg)' })}
+          <h2>{t.lookout.wishlistTitle}</h2>
+          {STEAM_PAGE_LIVE ? (
+            <Pill as="a" href={STEAM_URL} target="_blank" rel="noopener noreferrer">
+              {t.lookout.wishlistButton}
+            </Pill>
+          ) : (
+            <Pill type="button" onClick={showComingSoon}>
+              {t.lookout.wishlistButton}
+              <CapsulePopup ref={popupRef} $visible={comingSoon} $below={popupBelow} role="status">
+                <span className="header">{t.lookout.comingSoon}</span>
+                <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
+              </CapsulePopup>
+            </Pill>
+          )}
+        </WishNote>
+
+        <Shots>
+          {SHOTS.map((src, i) => (
+            <Print key={i} $tilt={SHOT_PINS[i].tilt}>
+              {tape(SHOT_PINS[i].tape, { left: '50%', top: -13, width: 100, height: 28, marginLeft: -50, transform: `rotate(${SHOT_PINS[i].tapeTilt}deg)` })}
+              <button
+                type="button"
+                className="shot"
+                onClick={(e) => { zoomTrigger.current = e.currentTarget; setZoom(i); }}
+                aria-label={t.lookout.enlargeShot(i + 1, SHOTS.length)}
+              >
+                <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 90vw, 300px" />
+              </button>
+            </Print>
+          ))}
+        </Shots>
+
+        <Mechanics>
+          <Print as="figure" $tilt={-1.2}>
+            {tape('green', { left: -16, top: 16, width: 96, height: 28, transform: 'rotate(-38deg)' })}
+            <Image src={Shot4} alt={t.lookout.shotAlt} sizes="(max-width: 700px) 90vw, 460px" />
+            <figcaption>{t.lookout.chainCaption}</figcaption>
+          </Print>
+          <div className="copy">
+            <p>{marked(t.lookout.platforms, ['red', 'blue'])}</p>
+            <p>{marked(t.lookout.players, ['green', 'red', 'blue'])}</p>
+          </div>
+        </Mechanics>
+      </Board>
+
+      {/* OUR STUDIO: intro + Discord, the demons' art, the team */}
+      <Board id="about">
+        <StudioGrid>
+          <div className="intro">
+            <h2>{t.studio.title}</h2>
+            <p>{plain(t.studio.intro)}</p>
+            <Pill as="a" href="https://discord.gg/mSYYyGs5Yd" target="_blank" rel="noopener noreferrer">
+              <DiscordIcon />
+              {t.studio.discordButton}
+            </Pill>
+          </div>
+          <Image className="iso" src={HellBrosIso} alt="Hell Bros" />
+        </StudioGrid>
+
+        <Print $tilt={0.7} $width="min(880px, 100%)">
+          {tape('blue', { left: -18, bottom: 18, width: 120, height: 32, transform: 'rotate(32deg)' })}
+          {tape('red', { right: -18, top: 18, width: 120, height: 32, transform: 'rotate(32deg)' })}
+          <ArtFrame>
+            <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} fill sizes="(max-width: 1000px) 100vw, 856px" />
+          </ArtFrame>
+        </Print>
+
+        <Team id="team">
+          {TEAM.map(({ name, role, color, linkedin }, i) => (
+            <Member key={name} $bg={color} $low={i % 2 === 1}>
+              <p className="name">{name}</p>
+              <p className="role">{t.people.roles[role]}</p>
+              <a
+                className="linkedin"
+                href={linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                $variant="solid"
-                color={theme.colors.cyan}
-                $labelColor={theme.colors.black}>
-                {t.lookout.wishlistButton}
-              </Button>
-            ) : (
-              <Button
-                $variant="solid"
-                color={theme.colors.cyan}
-                $labelColor={theme.colors.black}
-                onClick={showComingSoon}>
-                {t.lookout.wishlistButton}
-                <CapsulePopup ref={popupRef} $visible={comingSoon} $below={popupBelow} role="status">
-                  <span className="header">{t.lookout.comingSoon}</span>
-                  <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
-                </CapsulePopup>
-              </Button>
-            )}
-          </WishlistRow>
-        </CtaCard>
-
-        <ShotsGrid>
-          {SHOTS.map((src, i) => (
-            <button
-              key={i}
-              type="button"
-              className="shot"
-              onClick={(e) => { zoomTrigger.current = e.currentTarget; setZoom(i); }}
-              aria-label={t.lookout.enlargeShot(i + 1, SHOTS.length)}
-            >
-              <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 31vw, 300px" />
-            </button>
+                aria-label={t.people.onLinkedin(name)}
+              >
+                <LinkedinIcon />
+              </a>
+            </Member>
           ))}
-        </ShotsGrid>
-
-        <Text as="p" $styles="heroTagline">
-          {rich(t.lookout.platforms)}
-        </Text>
-
-        <FullShot>
-          <Image src={Shot4} alt={t.lookout.shotAlt} sizes="(max-width: 1000px) 100vw, 920px" />
-        </FullShot>
-
-        <Text as="p" $styles="heroTagline">
-          {rich(t.lookout.players)}
-        </Text>
-      </Hero>
-
-      {/* OUR STUDIO */}
-      <Section id="about">
-        <Text as="h2" $styles="sectionTitle">
-          {t.studio.title}
-        </Text>
-        <StudioLogo>
-          <Image src={HellBrosIso} alt="Hell Bros" />
-        </StudioLogo>
-        <Text as="p" $styles="studioIntro">
-          {rich(t.studio.intro)}
-        </Text>
-
-        <CtaCard>
-          <DiscordRow>
-            <div className="left">
-              <span className="icon" aria-hidden="true">
-                <DiscordIcon />
-              </span>
-              <div>
-                <h2 className="title">{t.studio.discordTitle}</h2>
-              </div>
-            </div>
-            <Button
-              as="a"
-              href="https://discord.gg/mSYYyGs5Yd"
-              target="_blank"
-              rel="noopener noreferrer"
-              $variant="solid"
-              color="#5865F2">
-              {t.studio.discordButton}
-            </Button>
-          </DiscordRow>
-        </CtaCard>
-
-        <StudioArt>
-          <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} sizes="(max-width: 1000px) 100vw, 920px" />
-        </StudioArt>
-      </Section>
-
-      {/* OUR HEADS */}
-      <Section id="nosotros">
-        <Text as="h2" $styles="sectionTitle">
-          {t.people.headsTitle}
-        </Text>
-        <HeadsGrid>
-          <HeadCard $accent={theme.colors.red}>
-            <Avatar $bg={theme.colors.red} aria-hidden="true">RJ</Avatar>
-            <p className="name">Raúl Jeri</p>
-            <p className="role">{t.people.roles.technicalCreative}</p>
-            <a
-              className="linkedin"
-              href="https://www.linkedin.com/in/rauljerilara/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t.people.onLinkedin('Raúl Jeri')}
-            >
-              <LinkedinIcon />
-            </a>
-          </HeadCard>
-          <HeadCard $accent={theme.colors.blue}>
-            <Avatar $bg={theme.colors.blue} aria-hidden="true">IA</Avatar>
-            <p className="name">Iván Aráoz</p>
-            <p className="role">{t.people.roles.productionMarketing}</p>
-            <a
-              className="linkedin"
-              href="https://www.linkedin.com/in/iaraoz06/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t.people.onLinkedin('Iván Aráoz')}
-            >
-              <LinkedinIcon />
-            </a>
-          </HeadCard>
-        </HeadsGrid>
-      </Section>
-
-      {/* OUR TEAM */}
-      <Section id="team">
-        <Text as="h2" $styles="sectionTitle">
-          {t.people.teamTitle}
-        </Text>
-        <HeadsGrid>
-          <HeadCard $accent="#0D86BB">
-            <Avatar $bg={theme.colors.cyan} aria-hidden="true">AC</Avatar>
-            <p className="name">Ariana Coronel</p>
-            <p className="role">{t.people.roles.art}</p>
-            <a
-              className="linkedin"
-              href="https://www.linkedin.com/in/ariana-coronel-palma-48b653401/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t.people.onLinkedin('Ariana Coronel')}
-            >
-              <LinkedinIcon />
-            </a>
-          </HeadCard>
-          <HeadCard $accent="#7C3AED">
-            <Avatar $bg="#7C3AED" aria-hidden="true">GB</Avatar>
-            <p className="name">Gunter Brenner</p>
-            <p className="role">{t.people.roles.soundMusic}</p>
-            <a
-              className="linkedin"
-              href="https://www.linkedin.com/in/gunterbrenner/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t.people.onLinkedin('Gunter Brenner')}
-            >
-              <LinkedinIcon />
-            </a>
-          </HeadCard>
-        </HeadsGrid>
-      </Section>
-
-      <HalfCircleContainer>
-        <HalfCircle/>
-      </HalfCircleContainer>
+        </Team>
+      </Board>
 
       {zoom !== null && (
         <Lightbox
