@@ -323,59 +323,65 @@ export const Pill = styled.button`
   }
 `;
 
-/* Part 2: three screens side by side, one per eye. On phones they stack. */
+/* Part 2: three screens side by side, one per iris. On phones they stack. */
 export const Lanes = styled.div`
   container-type: inline-size;
   display: flex;
   gap: 14px;
-  height: clamp(220px, 33vw, 330px);
 
   ${PHONE} {
     flex-direction: column;
-    height: auto;
+    gap: 18px;
   }
 `;
 
-// One eye's screen, in its color. The eye you pick opens its screen wide; the
-// ones you can't see go grey behind a dashed border. On phones the open one
-// keeps its full height and the others shrink to a strip.
-export const Lane = styled.button<{ $color: string; $seen: boolean; $open: boolean }>`
-  position: relative;
+// What one iris sees: its screen framed in its color, and under it what that
+// iris means. The iris you pick opens its screen wide; the colors you can't
+// see go grey behind a dashed border. On phones the open one keeps its full
+// height and the others shrink to a strip.
+export const Lane = styled.div<{ $color: string; $seen: boolean; $open: boolean }>`
   flex: ${({ $open }) => ($open ? 2.6 : 1)} 1 0;
   min-width: 0;
-  overflow: hidden;
-  padding: 0;
-  box-sizing: border-box;
-  background: ${theme.colors.black};
-  border: 4px ${({ $seen }) => ($seen ? 'solid' : 'dashed')} ${({ $color, $seen }) => ($seen ? $color : theme.colors.black)};
-  border-radius: 16px;
-  filter: ${({ $seen }) => ($seen ? 'none' : 'grayscale(1)')};
-  opacity: ${({ $seen }) => ($seen ? 1 : 0.45)};
-  cursor: zoom-in;
-  transition: flex-grow 0.3s ease-out, height 0.3s ease-out, filter 0.3s ease-out, opacity 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: flex-grow 0.3s ease-out;
 
-  img {
+  .screen {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: clamp(220px, 33vw, 330px);
+    overflow: hidden;
+    padding: 0;
+    box-sizing: border-box;
+    background: ${theme.colors.black};
+    border: 4px ${({ $seen }) => ($seen ? 'solid' : 'dashed')} ${({ $color, $seen }) => ($seen ? $color : theme.colors.black)};
+    border-radius: 16px;
+    filter: ${({ $seen }) => ($seen ? 'none' : 'grayscale(1)')};
+    opacity: ${({ $seen }) => ($seen ? 1 : 0.45)};
+    cursor: zoom-in;
+    transition: height 0.3s ease-out, filter 0.3s ease-out, opacity 0.3s ease-out;
+  }
+
+  .screen img {
     object-fit: cover;
   }
 
-  .label {
-    position: absolute;
-    left: 12px;
-    bottom: 12px;
-    padding: 4px 16px;
-    border: 3px solid ${theme.colors.black};
-    border-radius: 30px;
-    background: ${({ $color, $seen }) => ($seen ? $color : theme.colors.white)};
-    color: ${theme.colors.black};
+  p {
+    margin: 0;
     font-family: ${theme.fonts.hand};
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 800;
-    line-height: 1.5;
+    line-height: 1.35;
   }
 
   ${PHONE} {
     flex: none;
-    height: ${({ $seen }) => ($seen ? 'calc(100cqw * 9 / 16)' : '96px')};
+
+    .screen {
+      height: ${({ $seen }) => ($seen ? 'calc(100cqw * 9 / 16)' : '96px')};
+    }
   }
 `;
 

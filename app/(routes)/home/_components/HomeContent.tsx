@@ -217,17 +217,16 @@ const HomeContent = () => {
         <p>{marked(t.lookout.mechanicPaths, ['red', 'blue'])}</p>
         <Lanes>
           {SHOTS.map(({ src, eye }, i) => (
-            <Lane
-              key={eye}
-              type="button"
-              $color={IRIS_INK[eye].solid}
-              $seen={seen(eye)}
-              $open={iris === eye}
-              onClick={(e) => { zoomTrigger.current = e.currentTarget; setZoom(i); }}
-              aria-label={`${t.lookout.eyeView[eye]}. ${t.lookout.enlargeShot(i + 1, SHOTS.length)}`}
-            >
-              <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 90vw, 600px" />
-              <span className="label" aria-hidden="true">{t.lookout.eyeView[eye]}</span>
+            <Lane key={eye} $color={IRIS_INK[eye].solid} $seen={seen(eye)} $open={iris === eye}>
+              <button
+                type="button"
+                className="screen"
+                onClick={(e) => { zoomTrigger.current = e.currentTarget; setZoom(i); }}
+                aria-label={`${plain(t.lookout.irisView[eye])} ${t.lookout.enlargeShot(i + 1, SHOTS.length)}`}
+              >
+                <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 90vw, 600px" />
+              </button>
+              <p>{marked(t.lookout.irisView[eye], [eye])}</p>
             </Lane>
           ))}
         </Lanes>
