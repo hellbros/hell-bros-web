@@ -8,7 +8,8 @@ import { useDictionary } from '@/app/_i18n/LocaleProvider';
 
 export type Iris = 'red' | 'blue' | 'green';
 
-const IRISES: Iris[] = ['red', 'blue', 'green'];
+// Blue on top, red and green below, as in the game's eye counter.
+const IRISES: Iris[] = ['blue', 'red', 'green'];
 
 const EYE_SIZE = 46;
 
