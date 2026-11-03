@@ -122,7 +122,7 @@ const es: Dictionary = {
   },
   lookout: {
     trappedTitle: 'Tres demonios atrapados',
-    pathTitle: 'Nadie ve su propio camino',
+    pathTitle: 'Ninguno ve su propio camino',
     escapeTitle: 'Escapen juntos',
     tagline: 'Un **juego de plataformas 3D cooperativo online y asimétrico** donde **3\u00A0demonios** intentan escapar del Mundo Demoníaco.',
     irisLabel: { red: 'Iris **rojo**', blue: 'Iris **azul**', green: 'Iris **verde**' },
