@@ -185,11 +185,14 @@ export const Intro = styled.section`
     gap: 24px;
   }
 
-  /* Phones: the button spans the width, so the coming-soon popup that hangs
-     from its right edge stays on screen. */
+  /* Phones: one centered column under the studio's logo. The button spans the
+     width, so the coming-soon popup that hangs from its right edge stays on
+     screen. */
   ${PHONE} {
     gap: 12px;
+    justify-items: center;
     padding: 16px ${PHONE_PADDING} 0;
+    text-align: center;
 
     .pitch {
       gap: 16px;
@@ -201,8 +204,9 @@ export const Intro = styled.section`
   }
 `;
 
-// Smaller on phones, so the Steam button clears the floating eyes on the first
-// screen.
+// On phones it grows with the screen but stays small enough on the common
+// ones (up to about 430px wide) for the Steam button to clear the floating eyes
+// on the first screen.
 export const HeroLogo = styled.h1`
   width: min(460px, 100%);
   margin: 0;
@@ -214,7 +218,7 @@ export const HeroLogo = styled.h1`
   }
 
   ${PHONE} {
-    width: 240px;
+    width: clamp(240px, 64vw, 340px);
   }
 `;
 
