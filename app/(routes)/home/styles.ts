@@ -342,6 +342,17 @@ export const StudioGrid = styled.div`
   }
 `;
 
+// The three demons' diagram, with the empty sides of the 16:9 art cut off.
+// The drawing spans x 257-1662 of 1920; keep about 64px of it beside each cape.
+export const ChainArt = styled.div`
+  position: relative;
+  aspect-ratio: 1532 / 1080;
+
+  img {
+    object-fit: cover;
+  }
+`;
+
 // The art keeps the trailer's 16:9 frame.
 export const ArtFrame = styled.div`
   position: relative;

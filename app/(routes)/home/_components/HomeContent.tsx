@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, type CSSProperties, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import EyePicker, { IRIS_INK, type Iris } from "./EyePicker";
-import { SectionContainer, Board, HeroGrid, HeroLogo, HeroText, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
+import { SectionContainer, Board, HeroGrid, HeroLogo, HeroText, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
 import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
 import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
 import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
@@ -220,7 +220,9 @@ const HomeContent = () => {
         <Mechanics>
           <Print as="figure" $tilt={-1.2}>
             {tape('green', { left: -16, top: 16, width: 96, height: 28, transform: 'rotate(-38deg)' })}
-            <Image src={Shot4} alt={t.lookout.shotAlt} sizes="(max-width: 700px) 90vw, 460px" />
+            <ChainArt>
+              <Image src={Shot4} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 90vw, 460px" />
+            </ChainArt>
             <figcaption>{t.lookout.chainCaption}</figcaption>
           </Print>
           <div className="copy">
