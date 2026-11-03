@@ -50,7 +50,7 @@ const en = {
     mechanicPaths:
       "Each player must **travel a path of their own that they can't see**, and can **watch another player's path, but not travel it**.",
     mechanicChain:
-      "This takes away a player's self-sufficiency: **no one advances alone**, and progress depends on communication, trust and coordination between the three, forming a circular structure of dependency.",
+      '**No one advances alone**, and progress depends on communication, trust and coordination between the three, forming a circular structure of dependency.',
     chainCaption: 'No one advances alone!',
     eyesGroup: 'Choose the color of your iris',
     iris: { red: 'Red iris', blue: 'Blue iris', green: 'Green iris' },
@@ -142,7 +142,7 @@ const es: Dictionary = {
     mechanicPaths:
       'Cada jugador debe **recorrer un camino particular que no puede ver** y puede **observar el camino de otro jugador, pero no recorrerlo**.',
     mechanicChain:
-      'Esto elimina la autosuficiencia del jugador: **nadie avanza solo** y el progreso depende de la comunicación, la confianza y la coordinación entre los tres, formando una estructura de dependencia circular.',
+      '**Nadie avanza solo** y el progreso depende de la comunicación, la confianza y la coordinación entre los tres, formando una estructura de dependencia circular.',
     chainCaption: '¡Nadie avanza solo!',
     eyesGroup: 'Elige el color de tu iris',
     iris: { red: 'Iris rojo', blue: 'Iris azul', green: 'Iris verde' },
