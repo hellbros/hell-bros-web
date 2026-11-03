@@ -50,8 +50,7 @@ type Props = {
 };
 
 // The eyes with their legend sit in the page under the header. Once that bar
-// scrolls off the top, the same eyes wait in the top-left corner, in a
-// triangle, with the legend only on hover or focus.
+// scrolls off the top, the same eyes wait in a corner, without the legend.
 const EyePicker = ({ iris, onPick }: Props) => {
   const t = useDictionary();
   const barRef = useRef<HTMLDivElement>(null);
@@ -78,7 +77,6 @@ const EyePicker = ({ iris, onPick }: Props) => {
       </EyeBar>
       <EyeDock $docked={docked} $belowHeader={!headerHidden}>
         <Eyes iris={iris} onPick={onPick} size={46} triangle />
-        <p className="tip">{t.lookout.eyesHint}</p>
       </EyeDock>
     </>
   );

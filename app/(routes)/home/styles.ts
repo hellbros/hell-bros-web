@@ -202,6 +202,9 @@ export const WishNote = styled.div`
 // like the site's other solid buttons.
 export const Pill = styled.button`
   position: relative;
+  /* Over the note's tape: the hover scale wraps the coming-soon popup in the
+     button's own layer, so the button has to sit above the tape. */
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -342,13 +345,13 @@ export const Team = styled.div`
   padding-bottom: 16px;
 `;
 
-// Each teammate on a hand-drawn card in their own color; every other card sits
-// a little lower.
-export const Member = styled.div<{ $bg: string; $low?: boolean }>`
+// Each teammate on a hand-drawn card in one of the game's colors; every other
+// card sits a little lower. A color you can't see leaves the dashed outline.
+export const Member = styled.div<{ $bg: string; $seen: boolean; $low?: boolean }>`
   position: relative;
   padding: 16px 56px 16px 18px;
-  background: ${({ $bg }) => $bg};
-  border: 3px solid ${theme.colors.black};
+  background: ${({ $bg, $seen }) => ($seen ? $bg : 'transparent')};
+  border: 3px ${({ $seen }) => ($seen ? 'solid' : 'dashed')} ${theme.colors.black};
   border-radius: ${ROUGH_RADIUS};
   transform: ${({ $low }) => ($low ? 'translateY(14px)' : 'none')};
 
@@ -402,7 +405,8 @@ export const EyeGroup = styled.div<{ $size: number; $triangle?: boolean }>`
   flex: none;
   gap: 12px;
 
-  /* Two eyes below, one on top, like the game's eye counter. */
+  /* Two eyes below, one on top, like the game's eye counter; on phones, one
+     column in the bottom corner. */
   ${({ $size, $triangle }) => $triangle && css`
     display: grid;
     grid-template-columns: repeat(2, ${$size + 2}px);
@@ -411,6 +415,15 @@ export const EyeGroup = styled.div<{ $size: number; $triangle?: boolean }>`
     & > :first-child {
       grid-column: 1 / span 2;
       justify-self: center;
+    }
+
+    ${PHONE} {
+      grid-template-columns: ${$size}px;
+      gap: 6px;
+
+      & > :first-child {
+        grid-column: auto;
+      }
     }
   `}
 `;
@@ -449,11 +462,9 @@ export const EyePupil = styled.span<{ $size: number }>`
   border-radius: 50%;
 `;
 
-// The eyes and their legend, part of the page under the header.
+// The eyes and their legend, part of the page under the header, straight on
+// the board.
 export const EyeBar = styled.div`
-  background: ${theme.colors.white};
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05), 0 0 2px rgba(0, 0, 0, 0.15);
-
   .inner {
     display: flex;
     flex-wrap: wrap;
@@ -461,7 +472,7 @@ export const EyeBar = styled.div`
     gap: 12px 20px;
     max-width: ${MAX_WIDTH};
     margin: 0 auto;
-    padding: 10px ${SECTION_PADDING};
+    padding: 20px ${SECTION_PADDING} 0;
     box-sizing: border-box;
   }
 
@@ -474,7 +485,7 @@ export const EyeBar = styled.div`
 
   ${PHONE} {
     .inner {
-      padding: 10px ${PHONE_PADDING};
+      padding: 16px ${PHONE_PADDING} 0;
     }
 
     p {
@@ -484,42 +495,25 @@ export const EyeBar = styled.div`
 `;
 
 // Once the bar scrolls away, its eyes wait in the top-left corner, under the
-// header whenever the header is showing.
+// header whenever the header is showing. On phones they stand in the
+// bottom-right corner, within thumb reach and clear of the header.
 export const EyeDock = styled.div<{ $docked: boolean; $belowHeader: boolean }>`
   position: fixed;
   top: 12px;
   left: 12px;
   z-index: 9998;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
   opacity: ${({ $docked }) => ($docked ? 1 : 0)};
   visibility: ${({ $docked }) => ($docked ? 'visible' : 'hidden')};
   transform: translateY(${({ $belowHeader }) => ($belowHeader ? HEADER_HEIGHT : 0)}px);
   transition: opacity 0.2s ease-out, transform 0.35s ease-out,
     visibility 0s linear ${({ $docked }) => ($docked ? '0s' : '0.2s')};
 
-  .tip {
-    display: none;
-    max-width: 230px;
-    margin: 6px 0 0;
-    padding: 8px 14px;
-    background: ${theme.colors.white};
-    border: 3px solid ${theme.colors.black};
-    border-radius: ${ROUGH_RADIUS};
-    font-family: ${theme.fonts.hand};
-    font-size: 18px;
-    line-height: 1.3;
-  }
-
-  &:hover .tip,
-  &:focus-within .tip {
-    display: block;
-  }
-
   ${PHONE} {
-    left: 8px;
-    transform: translateY(${({ $belowHeader }) => ($belowHeader ? HEADER_HEIGHT_MOBILE : 0)}px);
+    top: auto;
+    left: auto;
+    right: 12px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    transform: none;
   }
 `;
 

@@ -42,11 +42,13 @@ const SHOT_PINS: { tilt: number; tape: Iris; tapeTilt: number }[] = [
   { tilt: -0.8, tape: 'green', tapeTilt: -2 },
 ];
 
-const TEAM: { name: string; role: keyof Dictionary['people']['roles']; color: string; linkedin: string }[] = [
-  { name: 'Raúl Jeri', role: 'technicalCreative', color: IRIS_INK.red.solid, linkedin: 'https://www.linkedin.com/in/rauljerilara/' },
-  { name: 'Iván Aráoz', role: 'productionMarketing', color: IRIS_INK.blue.solid, linkedin: 'https://www.linkedin.com/in/iaraoz06/' },
-  { name: 'Ariana Coronel', role: 'art', color: '#F98DC0', linkedin: 'https://www.linkedin.com/in/ariana-coronel-palma-48b653401/' },
-  { name: 'Gunter Brenner', role: 'soundMusic', color: IRIS_INK.green.solid, linkedin: 'https://www.linkedin.com/in/gunterbrenner/' },
+// Only the game's three colors, so the cards follow the eye like the rest of
+// the board.
+const TEAM: { name: string; role: keyof Dictionary['people']['roles']; color: Iris; linkedin: string }[] = [
+  { name: 'Raúl Jeri', role: 'technicalCreative', color: 'red', linkedin: 'https://www.linkedin.com/in/rauljerilara/' },
+  { name: 'Iván Aráoz', role: 'productionMarketing', color: 'blue', linkedin: 'https://www.linkedin.com/in/iaraoz06/' },
+  { name: 'Ariana Coronel', role: 'art', color: 'red', linkedin: 'https://www.linkedin.com/in/ariana-coronel-palma-48b653401/' },
+  { name: 'Gunter Brenner', role: 'soundMusic', color: 'green', linkedin: 'https://www.linkedin.com/in/gunterbrenner/' },
 ];
 
 const CloseIcon = () => (
@@ -248,7 +250,7 @@ const HomeContent = () => {
 
         <Team id="team">
           {TEAM.map(({ name, role, color, linkedin }, i) => (
-            <Member key={name} $bg={color} $low={i % 2 === 1}>
+            <Member key={name} $bg={IRIS_INK[color].solid} $seen={seen(color)} $low={i % 2 === 1}>
               <p className="name">{name}</p>
               <p className="role">{t.people.roles[role]}</p>
               <a

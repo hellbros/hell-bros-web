@@ -72,7 +72,7 @@ export const HeaderStyled = styled.header<HeaderStyledProps>`
     }
 
     .logo img {
-      height: 36px;
+      height: 44px;
       width: auto;
     }
 
@@ -97,7 +97,7 @@ export const HeaderStyled = styled.header<HeaderStyledProps>`
       top: ${HEADER_HEIGHT_MOBILE / 2}px;
 
       .logo img {
-        height: 26px;
+        height: 32px;
       }
 
       .menu-toggle {
