@@ -31,10 +31,11 @@ const en = {
     pathTitle: 'No one sees their own path',
     escapeTitle: 'Escape together',
     tagline: 'An **asymmetrical online co-op 3D platformer** where **3\u00A0demons** are trying to escape the Demon World.',
-    irisView: {
-      red: 'If your iris is red, you see **red**.',
-      blue: 'If your iris is blue, you see **blue**.',
-      green: 'If your iris is green, you see **green**.',
+    irisLabel: { red: '**Red** iris', blue: '**Blue** iris', green: '**Green** iris' },
+    irisSees: {
+      red: "The **red**-iris player's view",
+      blue: "The **blue**-iris player's view",
+      green: "The **green**-iris player's view",
     },
     trailerTitle: 'Demo trailer',
     play: (title: string) => `Play ${title}`,
@@ -124,10 +125,11 @@ const es: Dictionary = {
     pathTitle: 'Nadie ve su propio camino',
     escapeTitle: 'Escapen juntos',
     tagline: 'Un **juego de plataformas 3D cooperativo online y asimétrico** donde **3\u00A0demonios** intentan escapar del Mundo Demoníaco.',
-    irisView: {
-      red: 'Si tu iris es rojo, ves **rojo**.',
-      blue: 'Si tu iris es azul, ves **azul**.',
-      green: 'Si tu iris es verde, ves **verde**.',
+    irisLabel: { red: 'Iris **rojo**', blue: 'Iris **azul**', green: 'Iris **verde**' },
+    irisSees: {
+      red: 'Esto vería el jugador con iris **rojo**',
+      blue: 'Esto vería el jugador con iris **azul**',
+      green: 'Esto vería el jugador con iris **verde**',
     },
     trailerTitle: 'Tráiler de la demo',
     play: (title: string) => `Reproducir ${title}`,

@@ -222,11 +222,12 @@ const HomeContent = () => {
                 type="button"
                 className="screen"
                 onClick={(e) => { zoomTrigger.current = e.currentTarget; setZoom(i); }}
-                aria-label={`${plain(t.lookout.irisView[eye])} ${t.lookout.enlargeShot(i + 1, SHOTS.length)}`}
+                aria-label={`${plain(t.lookout.irisLabel[eye])}. ${t.lookout.enlargeShot(i + 1, SHOTS.length)}`}
               >
                 <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 90vw, 600px" />
               </button>
-              <p>{marked(t.lookout.irisView[eye], [eye])}</p>
+              {/* The open screen says whose view it is; the others just name their iris. */}
+              <p>{marked(iris === eye ? t.lookout.irisSees[eye] : t.lookout.irisLabel[eye], [eye])}</p>
             </Lane>
           ))}
         </Lanes>

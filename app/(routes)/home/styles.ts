@@ -335,10 +335,10 @@ export const Lanes = styled.div`
   }
 `;
 
-// What one iris sees: its screen framed in its color, and under it what that
-// iris means. The iris you pick opens its screen wide; the colors you can't
-// see go grey behind a dashed border. On phones the open one keeps its full
-// height and the others shrink to a strip.
+// What one iris sees: its screen framed in its color, and its label under it.
+// The iris you pick opens its screen wide; the colors you can't see go grey
+// behind a dashed border. On phones the open one keeps its full height and the
+// others shrink to a strip.
 export const Lane = styled.div<{ $color: string; $seen: boolean; $open: boolean }>`
   flex: ${({ $open }) => ($open ? 2.6 : 1)} 1 0;
   min-width: 0;
@@ -368,19 +368,28 @@ export const Lane = styled.div<{ $color: string; $seen: boolean; $open: boolean 
     object-fit: cover;
   }
 
+  /* One line: while a screen widens, its label is cut instead of wrapping. */
   p {
     margin: 0;
+    overflow: hidden;
     font-family: ${theme.fonts.hand};
     font-size: 19px;
     font-weight: 800;
     line-height: 1.35;
+    white-space: nowrap;
   }
 
+  /* Phones: the screens don't change width here, so a long label may wrap. */
   ${PHONE} {
     flex: none;
 
     .screen {
       height: ${({ $seen }) => ($seen ? 'calc(100cqw * 9 / 16)' : '96px')};
+    }
+
+    p {
+      font-size: 16px;
+      white-space: normal;
     }
   }
 `;
