@@ -145,7 +145,10 @@ export const SocialRow = styled.div`
     height: 44px;
     border-radius: 12px;
     color: ${theme.colors.white};
-    transition: color 0.2s ease, transform 0.2s ease;
+    transition: color 0.2s ease-out, transform 0.2s ease-out;
+    /* Its own layer from the start: otherwise the browser redraws the icon
+       sharp once the hover scale ends, and the growth lands in two steps. */
+    will-change: transform;
   }
 
   @media (hover: hover) {

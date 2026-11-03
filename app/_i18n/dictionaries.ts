@@ -70,6 +70,7 @@ const en = {
     clickToCopy: 'Click to copy',
     followUs: 'Follow us',
     rights: 'All rights reserved.',
+    socialLink: (network: string) => `Hell Bros on ${network} (opens in a new tab)`,
   },
   error: {
     title: 'Something went wrong!',
@@ -150,6 +151,7 @@ const es: Dictionary = {
     clickToCopy: 'Clic para copiar',
     followUs: 'Síguenos',
     rights: 'Todos los derechos reservados.',
+    socialLink: (network: string) => `Hell Bros en ${network} (se abre en una pestaña nueva)`,
   },
   error: {
     title: '¡Algo salió mal!',

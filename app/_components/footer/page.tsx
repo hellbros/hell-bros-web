@@ -122,7 +122,7 @@ const Footer = () => {
             <p className="label">{t.footer.followUs}</p>
             <SocialRow>
               {socials.map(({ label, href, Icon }) => (
-                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={t.footer.socialLink(label)}>
                   <Icon />
                 </a>
               ))}
