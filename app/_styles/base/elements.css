@@ -38,7 +38,7 @@ body {
   color: #000000;
   /* The board: dotted paper. */
   background-color: #F4F4F4;
-  background-image: radial-gradient(#C4C4C4 1.6px, transparent 1.8px);
+  background-image: radial-gradient(#DCDCDC 1.6px, transparent 1.8px);
   background-size: 28px 28px;
   -webkit-font-smoothing: antialiased;
 }
