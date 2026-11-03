@@ -61,7 +61,7 @@ const en = {
       art: 'Art Director',
       soundMusic: 'Sound & Music Designer',
     },
-    onLinkedin: (name: string) => `${name} on LinkedIn`,
+    onLinkedin: (name: string) => `${name} on LinkedIn (opens in a new tab)`,
   },
   footer: {
     location: 'Lima, Peru',
@@ -142,7 +142,7 @@ const es: Dictionary = {
       art: 'Dirección de Arte',
       soundMusic: 'Diseño de Sonido y Música',
     },
-    onLinkedin: (name: string) => `${name} en LinkedIn`,
+    onLinkedin: (name: string) => `${name} en LinkedIn (se abre en una pestaña nueva)`,
   },
   footer: {
     location: 'Lima, Perú',

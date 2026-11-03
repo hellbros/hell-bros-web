@@ -356,15 +356,26 @@ export const Team = styled.div`
   padding-bottom: 16px;
 `;
 
-// Each teammate on a hand-drawn card in one of the game's colors; every other
-// card sits a little lower. A color you can't see leaves the dashed outline.
-export const Member = styled.div<{ $bg: string; $seen: boolean; $low?: boolean }>`
+// Each teammate on a hand-drawn card in one of the game's colors, linking to
+// their LinkedIn; every other card sits a little lower and each one lifts on
+// hover. A color you can't see leaves the dashed outline.
+export const Member = styled.a<{ $bg: string; $seen: boolean; $low?: boolean }>`
   position: relative;
-  padding: 16px 56px 16px 18px;
+  display: block;
+  padding: 16px 18px;
+  color: ${theme.colors.black};
+  text-decoration: none;
   background: ${({ $bg, $seen }) => ($seen ? $bg : 'transparent')};
   border: 3px ${({ $seen }) => ($seen ? 'solid' : 'dashed')} ${theme.colors.black};
   border-radius: ${ROUGH_RADIUS};
-  transform: ${({ $low }) => ($low ? 'translateY(14px)' : 'none')};
+  transform: translateY(${({ $low }) => ($low ? 14 : 0)}px);
+  transition: transform 0.15s ease-out;
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(${({ $low }) => ($low ? 10 : -4)}px);
+    }
+  }
 
   .name {
     margin: 0;
@@ -380,27 +391,15 @@ export const Member = styled.div<{ $bg: string; $seen: boolean; $low?: boolean }
     line-height: 1.25;
   }
 
-  .linkedin {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    color: ${theme.colors.black};
-  }
-
-  .linkedin svg {
-    width: 22px;
-    height: 22px;
-    fill: currentColor;
-  }
-
   /* Stacked in one column there's nothing to stagger against. */
   ${PHONE} {
     transform: none;
+
+    @media (hover: hover) {
+      &:hover {
+        transform: translateY(-4px);
+      }
+    }
   }
 `;
 
