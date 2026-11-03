@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
-import FooterClaw from '@/public/assets/look-out/footer-hand.webp';
+import FooterClaw from '@/public/assets/look-out/hell-bros-look-out-demon-hand.webp';
 import { useDictionary } from '@/app/_i18n/LocaleProvider';
 import { HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
@@ -131,7 +131,7 @@ const Footer = () => {
         </FooterGrid>
 
         <FooterBottom>
-          <Image className="claw" src={FooterClaw} alt="" sizes="(max-width: 1000px) 100vw, 1000px" />
+          <Image className="claw" src={FooterClaw} alt={t.footer.handArtAlt} sizes="(max-width: 1000px) 100vw, 1000px" />
           <p className="slogan">Games from hell</p>
           © {new Date().getFullYear()} Hell Bros. {t.footer.rights}
         </FooterBottom>

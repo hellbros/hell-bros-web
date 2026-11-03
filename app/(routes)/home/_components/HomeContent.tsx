@@ -2,16 +2,16 @@
 import { useState, useEffect, useRef, type CSSProperties, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
 import EyePicker, { IRIS_INK, type Iris } from "./EyePicker";
-import { SectionContainer, Board, HeroGrid, HeroLogo, HeroText, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
+import { SectionContainer, Board, HeroGrid, HeroLogo, Tagline, Mark, Print, Tape, WishNote, Pill, Shots, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
 import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
-import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
+import LookOutLogo from "@/public/assets/look-out/look-out-logo-hell-bros.png"
 import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
 import Shot1 from "@/public/assets/images/1.png"
 import Shot2 from "@/public/assets/images/2.png"
 import Shot3 from "@/public/assets/images/3.png"
 import Shot4 from "@/public/assets/images/4.png"
 import SteamCapsule from "@/public/assets/look-out/steam-capsule.webp"
-import DemonsInWater from "@/public/assets/look-out/demons-in-water.webp"
+import DemonsInWater from "@/public/assets/look-out/hell-bros-look-out-demons-in-water.webp"
 import Image from "next/image";
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
 import { trapTab } from "@/app/_utils/focus";
@@ -171,10 +171,7 @@ const HomeContent = () => {
           <HeroLogo ref={logoRef}>
             <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="(max-width: 700px) 90vw, 460px" priority />
           </HeroLogo>
-          <HeroText>
-            <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
-            <p className="hint">{t.lookout.eyesHint}</p>
-          </HeroText>
+          <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
         </HeroGrid>
 
         <Print $tilt={-0.7} $width="min(880px, 100%)">

@@ -6,6 +6,13 @@ export const HEADER_HEIGHT_MOBILE = 48;
 export const HIGHLIGHT_EMAIL_EVENT = 'hellbros:highlight-email';
 
 export const SITE_URL = 'https://www.hellbrosstudio.com';
+// Look Out art we want Google Images to tie to Hell Bros, at the fixed public
+// addresses the sitemap and the game's structured data point to.
+export const SHOWCASE_IMAGES = [
+  '/assets/look-out/look-out-logo-hell-bros.png',
+  '/assets/look-out/hell-bros-look-out-demons-in-water.webp',
+  '/assets/look-out/hell-bros-look-out-demon-hand.webp',
+].map((path) => `${SITE_URL}${path}`);
 export const STEAM_URL = 'https://store.steampowered.com/app/4605750/';
 // The Steam page isn't public yet: the Wishlist button shows a "Coming soon!"
 // capsule popup instead of linking out. Flip to true once the store page is live.

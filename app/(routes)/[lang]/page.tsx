@@ -4,7 +4,7 @@ import Footer from '@/app/_components/footer/page'
 import HomeContent from '../home/_components/HomeContent'
 import { dictionaries } from '@/app/_i18n/dictionaries'
 import { DEFAULT_LOCALE, localePath, localeUrl, otherLocale, toLocale, type Locale } from '@/app/_i18n/locales'
-import { SITE_URL, STEAM_PAGE_LIVE, STEAM_URL } from '@/app/_utils/constants'
+import { SHOWCASE_IMAGES, SITE_URL, STEAM_PAGE_LIVE, STEAM_URL } from '@/app/_utils/constants'
 
 type Props = {
   params: Promise<{ lang: string }>
@@ -75,6 +75,7 @@ const videoGameJsonLd = (locale: Locale) => ({
   '@type': 'VideoGame',
   name: 'Look Out: Indie Game',
   description: dictionaries[locale].meta.gameDescription,
+  image: SHOWCASE_IMAGES,
   url: STEAM_PAGE_LIVE ? STEAM_URL : localeUrl(locale),
   publisher: {
     '@type': 'Organization',

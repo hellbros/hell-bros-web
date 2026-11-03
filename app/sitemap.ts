@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { LOCALES, localeUrl } from '@/app/_i18n/locales'
+import { SHOWCASE_IMAGES } from '@/app/_utils/constants'
 
 const sitemap = (): MetadataRoute.Sitemap =>
   LOCALES.map((locale) => ({
@@ -13,6 +14,7 @@ const sitemap = (): MetadataRoute.Sitemap =>
         es: localeUrl('es'),
       },
     },
+    images: SHOWCASE_IMAGES,
   }))
 
 export default sitemap

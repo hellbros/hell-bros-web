@@ -113,20 +113,6 @@ export const HeroLogo = styled.h1`
   }
 `;
 
-export const HeroText = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-
-  /* The eyes' legend, written by hand under the tagline. */
-  .hint {
-    margin: 0;
-    font-family: ${theme.fonts.hand};
-    font-size: 20px;
-    line-height: 1.3;
-  }
-`;
-
 export const Tagline = styled.p`
   margin: 0;
   font-size: clamp(23px, 2.7vw, 30px);
