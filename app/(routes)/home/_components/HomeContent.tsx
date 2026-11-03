@@ -226,8 +226,7 @@ const HomeContent = () => {
             <figcaption>{t.lookout.chainCaption}</figcaption>
           </Print>
           <div className="copy">
-            <p>{marked(t.lookout.platforms, ['red', 'blue'])}</p>
-            <p>{marked(t.lookout.players, ['green', 'red', 'blue'])}</p>
+            <p>{marked(t.lookout.mechanic, ['red', 'blue', 'green'])}</p>
           </div>
         </Mechanics>
       </Board>
