@@ -464,16 +464,13 @@ export const EyePupil = styled.span<{ $size: number }>`
 // The eyes wait in the top-left corner (bottom center on phones), under the
 // header whenever the header is showing (also when keyboard focus calls it
 // back while scrolled away).
-export const EyeDock = styled.div<{ $docked: boolean; $belowHeader: boolean }>`
+export const EyeDock = styled.div<{ $belowHeader: boolean }>`
   position: fixed;
   top: 12px;
   left: 12px;
   z-index: 9998;
-  opacity: ${({ $docked }) => ($docked ? 1 : 0)};
-  visibility: ${({ $docked }) => ($docked ? 'visible' : 'hidden')};
   transform: translateY(${({ $belowHeader }) => ($belowHeader ? HEADER_HEIGHT : 0)}px);
-  transition: opacity 0.2s ease-out, transform 0.35s ease-out,
-    visibility 0s linear ${({ $docked }) => ($docked ? '0s' : '0.2s')};
+  transition: transform 0.35s ease-out;
 
   .site-header:has(:focus-visible) ~ main & {
     transform: translateY(${HEADER_HEIGHT}px);

@@ -59,7 +59,6 @@ const HomeContent = () => {
   const t = useDictionary();
   // The eye the visitor picked: only its iris color stays on the board.
   const [iris, setIris] = useState<Iris | null>(null);
-  const logoRef = useRef<HTMLHeadingElement>(null);
   const [zoom, setZoom] = useState<number | null>(null);
   const [comingSoon, setComingSoon] = useState(false);
   const [popupBelow, setPopupBelow] = useState(false);
@@ -157,12 +156,12 @@ const HomeContent = () => {
   return (
     <SectionContainer id="inicio" tabIndex={-1}>
 
-      <EyePicker iris={iris} onPick={pickIris} logo={logoRef} />
+      <EyePicker iris={iris} onPick={pickIris} />
 
       {/* LOOK OUT: logo + tagline, trailer, wishlist note, shots, how it plays */}
       <Board id="lookout">
         <HeroGrid>
-          <HeroLogo ref={logoRef}>
+          <HeroLogo>
             <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="(max-width: 700px) 90vw, 460px" priority />
           </HeroLogo>
           <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
