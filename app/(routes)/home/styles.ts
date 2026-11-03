@@ -406,7 +406,7 @@ export const Member = styled.a<{ $bg: string; $seen: boolean; $low?: boolean }>`
 /* Eyes ------------------------------------------------------------------- */
 
 // The chosen eye narrows its lid into a V over the iris instead of wearing a
-// ring; picking another eye swaps the lid over at once.
+// ring. Both shapes have the same points so the lid can close in a blink.
 const LID_OPEN = 'polygon(0 0, 50% 0, 100% 0, 100% 100%, 0 100%)';
 const LID_V = 'polygon(0 12%, 50% 41%, 100% 12%, 100% 100%, 0 100%)';
 
@@ -447,6 +447,7 @@ export const EyeIris = styled.span<{ $size: number; $color: string; $chosen: boo
   background: ${({ $color }) => $color};
   border-radius: 50%;
   clip-path: ${({ $chosen }) => ($chosen ? LID_V : LID_OPEN)};
+  transition: clip-path 0.1s ease-out;
 `;
 
 // Always on top of the iris, even while the lid cuts it.
