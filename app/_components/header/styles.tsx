@@ -24,8 +24,9 @@ export const HeaderStyled = styled.header<HeaderStyledProps>`
     height 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s ease-out;
   z-index: 9999;
 
-  /* Tabbing into it brings it back. */
-  &:focus-within {
+  /* Tabbing into it brings it back. Keyboard focus only: a clicked menu button
+     keeps focus while the page scrolls, and the header would never leave. */
+  &:has(:focus-visible) {
     transform: none;
   }
 

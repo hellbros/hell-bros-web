@@ -405,8 +405,7 @@ export const EyeGroup = styled.div<{ $size: number; $triangle?: boolean }>`
   flex: none;
   gap: 12px;
 
-  /* Two eyes below, one on top, like the game's eye counter; on phones, one
-     column in the bottom corner. */
+  /* Two eyes below, one on top, like the game's eye counter. */
   ${({ $size, $triangle }) => $triangle && css`
     display: grid;
     grid-template-columns: repeat(2, ${$size + 2}px);
@@ -415,15 +414,6 @@ export const EyeGroup = styled.div<{ $size: number; $triangle?: boolean }>`
     & > :first-child {
       grid-column: 1 / span 2;
       justify-self: center;
-    }
-
-    ${PHONE} {
-      grid-template-columns: ${$size}px;
-      gap: 6px;
-
-      & > :first-child {
-        grid-column: auto;
-      }
     }
   `}
 `;
@@ -436,7 +426,7 @@ export const EyeButton = styled.button<{ $size: number }>`
   padding: 0;
   box-sizing: border-box;
   background: ${theme.colors.white};
-  border: 3px solid ${theme.colors.black};
+  border: 0;
   border-radius: 50%;
   cursor: pointer;
 `;
@@ -495,8 +485,8 @@ export const EyeBar = styled.div`
 `;
 
 // Once the bar scrolls away, its eyes wait in the top-left corner, under the
-// header whenever the header is showing. On phones they stand in the
-// bottom-right corner, within thumb reach and clear of the header.
+// header whenever the header is showing (also when keyboard focus calls it
+// back while scrolled away).
 export const EyeDock = styled.div<{ $docked: boolean; $belowHeader: boolean }>`
   position: fixed;
   top: 12px;
@@ -508,12 +498,17 @@ export const EyeDock = styled.div<{ $docked: boolean; $belowHeader: boolean }>`
   transition: opacity 0.2s ease-out, transform 0.35s ease-out,
     visibility 0s linear ${({ $docked }) => ($docked ? '0s' : '0.2s')};
 
+  .site-header:has(:focus-visible) ~ main & {
+    transform: translateY(${HEADER_HEIGHT}px);
+  }
+
   ${PHONE} {
-    top: auto;
-    left: auto;
-    right: 12px;
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    transform: none;
+    left: 8px;
+    transform: translateY(${({ $belowHeader }) => ($belowHeader ? HEADER_HEIGHT_MOBILE : 0)}px);
+
+    .site-header:has(:focus-visible) ~ main & {
+      transform: translateY(${HEADER_HEIGHT_MOBILE}px);
+    }
   }
 `;
 
