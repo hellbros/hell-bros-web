@@ -27,9 +27,9 @@ export const IRIS_INK: Record<Iris, { solid: string; mark: string }> = {
    own body tied to the next by a string nobody sees: the grabbed one stays
    under the finger, the others follow on springs, bunch up the faster they go
    (never overlapping) and spread back with a little bounce once they stop.
-   The faster they go, the more the grabbed eye leads: the others string out
-   behind it along the way they're going, like an arrow or a comet's tail,
-   and fold back into their shape as they slow down.
+   Once thrown they don't fly as a block: the grabbed eye is the quickest,
+   then whichever of the others is nearer its landing spot, so they arrive
+   one after another.
    Where they land, each takes the free spot of the arrangement nearest to it,
    so none crosses the others: the logo's order only holds until the first
    throw. */
@@ -78,10 +78,9 @@ const SQUEEZE_SPEED = 1600;
 const STRING_MAX = 1.7;
 const PERSONAL_SPACE = 0.94;
 const LIFT = 1.08;
-// From this speed (px/s) on, the eyes fly fully in a line behind the one that
-// leads, this far apart.
-const TRAIL_SPEED = 700;
-const TRAIL_GAP = S + 4;
+// How briskly each eye chases its spot after a throw, against the usual
+// spring: the grabbed one, then the others from nearest their landing spot.
+const PACE = { grabbed: 1.8, near: 1, far: 0.55 };
 // The grip: the eyes' whole group plus this margin, so a press between them or
 // just off one still catches the nearest eye.
 const GRIP_MARGIN = 14;
@@ -167,11 +166,8 @@ const EyePicker = ({ iris, onPick }: Props) => {
     let velocity: Point = { x: 0, y: 0 };
     let target: Point | null = null; // where a throw glides to
     let squeeze = 1;
-    // The line behind the leading eye: how much (0 to 1), which eye leads and
-    // which way they're heading.
-    let trail = 0;
-    let leader = -1;
-    let heading: Point = { x: 1, y: 0 };
+    // Each eye's pace after a throw (1 while dragged or at rest).
+    let pace = IRISES.map(() => 1);
     let lift = 1;
     const bodies: Body[] = IRISES.map(() => ({ x: 0, y: 0, vx: 0, vy: 0 }));
     let drag: {
@@ -297,66 +293,9 @@ const EyePicker = ({ iris, onPick }: Props) => {
     const tieStrings = () => {
       for (let i = 0; i < bodies.length; i++) {
         for (let j = i + 1; j < bodies.length; j++) {
-          // In a line, the string has to reach two gaps.
-          const max = j === i + 1 ? Math.max(restLength(i) * STRING_MAX, TRAIL_GAP * 2.2) : Infinity;
+          const max = j === i + 1 ? restLength(i) * STRING_MAX : Infinity;
           keepApart(i, j, S * PERSONAL_SPACE, max);
         }
-      }
-    };
-
-    // At speed the others string out behind the leading eye like a snake: each
-    // one a gap behind the eye ahead of it, along the line between them, so the
-    // tail follows the leader's actual path. The one nearer the leader goes
-    // first. Blended in by `trail`, so slow moves keep the shape.
-    // The followers, the one nearer the leader first.
-    const followers = () => {
-      const head = bodies[leader];
-      const gap = (b: Body) => Math.hypot(b.x - head.x, b.y - head.y);
-      return bodies
-        .map((b, i) => i)
-        .filter((i) => i !== leader)
-        .sort((a, c) => gap(bodies[a]) - gap(bodies[c]));
-    };
-
-    // Where each follower would be in a straight line behind the leader.
-    const lineSpots = (): Record<number, Point> => {
-      const spots: Record<number, Point> = {};
-      if (leader < 0 || trail < 0.001) return spots;
-      const head = bodies[leader];
-      followers().forEach((i, k) => {
-        spots[i] = { x: head.x - heading.x * TRAIL_GAP * (k + 1), y: head.y - heading.y * TRAIL_GAP * (k + 1) };
-      });
-      return spots;
-    };
-
-    const followLeader = (dt: number, before: Point[]) => {
-      if (leader < 0 || trail < 0.001) return;
-      let ahead = bodies[leader];
-      for (const i of followers()) {
-        const b = bodies[i];
-        let dx = b.x - ahead.x;
-        let dy = b.y - ahead.y;
-        let d = Math.hypot(dx, dy);
-        if (d < 0.01) {
-          dx = -heading.x;
-          dy = -heading.y;
-          d = 1;
-        }
-        // Half straightened against the heading: an arrow that still bends a
-        // little through curves.
-        dx = dx / d - heading.x * trail * 0.5;
-        dy = dy / d - heading.y * trail * 0.5;
-        d = Math.hypot(dx, dy) || 1;
-        const x = ahead.x + (dx / d) * TRAIL_GAP;
-        const y = ahead.y + (dy / d) * TRAIL_GAP;
-        const nx = b.x + (x - b.x) * trail;
-        const ny = b.y + (y - b.y) * trail;
-        // Its speed becomes the speed it actually moved at this step.
-        b.vx += ((nx - before[i].x) / dt - b.vx) * trail;
-        b.vy += ((ny - before[i].y) / dt - b.vy) * trail;
-        b.x = nx;
-        b.y = ny;
-        ahead = b;
       }
     };
 
@@ -382,10 +321,6 @@ const EyePicker = ({ iris, onPick }: Props) => {
       squeeze += (squeezeGoal - squeeze) * Math.min(1, dt * 10);
       const liftGoal = drag?.moving && !still ? LIFT : 1;
       lift += (liftGoal - lift) * Math.min(1, dt * 18);
-      // Faster also means more of a line behind the leader.
-      if (speed > 40) heading = { x: velocity.x / speed, y: velocity.y / speed };
-      const trailGoal = still || leader < 0 ? 0 : Math.min(1, speed / TRAIL_SPEED);
-      trail += (trailGoal - trail) * Math.min(1, dt * 10);
 
       // The group: under the finger while dragged, gliding to its side after.
       if (drag?.moving) {
@@ -414,14 +349,8 @@ const EyePicker = ({ iris, onPick }: Props) => {
         }
       }
 
-      const before = bodies.map((b) => ({ x: b.x, y: b.y }));
-      const line = lineSpots();
       bodies.forEach((b, i) => {
-        const spot = spotOf(i);
-        const inLine = line[i];
-        const to = inLine && i !== leader
-          ? { x: spot.x + (inLine.x - spot.x) * trail, y: spot.y + (inLine.y - spot.y) * trail }
-          : spot;
+        const to = spotOf(i);
         if (drag?.moving && drag.eye === i) {
           // Held: its spot is under the finger, as long as the group fits.
           b.vx = (to.x - b.x) / dt;
@@ -431,19 +360,17 @@ const EyePicker = ({ iris, onPick }: Props) => {
         } else if (still) {
           Object.assign(b, { x: to.x, y: to.y, vx: 0, vy: 0 });
         } else {
-          spring(b, to, EYE_SPRING.k, EYE_SPRING.c, dt);
+          // A brisker spring keeps an eye closer to its moving spot; damping
+          // grows with it so each sways alike.
+          spring(b, to, EYE_SPRING.k * pace[i], EYE_SPRING.c * Math.sqrt(pace[i]), dt);
         }
       });
-      if (!still) {
-        followLeader(dt, before);
-        tieStrings();
-      }
+      if (!still) tieStrings();
     };
 
     const resting = () =>
       !drag?.moving &&
       !target &&
-      trail < 0.001 &&
       Math.abs(squeeze - 1) < 0.001 &&
       Math.abs(lift - 1) < 0.001 &&
       bodies.every((b, i) => {
@@ -458,8 +385,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
       const steps = Math.max(1, Math.ceil(elapsed / (1 / 240)));
       for (let i = 0; i < steps; i++) step(elapsed / steps, now);
       if (resting()) {
-        trail = 0;
-        leader = -1;
+        pace = IRISES.map(() => 1);
         settle();
         frame = 0;
         return;
@@ -504,7 +430,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
       if (!drag.moving) {
         if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < drag.slop) return;
         drag.moving = true;
-        leader = drag.eye;
+        pace = IRISES.map(() => 1);
         target = null;
         buttons[drag.eye].setPointerCapture(e.pointerId);
         dock.dataset.dragging = 'true';
@@ -591,6 +517,15 @@ const EyePicker = ({ iris, onPick }: Props) => {
         target = { x: sideX(side, f), y: clamp(carried.y, room.min, room.max) };
         saveSpot({ side, fy: room.max > room.min ? (target.y - room.min) / (room.max - room.min) : 0, order });
       }
+      // The grabbed eye flies quickest; of the others, the one nearer its
+      // landing spot goes next.
+      const landing = target;
+      const toLand = (i: number) => {
+        const at = slot(f, i);
+        return Math.hypot(landing.x + at.x - bodies[i].x, landing.y + at.y - bodies[i].y);
+      };
+      const others = bodies.map((b, i) => i).filter((i) => i !== done.eye).sort((a, b) => toLand(a) - toLand(b));
+      pace = IRISES.map((id, i) => (i === done.eye ? PACE.grabbed : i === others[0] ? PACE.near : PACE.far));
       wake();
       // The click that follows a drag isn't a pick.
       swallowClick = true;
