@@ -26,7 +26,10 @@ export const IRIS_INK: Record<Iris, { solid: string; mark: string }> = {
    can also land back in their row at the bottom center, within thumb reach. Each eye is its
    own body tied to the next by a string nobody sees: the grabbed one stays
    under the finger, the others follow on springs, bunch up the faster they go
-   (never overlapping) and spread back with a little bounce once they stop. */
+   (never overlapping) and spread back with a little bounce once they stop.
+   Where they land, each takes the free spot of the arrangement nearest to it,
+   so none crosses the others: the logo's order only holds until the first
+   throw. */
 
 type Point = { x: number; y: number };
 type Layout = 'triangle' | 'row' | 'column';
@@ -73,8 +76,15 @@ const STRING_MAX = 1.7;
 const PERSONAL_SPACE = 0.94;
 const LIFT = 1.08;
 
-// The bottom spot is the phone's row; fy only counts on a side.
-type Spot = { side: 'left' | 'right' | 'bottom'; fy: number };
+// The bottom spot is the phone's row; fy only counts on a side. order[i] is
+// the arrangement's spot eye i took (spots listed in the logo's order).
+type Spot = { side: 'left' | 'right' | 'bottom'; fy: number; order?: number[] };
+
+// The ways three eyes can fill three spots.
+const ORDERS = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+const LOGO_ORDER = ORDERS[0];
+const isOrder = (order: unknown): order is number[] =>
+  Array.isArray(order) && ORDERS.some((o) => o.every((v, i) => v === order[i]));
 type Body = { x: number; y: number; vx: number; vy: number };
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -162,13 +172,17 @@ const EyePicker = ({ iris, onPick }: Props) => {
     let last = 0;
     let swallowClick = false;
 
+    // Which of the arrangement's spots each eye holds.
+    let order = LOGO_ORDER;
+
     const formation = () => FORMATIONS[layout];
+    const slot = (f: Formation, i: number) => f.at[IRISES[order[i]]];
 
     // Where each eye wants to be: its spot in the arrangement, pulled toward
     // the middle while the group moves fast.
     const spotOf = (i: number): Point => {
       const f = formation();
-      const at = f.at[IRISES[i]];
+      const at = slot(f, i);
       const cx = (f.w - S) / 2;
       const cy = (f.h - S) / 2;
       return { x: origin.x + cx + (at.x - cx) * squeeze, y: origin.y + cy + (at.y - cy) * squeeze };
@@ -176,8 +190,8 @@ const EyePicker = ({ iris, onPick }: Props) => {
 
     const restLength = (i: number) => {
       const f = formation();
-      const a = f.at[IRISES[i]];
-      const b = f.at[IRISES[i + 1]];
+      const a = slot(f, i);
+      const b = slot(f, i + 1);
       return Math.hypot(b.x - a.x, b.y - a.y);
     };
 
@@ -209,6 +223,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
     // The resting place: where the visitor left the eyes, or the default.
     const home = () => {
       const spot = readSpot();
+      order = spot && isOrder(spot.order) ? spot.order : LOGO_ORDER;
       if (spot && spot.side !== 'bottom') {
         layout = isPhone() ? 'column' : 'triangle';
         const f = formation();
@@ -287,7 +302,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
 
       // The group: under the finger while dragged, gliding to its side after.
       if (drag?.moving) {
-        const at = f.at[IRISES[drag.eye]];
+        const at = slot(f, drag.eye);
         const cx = (f.w - S) / 2;
         const cy = (f.h - S) / 2;
         const grabbed = { x: drag.pointer.x - drag.grab.x, y: drag.pointer.y - drag.grab.y };
@@ -434,14 +449,36 @@ const EyePicker = ({ iris, onPick }: Props) => {
         const to = formation();
         origin = { x: origin.x + (from.w - to.w) / 2, y: origin.y + (from.h - to.h) / 2 };
       }
+      // Each eye takes the spot nearest to where it is in the group: of the six
+      // ways to share the spots, the one with the least travel.
+      const f = formation();
+      const mean = (points: Point[]) => ({
+        x: points.reduce((sum, p) => sum + p.x, 0) / points.length,
+        y: points.reduce((sum, p) => sum + p.y, 0) / points.length,
+      });
+      const spots = IRISES.map((id) => f.at[id]);
+      const spotsMid = mean(spots);
+      const eyesMid = mean(bodies);
+      const travelOf = (candidate: number[]) => bodies.reduce((sum, b, i) => {
+        const at = spots[candidate[i]];
+        return sum + ((b.x - eyesMid.x) - (at.x - spotsMid.x)) ** 2 + ((b.y - eyesMid.y) - (at.y - spotsMid.y)) ** 2;
+      }, 0);
+      // On a tie the eyes keep the spots they had.
+      let travel = travelOf(order);
+      for (const candidate of ORDERS) {
+        const cost = travelOf(candidate);
+        if (cost < travel - 0.5) {
+          travel = cost;
+          order = candidate;
+        }
+      }
       if (side === 'bottom') {
         target = bottomSpot();
-        saveSpot({ side, fy: 1 });
+        saveSpot({ side, fy: 1, order });
       } else {
-        const f = formation();
         const room = verticalRoom(f);
         target = { x: sideX(side, f), y: clamp(carried.y, room.min, room.max) };
-        saveSpot({ side, fy: room.max > room.min ? (target.y - room.min) / (room.max - room.min) : 0 });
+        saveSpot({ side, fy: room.max > room.min ? (target.y - room.min) / (room.max - room.min) : 0, order });
       }
       wake();
       // The click that follows a drag isn't a pick.
