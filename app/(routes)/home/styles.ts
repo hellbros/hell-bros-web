@@ -185,9 +185,8 @@ export const Intro = styled.section`
     gap: 24px;
   }
 
-  /* Phones: one centered column under the studio's logo. The button spans the
-     width, so the coming-soon popup that hangs from its right edge stays on
-     screen. */
+  /* Phones: one centered column under the studio's logo, the button spanning
+     its width. */
   ${PHONE} {
     gap: 12px;
     justify-items: center;
@@ -709,12 +708,13 @@ export const TrailerFrame = styled.div`
 
 // "Coming soon!" popup for the Wishlist button while the Steam page isn't
 // live: the Steam capsule under a green header, framed in the same green.
-// Pops above the button's right edge like a badge, or below it when there's no
-// room under the fixed header; always mounted (just hidden) so the image is
-// already loaded when it shows.
+// Pops centered above the button, or below it when there's no room under the
+// fixed header; always mounted (just hidden) so the image is already loaded
+// when it shows.
 export const CapsulePopup = styled.span<{ $visible: boolean; $below: boolean }>`
   position: absolute;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   ${({ $below }) => ($below ? 'top' : 'bottom')}: calc(100% + ${CAPSULE_POPUP_GAP}px);
   z-index: 2;
   display: block;
