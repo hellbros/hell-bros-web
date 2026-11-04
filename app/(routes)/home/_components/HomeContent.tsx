@@ -200,9 +200,10 @@ const HomeContent = () => {
         </div>
       </Intro>
 
-      {/* Part 1: the three demons, trapped. */}
+      {/* Part 1: the three demons, trapped: who they are and why they escape. */}
       <Act>
         <h2>{t.lookout.trappedTitle}</h2>
+        <p>{t.lookout.story}</p>
         <StoryArt>
           <ArtFrame>
             <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} fill sizes="(max-width: 1000px) 90vw, 856px" />
