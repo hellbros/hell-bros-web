@@ -22,7 +22,8 @@ export const IRIS_INK: Record<Iris, { solid: string; mark: string }> = {
 
 /* Dragging ----------------------------------------------------------------
    The visitor can grab any eye and throw the three: they fly on, land on the
-   nearest side and stay at the height they were thrown to. Each eye is its
+   nearest side and stay at the height they were thrown to. On phones they
+   can also land back in their row at the bottom center, within thumb reach. Each eye is its
    own body tied to the next by a string nobody sees: the grabbed one stays
    under the finger, the others follow on springs, bunch up the faster they go
    (never overlapping) and spread back with a little bounce once they stop. */
@@ -72,7 +73,8 @@ const STRING_MAX = 1.7;
 const PERSONAL_SPACE = 0.94;
 const LIFT = 1.08;
 
-type Spot = { side: 'left' | 'right'; fy: number };
+// The bottom spot is the phone's row; fy only counts on a side.
+type Spot = { side: 'left' | 'right' | 'bottom'; fy: number };
 type Body = { x: number; y: number; vx: number; vy: number };
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -85,7 +87,7 @@ function readSpot(): Spot | null {
     const spot = JSON.parse(window.localStorage.getItem(spotKey()) ?? 'null');
     if (!spot || !Number.isFinite(spot.fy)) return null;
     // Spots saved before the eyes snapped to a side kept a free x instead.
-    if (spot.side !== 'left' && spot.side !== 'right') {
+    if (spot.side !== 'left' && spot.side !== 'right' && spot.side !== 'bottom') {
       return Number.isFinite(spot.fx) ? { side: spot.fx < 0.5 ? 'left' : 'right', fy: spot.fy } : null;
     }
     return spot;
@@ -109,7 +111,7 @@ function verticalRoom(f: Formation) {
   return { min, max: Math.max(min, window.innerHeight - f.h - EDGE) };
 }
 
-function sideX(side: Spot['side'], f: Formation) {
+function sideX(side: 'left' | 'right', f: Formation) {
   return side === 'left' ? EDGE : Math.max(EDGE, document.documentElement.clientWidth - f.w - EDGE);
 }
 
@@ -198,18 +200,23 @@ const EyePicker = ({ iris, onPick }: Props) => {
       draw();
     };
 
+    // The phone's row at the bottom center, where the stylesheet puts it.
+    const bottomSpot = (): Point => {
+      const f = FORMATIONS.row;
+      return { x: (document.documentElement.clientWidth - f.w) / 2, y: window.innerHeight - bottomGap - f.h };
+    };
+
     // The resting place: where the visitor left the eyes, or the default.
     const home = () => {
       const spot = readSpot();
-      if (spot) {
+      if (spot && spot.side !== 'bottom') {
         layout = isPhone() ? 'column' : 'triangle';
         const f = formation();
         const room = verticalRoom(f);
         origin = { x: sideX(spot.side, f), y: room.min + spot.fy * (room.max - room.min) };
       } else if (isPhone()) {
         layout = 'row';
-        const f = formation();
-        origin = { x: (document.documentElement.clientWidth - f.w) / 2, y: window.innerHeight - bottomGap - f.h };
+        origin = bottomSpot();
       } else {
         layout = 'triangle';
         origin = { x: 12, y: HEADER_HEIGHT + 12 };
@@ -402,20 +409,40 @@ const EyePicker = ({ iris, onPick }: Props) => {
       velocity = pointerVelocity(performance.now());
       drag = null;
 
-      // Where the throw would carry the group decides its side.
+      // Where the throw would carry the group decides where it lands: the
+      // nearer side or, on phones, the row at the bottom center if that's
+      // nearer still.
+      const width = document.documentElement.clientWidth;
       const carried = { x: origin.x + velocity.x * CARRY, y: origin.y + velocity.y * CARRY };
-      const side: Spot['side'] = carried.x + formation().w / 2 < document.documentElement.clientWidth / 2 ? 'left' : 'right';
-      if (isPhone() && layout !== 'column') {
+      const center = { x: carried.x + formation().w / 2, y: carried.y + formation().h / 2 };
+      let side: Spot['side'] = center.x < width / 2 ? 'left' : 'right';
+      if (isPhone()) {
+        const row = FORMATIONS.row;
+        const bottom = bottomSpot();
+        const toSide = Math.min(center.x - (EDGE + S / 2), width - EDGE - S / 2 - center.x);
+        const toBottom = Math.hypot(center.x - width / 2, center.y - (bottom.y + row.h / 2));
+        // A throw that's mostly downward goes home too, even if its carry
+        // would overshoot the middle.
+        const downward = velocity.y > 400 && velocity.y > 1.5 * Math.abs(velocity.x);
+        if (toBottom < toSide || (downward && center.y > window.innerHeight * 0.6)) side = 'bottom';
+      }
+      const turnTo: Layout = !isPhone() ? 'triangle' : side === 'bottom' ? 'row' : 'column';
+      if (turnTo !== layout) {
         // Keeps the eyes where they are while the arrangement turns.
         const from = formation();
-        layout = 'column';
+        layout = turnTo;
         const to = formation();
         origin = { x: origin.x + (from.w - to.w) / 2, y: origin.y + (from.h - to.h) / 2 };
       }
-      const f = formation();
-      const room = verticalRoom(f);
-      target = { x: sideX(side, f), y: clamp(carried.y, room.min, room.max) };
-      saveSpot({ side, fy: room.max > room.min ? (target.y - room.min) / (room.max - room.min) : 0 });
+      if (side === 'bottom') {
+        target = bottomSpot();
+        saveSpot({ side, fy: 1 });
+      } else {
+        const f = formation();
+        const room = verticalRoom(f);
+        target = { x: sideX(side, f), y: clamp(carried.y, room.min, room.max) };
+        saveSpot({ side, fy: room.max > room.min ? (target.y - room.min) / (room.max - room.min) : 0 });
+      }
       wake();
       // The click that follows a drag isn't a pick.
       swallowClick = true;
