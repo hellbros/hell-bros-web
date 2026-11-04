@@ -13,12 +13,16 @@ export const toLocale = (value: string): Locale => (isLocale(value) ? value : DE
 
 export const otherLocale = (locale: Locale): Locale => (locale === 'en' ? 'es' : 'en');
 
-// English lives at the root; other languages under their own prefix.
-export const localePath = (locale: Locale): string =>
-  locale === DEFAULT_LOCALE ? '/' : `/${locale}`;
+// The site's pages besides the home page, as their path after the language.
+export const PRESSKIT_PAGE = '/presskit';
 
-export const localeUrl = (locale: Locale): string =>
-  locale === DEFAULT_LOCALE ? SITE_URL : `${SITE_URL}/${locale}`;
+// English lives at the root; other languages under their own prefix. `page` is
+// a path such as PRESSKIT_PAGE; none means the home page.
+export const localePath = (locale: Locale, page = ''): string =>
+  locale === DEFAULT_LOCALE ? page || '/' : `/${locale}${page}`;
+
+export const localeUrl = (locale: Locale, page = ''): string =>
+  locale === DEFAULT_LOCALE ? `${SITE_URL}${page}` : `${SITE_URL}/${locale}${page}`;
 
 // The visitor's preferred language (highest q in Accept-Language): Spanish if
 // it is any `es` variant, English otherwise.

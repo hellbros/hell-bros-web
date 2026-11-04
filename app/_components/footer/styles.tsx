@@ -72,6 +72,29 @@ export const Brand = styled.div`
     transition-duration: 0.25s;
   }
 
+  /* The way in for the press: a white outlined pill under the email. */
+  a.press {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    border: 2px solid ${theme.colors.white};
+    border-radius: 48px;
+    color: ${theme.colors.white};
+    font-family: ${theme.fonts.hand};
+    font-size: 16px;
+    font-weight: 800;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  @media (hover: hover) {
+    a.press:hover {
+      background-color: ${theme.colors.white};
+      color: ${theme.colors.black};
+    }
+  }
+
   .copied-badge {
     position: absolute;
     right: 0;

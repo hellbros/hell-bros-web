@@ -14,6 +14,7 @@ import HellBrosLogo from '@/public/assets/brand/logo_hb_color02.svg';
 import { useDictionary, useLocale } from '@/app/_i18n/LocaleProvider';
 import type { Dictionary } from '@/app/_i18n/dictionaries';
 import { LOCALE_COOKIE, localePath, otherLocale } from '@/app/_i18n/locales';
+import { usePathname } from 'next/navigation';
 
 const HamburgerIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -39,7 +40,12 @@ const EMAIL_HIGHLIGHT_MS = { min: 500, max: 1300 };
 
 const Header = () => {
   const t = useDictionary();
-  const nextLocale = otherLocale(useLocale());
+  const locale = useLocale();
+  const nextLocale = otherLocale(locale);
+  // This page's path after the language ('' on the home page). Away from home,
+  // the logo and the section links go back to it.
+  const page = (usePathname() ?? '/').replace(/^\/es(?=\/|$)/, '').replace(/^\/$/, '');
+  const onHome = page === '';
   const sm = useMediaQuery('(max-width: 700px)');
   const hasScrolled = useScroll();
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
@@ -47,11 +53,17 @@ const Header = () => {
   // own small one once that has scrolled away.
   const brandInView = useInView('marca', headerHeight);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const activeSection = useActiveSection(NAV_IDS, headerHeight);
+  const spiedSection = useActiveSection(NAV_IDS, headerHeight);
+  const activeSection = onHome ? spiedSection : undefined;
   const headerRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
   function goToSection(sectionId: string): void {
+    // A section that isn't on this page is on the home page.
+    if (!document.getElementById(sectionId)) {
+      window.location.assign(`${localePath(locale)}#${sectionId}`);
+      return;
+    }
     const from = window.scrollY;
     const top = scrollToSection(sectionId, headerHeight);
     if (sectionId === 'contact' && top !== undefined) {
@@ -68,6 +80,10 @@ const Header = () => {
   }
 
   function goHome(): void {
+    if (!onHome) {
+      window.location.assign(localePath(locale));
+      return;
+    }
     scrollToSection('inicio', headerHeight);
     setMobileMenuOpen(false);
   }
@@ -142,7 +158,7 @@ const Header = () => {
               </button>
             ))}
             <a
-              href={localePath(nextLocale)}
+              href={localePath(nextLocale, page)}
               hrefLang={nextLocale}
               lang={nextLocale}
               aria-label={t.nav.language}
@@ -177,7 +193,7 @@ const Header = () => {
                 <Text as="span">{t.nav[label]}</Text>
               </button>
             ))}
-            <a href={localePath(nextLocale)} hrefLang={nextLocale} lang={nextLocale} onClick={rememberLanguage}>
+            <a href={localePath(nextLocale, page)} hrefLang={nextLocale} lang={nextLocale} onClick={rememberLanguage}>
               <Text as="span">{t.nav.language}</Text>
             </a>
           </HeaderMobileOptions>

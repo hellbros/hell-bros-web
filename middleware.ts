@@ -1,5 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { LOCALE_COOKIE, isLocale, parseAcceptLanguage } from '@/app/_i18n/locales';
+import { LOCALE_COOKIE, PRESSKIT_PAGE, isLocale, parseAcceptLanguage } from '@/app/_i18n/locales';
+
+// Pages that exist in every language, as their English path.
+const PAGES = ['/', PRESSKIT_PAGE];
 
 // Each language has one URL: English at /, Spanish at /es. Both pages are
 // static, so the language choice happens here instead of on the server render.
@@ -19,8 +22,8 @@ export function middleware(request: NextRequest) {
   const chosen = request.cookies.get(LOCALE_COOKIE)?.value;
   const locale = isLocale(chosen) ? chosen : parseAcceptLanguage(request.headers.get('accept-language'));
 
-  if (pathname === '/' && locale === 'es') {
-    url.pathname = '/es';
+  if (PAGES.includes(pathname) && locale === 'es') {
+    url.pathname = pathname === '/' ? '/es' : `/es${pathname}`;
     const response = NextResponse.redirect(url, 307);
     response.headers.set('Vary', 'Accept-Language, Cookie');
     return response;

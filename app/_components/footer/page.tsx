@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
 import FooterClaw from '@/public/assets/look-out/hell-bros-look-out-demon-hand.webp';
-import { useDictionary } from '@/app/_i18n/LocaleProvider';
+import { useDictionary, useLocale } from '@/app/_i18n/LocaleProvider';
+import { PRESSKIT_PAGE, localePath } from '@/app/_i18n/locales';
 import { HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
 
@@ -64,6 +65,7 @@ const socials = [
 
 const Footer = () => {
   const t = useDictionary();
+  const locale = useLocale();
   const [copied, setCopied] = useState(false);
   const [highlighted, setHighlighted] = useState(false);
 
@@ -115,6 +117,9 @@ const Footer = () => {
                   {t.footer.copied}
                 </span>
               )}
+            </a>
+            <a className="press" href={localePath(locale, PRESSKIT_PAGE)}>
+              {t.footer.pressKit}
             </a>
           </Brand>
 
