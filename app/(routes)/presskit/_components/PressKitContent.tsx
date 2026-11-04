@@ -11,6 +11,7 @@ import Shot4 from "@/public/assets/images/4.png"
 import SteamCapsule from "@/public/assets/look-out/steam-capsule.webp"
 import DemonsInWater from "@/public/assets/look-out/hell-bros-look-out-demons-in-water.webp"
 import DemonHand from "@/public/assets/look-out/hell-bros-look-out-demon-hand.webp"
+import GiantDemon from "@/public/assets/look-out/hell-bros-look-out-giant-demon.png"
 import LookOutLogo from "@/public/assets/look-out/look-out-logo-hell-bros.png"
 import LookOutIcon from "@/public/assets/look-out/look-out-game-icon.png"
 import HellBrosColor from "@/public/assets/brand/logo_hb_color02.png"
@@ -65,6 +66,7 @@ const PressKitContent = () => {
     { img: SteamCapsule, file: '/assets/look-out/steam-capsule.webp', alt: p.capsuleAlt },
     { img: DemonsInWater, file: '/assets/look-out/hell-bros-look-out-demons-in-water.webp', alt: t.lookout.demonsArtAlt },
     { img: DemonHand, file: '/assets/look-out/hell-bros-look-out-demon-hand.webp', alt: t.footer.handArtAlt },
+    { img: GiantDemon, file: '/assets/look-out/hell-bros-look-out-giant-demon.png', alt: p.giantDemonAlt },
   ];
 
   return (
@@ -110,7 +112,7 @@ const PressKitContent = () => {
         <Gallery $wide>
           {art.map(({ img, file, alt }) => (
             <a key={file} href={file} target="_blank" rel="noopener noreferrer">
-              <Image src={img} alt={alt} fill sizes="(max-width: 700px) 90vw, 290px" />
+              <Image src={img} alt={alt} fill sizes="(max-width: 700px) 90vw, 440px" />
             </a>
           ))}
         </Gallery>

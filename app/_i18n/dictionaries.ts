@@ -103,6 +103,7 @@ const en = {
     chainAlt: 'Diagram of the three demons: no one advances alone',
     art: 'Art',
     capsuleAlt: 'Look Out Steam capsule',
+    giantDemonAlt: 'Look Out artwork by Hell Bros: a giant black demon with many red eyes and purple fire looming over the three demons',
     logos: 'Logos',
     logoAlt: {
       lookOut: 'Look Out logo',
@@ -237,6 +238,7 @@ const es: Dictionary = {
     chainAlt: 'Diagrama de los tres demonios: nadie avanza solo',
     art: 'Arte',
     capsuleAlt: 'Cápsula de Steam de Look Out',
+    giantDemonAlt: 'Ilustración de Look Out, de Hell Bros: un demonio negro gigante con muchos ojos rojos y fuego morado sobre los tres demonios',
     logos: 'Logos',
     logoAlt: {
       lookOut: 'Logo de Look Out',

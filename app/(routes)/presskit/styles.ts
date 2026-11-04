@@ -82,7 +82,7 @@ export const Sheet = styled.article`
 // Thumbnails that open the full-size file, in the pictures' own 16:9.
 export const Gallery = styled.div<{ $wide?: boolean }>`
   display: grid;
-  grid-template-columns: repeat(${({ $wide }) => ($wide ? 3 : 4)}, minmax(0, 1fr));
+  grid-template-columns: repeat(${({ $wide }) => ($wide ? 2 : 4)}, minmax(0, 1fr));
   gap: 12px;
 
   a {
