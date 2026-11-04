@@ -29,8 +29,8 @@ const en = {
   lookout: {
     trappedTitle: 'Three trapped demons',
     pathTitle: 'No one sees their own path',
-    escapeTitle: 'Escape together',
-    tagline: 'An **asymmetrical online co-op 3D platformer** where **3\u00A0demons** are trying to escape the Demon World.',
+    escapeTitle: 'They must escape together',
+    tagline: 'An **online co-op 3D platformer** where **3\u00A0demons** are trying to escape the Demon World.',
     irisLabel: { red: '**Red** iris', blue: '**Blue** iris', green: '**Green** iris' },
     irisSees: {
       red: "The **red**-iris player's view",
@@ -123,8 +123,8 @@ const es: Dictionary = {
   lookout: {
     trappedTitle: 'Tres demonios atrapados',
     pathTitle: 'Ninguno ve su propio camino',
-    escapeTitle: 'Escapen juntos',
-    tagline: 'Un **juego de plataformas 3D cooperativo online y asimétrico** donde **3\u00A0demonios** intentan escapar del Mundo Demoníaco.',
+    escapeTitle: 'Deben escapar juntos',
+    tagline: 'Un **juego de plataformas 3D cooperativo online** donde **3\u00A0demonios** intentan escapar del Mundo Demoníaco.',
     irisLabel: { red: 'Iris **rojo**', blue: 'Iris **azul**', green: 'Iris **verde**' },
     irisSees: {
       red: 'Esto vería el jugador con iris **rojo**',
