@@ -9,10 +9,10 @@ const en = {
     description:
       'An online co-op 3D platformer where 3 demons rely on each other to escape the Demon World. A game by Hell Bros, an indie studio from Peru.',
     ogDescription:
-      'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an asymmetrical online co-op 3D platformer for 3 players.',
+      'Hell Bros is an independent Peruvian game studio making Look Out: Indie Game, an online co-op 3D platformer for 3 players.',
     ogLocale: 'en_US',
     gameDescription:
-      'An asymmetrical online co-op 3D platformer where 3 demons are trying to escape the Demon World. Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.',
+      'An online co-op 3D platformer where 3 demons are trying to escape the Demon World. Unable to see their own path, each player depends on another to move forward, forcing them to coordinate constantly.',
   },
   nav: {
     lookout: 'Look Out',
@@ -103,10 +103,10 @@ const es: Dictionary = {
     description:
       'Plataformas 3D cooperativo online donde 3 demonios dependen uno del otro para escapar del Mundo Demoníaco. Un juego de Hell Bros, estudio indie peruano.',
     ogDescription:
-      'Hell Bros es un estudio independiente peruano de videojuegos que está creando Look Out: Indie Game, un juego de plataformas 3D cooperativo online y asimétrico para 3 jugadores.',
+      'Hell Bros es un estudio independiente peruano de videojuegos que está creando Look Out: Indie Game, un juego de plataformas 3D cooperativo online para 3 jugadores.',
     ogLocale: 'es_PE',
     gameDescription:
-      'Un juego de plataformas 3D cooperativo online y asimétrico donde 3 demonios intentan escapar del Mundo Demoníaco. Sin poder ver su propio camino, cada jugador depende de otro para avanzar, lo que los obliga a coordinarse constantemente.',
+      'Un juego de plataformas 3D cooperativo online donde 3 demonios intentan escapar del Mundo Demoníaco. Sin poder ver su propio camino, cada jugador depende de otro para avanzar, lo que los obliga a coordinarse constantemente.',
   },
   nav: {
     lookout: 'Look Out',
