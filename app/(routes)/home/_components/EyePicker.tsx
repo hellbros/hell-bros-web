@@ -30,9 +30,10 @@ export const IRIS_INK: Record<Iris, { solid: string; mark: string }> = {
    Once thrown they don't fly as a block: the grabbed eye is the quickest,
    then whichever of the others is nearer its landing spot, so they arrive
    one after another.
-   Where they land, each takes the free spot of the arrangement nearest to it,
-   so none crosses the others: the logo's order only holds until the first
-   throw. */
+   Each eye takes the free spot of the arrangement nearest to it, so none
+   crosses the others: while dragged, as soon as they plainly fall into
+   another order, and again where they land. The logo's order only holds
+   until the first move. */
 
 type Point = { x: number; y: number };
 type Layout = 'triangle' | 'row' | 'column';
@@ -78,6 +79,10 @@ const SQUEEZE_SPEED = 1600;
 const STRING_MAX = 1.7;
 const PERSONAL_SPACE = 0.94;
 const LIFT = 1.08;
+// While dragged, the eyes trade spots only once that saves this much (in
+// squared px): a little past halfway between two spots, so they don't flick
+// back and forth.
+const REORDER_MARGIN = (S / 2) ** 2;
 // How briskly each eye chases its spot after a throw, against the usual
 // spring: the grabbed one, then the others from nearest their landing spot.
 const PACE = { grabbed: 1.8, near: 1, far: 0.55 };
@@ -196,22 +201,24 @@ const EyePicker = ({ iris, onPick }: Props) => {
     let order = LOGO_ORDER;
 
     const formation = () => FORMATIONS[layout];
-    const slot = (f: Formation, i: number) => f.at[IRISES[order[i]]];
+    const slot = (f: Formation, i: number, of = order) => f.at[IRISES[of[i]]];
 
-    // Where each eye wants to be: its spot in the arrangement, pulled toward
-    // the middle while the group moves fast.
-    const spotOf = (i: number): Point => {
-      const f = formation();
-      const at = slot(f, i);
+    // Where an eye holding the arrangement's spot `at` wants to be with the
+    // group at `from`: pulled toward the middle while the group moves fast.
+    const spotAt = (f: Formation, from: Point, at: Point): Point => {
       const cx = (f.w - S) / 2;
       const cy = (f.h - S) / 2;
-      return { x: origin.x + cx + (at.x - cx) * squeeze, y: origin.y + cy + (at.y - cy) * squeeze };
+      return { x: from.x + cx + (at.x - cx) * squeeze, y: from.y + cy + (at.y - cy) * squeeze };
+    };
+    const spotOf = (i: number): Point => {
+      const f = formation();
+      return spotAt(f, origin, slot(f, i));
     };
 
-    const restLength = (i: number) => {
+    const restLength = (i: number, of = order) => {
       const f = formation();
-      const a = slot(f, i);
-      const b = slot(f, i + 1);
+      const a = slot(f, i, of);
+      const b = slot(f, i + 1, of);
       return Math.hypot(b.x - a.x, b.y - a.y);
     };
 
@@ -323,6 +330,48 @@ const EyePicker = ({ iris, onPick }: Props) => {
       }
     };
 
+    // The group's place while dragged: the held eye, holding the spot `at`,
+    // under the pointer, as long as the group fits.
+    const dragOrigin = (f: Formation, at: Point): Point => {
+      if (!drag) return origin;
+      const cx = (f.w - S) / 2;
+      const cy = (f.h - S) / 2;
+      const grabbed = { x: drag.pointer.x - drag.grab.x, y: drag.pointer.y - drag.grab.y };
+      const room = verticalRoom(f, viewHeight());
+      return {
+        x: clamp(grabbed.x - cx - (at.x - cx) * squeeze, EDGE, Math.max(EDGE, document.documentElement.clientWidth - f.w - EDGE)),
+        y: clamp(grabbed.y - cy - (at.y - cy) * squeeze, room.min, room.max),
+      };
+    };
+
+    // While dragged, the eyes keep any order they plainly fall into: each
+    // takes the spot it's nearest, counted from the held eye under the
+    // pointer. An order that would pull the held eye off the pointer (the
+    // group pressed against an edge) or snap the string waits for the release.
+    const regroup = () => {
+      if (!drag?.moving) return;
+      const f = formation();
+      const held = drag.eye;
+      const fit = (of: number[]) => {
+        const from = dragOrigin(f, slot(f, held, of));
+        const spots = bodies.map((b, i) => spotAt(f, from, slot(f, i, of)));
+        const cost = bodies.reduce((sum, b, i) => (i === held ? sum : sum + (b.x - spots[i].x) ** 2 + (b.y - spots[i].y) ** 2), 0);
+        return { heldAt: spots[held], cost };
+      };
+      const now = fit(order);
+      let best = { of: order, cost: now.cost - REORDER_MARGIN };
+      for (const candidate of ORDERS) {
+        const { heldAt, cost } = fit(candidate);
+        const stays = Math.hypot(heldAt.x - now.heldAt.x, heldAt.y - now.heldAt.y) < 1;
+        const tied = bodies.every((b, i) => {
+          const next = bodies[i + 1];
+          return !next || Math.hypot(next.x - b.x, next.y - b.y) <= restLength(i, candidate) * STRING_MAX;
+        });
+        if (cost < best.cost && stays && tied) best = { of: candidate, cost };
+      }
+      order = best.of;
+    };
+
     // The pointer's speed over its last tenth of a second; zero once it rests.
     const pointerVelocity = (now: number): Point => {
       if (!drag) return { x: 0, y: 0 };
@@ -348,15 +397,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
 
       // The group: under the finger while dragged, gliding to its side after.
       if (drag?.moving) {
-        const at = slot(f, drag.eye);
-        const cx = (f.w - S) / 2;
-        const cy = (f.h - S) / 2;
-        const grabbed = { x: drag.pointer.x - drag.grab.x, y: drag.pointer.y - drag.grab.y };
-        const room = verticalRoom(f, viewHeight());
-        origin = {
-          x: clamp(grabbed.x - cx - (at.x - cx) * squeeze, EDGE, Math.max(EDGE, document.documentElement.clientWidth - f.w - EDGE)),
-          y: clamp(grabbed.y - cy - (at.y - cy) * squeeze, room.min, room.max),
-        };
+        origin = dragOrigin(f, slot(f, drag.eye));
       } else if (target) {
         if (still) {
           origin = target;
@@ -389,7 +430,10 @@ const EyePicker = ({ iris, onPick }: Props) => {
           spring(b, to, EYE_SPRING.k * pace[i], EYE_SPRING.c * Math.sqrt(pace[i]), dt);
         }
       });
-      if (!still) tieStrings();
+      if (!still) {
+        tieStrings();
+        regroup();
+      }
     };
 
     const resting = () =>
