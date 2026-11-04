@@ -106,6 +106,7 @@ const en = {
     logos: 'Logos',
     logoAlt: {
       lookOut: 'Look Out logo',
+      lookOutIcon: 'Look Out icon: an eye with a green iris',
       color: 'Hell Bros logo',
       line: 'Hell Bros logo, black outline',
       white: 'Hell Bros logo in white',
@@ -239,6 +240,7 @@ const es: Dictionary = {
     logos: 'Logos',
     logoAlt: {
       lookOut: 'Logo de Look Out',
+      lookOutIcon: 'Ícono de Look Out: un ojo con el iris verde',
       color: 'Logo de Hell Bros',
       line: 'Logo de Hell Bros, en línea negra',
       white: 'Logo de Hell Bros en blanco',

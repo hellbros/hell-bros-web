@@ -12,6 +12,7 @@ import SteamCapsule from "@/public/assets/look-out/steam-capsule.webp"
 import DemonsInWater from "@/public/assets/look-out/hell-bros-look-out-demons-in-water.webp"
 import DemonHand from "@/public/assets/look-out/hell-bros-look-out-demon-hand.webp"
 import LookOutLogo from "@/public/assets/look-out/look-out-logo-hell-bros.png"
+import LookOutIcon from "@/public/assets/look-out/look-out-game-icon.png"
 import HellBrosColor from "@/public/assets/brand/logo_hb_color02.png"
 import HellBrosLine from "@/public/assets/brand/logo_hb_linea02.png"
 import HellBrosWhite from "@/public/assets/brand/logo_hb_neg02.png"
@@ -32,10 +33,12 @@ const SHOTS: { img: StaticImageData; file: string }[] = [
   { img: Shot4, file: '/assets/images/4.png' },
 ];
 
-// The game's logo, then the studio's in color, black outline and white (the
-// white ones on black), whole and as the icon alone.
+// The game's logo and icon, then the studio's in color, black outline and
+// white, whole and as the icon alone. The white ones sit on black, and so does
+// the game's icon, a white eye.
 const LOGOS: { img: StaticImageData; file: string; alt: keyof Dictionary['presskit']['logoAlt']; dark?: boolean }[] = [
   { img: LookOutLogo, file: '/assets/look-out/look-out-logo-hell-bros.png', alt: 'lookOut' },
+  { img: LookOutIcon, file: '/assets/look-out/look-out-game-icon.png', alt: 'lookOutIcon', dark: true },
   { img: HellBrosColor, file: '/assets/brand/logo_hb_color02.png', alt: 'color' },
   { img: HellBrosLine, file: '/assets/brand/logo_hb_linea02.png', alt: 'line' },
   { img: HellBrosWhite, file: '/assets/brand/logo_hb_neg02.png', alt: 'white', dark: true },
