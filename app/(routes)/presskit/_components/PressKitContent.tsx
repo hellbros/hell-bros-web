@@ -78,7 +78,6 @@ const PressKitContent = () => {
 
         <h2>{p.glance}</h2>
         <p>{p.studio}: {p.studioValue}</p>
-        <p>{p.madeBy}: {p.madeByValue}</p>
         <p>{p.releaseDate}: {p.releaseDateValue}</p>
         <p>{p.platforms}: {p.platformsValue}</p>
         <p>{p.players}: {p.playersValue}</p>
