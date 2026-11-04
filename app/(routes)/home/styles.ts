@@ -621,6 +621,10 @@ export const EyeDock = styled.div`
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
+  /* Hidden until the script places the eyes where the visitor left them, so
+     they never flash at the default spot while the page loads. */
+  opacity: 0;
+  visibility: hidden;
 
   /* Phones: one row at the bottom center, within thumb reach and clear of the
      header, lifted above the iPhone's home indicator. */
@@ -635,6 +639,13 @@ export const EyeDock = styled.div`
     inset: 0;
     transform: none;
     pointer-events: none;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 200ms ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
   }
 
   .grip {
