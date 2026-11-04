@@ -76,29 +76,27 @@ const PressKitContent = () => {
         <p className="lead">{p.intro}</p>
         <p><a href={ZIP_URL} download>{p.download}</a></p>
 
-        <h2>{p.description}</h2>
-        <p>{t.meta.gameDescription}</p>
-
-        <h2>{p.about}</h2>
-        <h3>{t.lookout.pathTitle}</h3>
-        <p>{plain(t.lookout.mechanicPaths)}</p>
-        <h3>{t.lookout.escapeTitle}</h3>
-        <p>{plain(t.lookout.mechanicChain)}</p>
-
-        <h2>{p.features}</h2>
-        <ul>
-          {p.featureList.map((feature) => <li key={feature}>{feature}</li>)}
-        </ul>
-
-        <h2>{p.facts}</h2>
-        <p>{p.developer}: {p.developerValue}</p>
+        <h2>{p.glance}</h2>
+        <p>{p.studio}: {p.studioValue}</p>
         <p>{p.releaseDate}: {p.releaseDateValue}</p>
         <p>{p.platforms}: {p.platformsValue}</p>
+        <p>{p.players}: {p.playersValue}</p>
+        <p>{p.languages}: {p.languagesValue}</p>
         <p>{p.pressContact}: <a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
         {STEAM_PAGE_LIVE && <p><a href={STEAM_URL} target="_blank" rel="noopener noreferrer">{p.steamPage}</a></p>}
         <p><a href={TRAILER_URL} target="_blank" rel="noopener noreferrer">{p.trailer}</a></p>
 
-        <h2>{p.screenshots}</h2>
+        <h2>{p.game}</h2>
+        <p>{t.meta.gameDescription}</p>
+        <p>{p.premise}</p>
+
+        <h2>{p.different}</h2>
+        <ul>
+          {p.featureList.map((feature) => <li key={feature}>{feature}</li>)}
+        </ul>
+
+        <h2>{p.media}</h2>
+        <h3>{p.screenshots}</h3>
         <Gallery>
           {SHOTS.map(({ img, file }, i) => (
             <a key={file} href={file} target="_blank" rel="noopener noreferrer">
@@ -108,7 +106,7 @@ const PressKitContent = () => {
         </Gallery>
         <p className="note">{p.fullSize}</p>
 
-        <h2>{p.art}</h2>
+        <h3>{p.art}</h3>
         <Gallery $wide>
           {art.map(({ img, file, alt }) => (
             <a key={file} href={file} target="_blank" rel="noopener noreferrer">
@@ -117,7 +115,7 @@ const PressKitContent = () => {
           ))}
         </Gallery>
 
-        <h2>{p.logos}</h2>
+        <h3>{p.logos}</h3>
         <Logos>
           {LOGOS.map(({ img, file, alt, dark }) => (
             <a key={file} className={dark ? 'dark' : undefined} href={file} target="_blank" rel="noopener noreferrer">
@@ -126,13 +124,11 @@ const PressKitContent = () => {
           ))}
         </Logos>
 
-        <h2>{p.team}</h2>
-        {TEAM.map(({ name, role }) => (
-          <p key={name}>{name}: {t.people.roles[role]}</p>
-        ))}
-
-        <h2>{p.aboutStudio}</h2>
+        <h2>{t.studio.title}</h2>
         <p>{plain(t.studio.intro)}</p>
+        <p>
+          {p.team}: {TEAM.map(({ name, role }) => `${name} (${t.people.roles[role]})`).join(', ')}.
+        </p>
       </Sheet>
     </PressKitPage>
   );

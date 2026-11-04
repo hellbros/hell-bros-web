@@ -44,7 +44,7 @@ export const Sheet = styled.article`
   }
 
   h3 {
-    margin: 22px 0 4px;
+    margin: 24px 0 10px;
     font-size: 17px;
     font-weight: 700;
   }
