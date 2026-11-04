@@ -2,6 +2,8 @@ export const MAX_WIDTH = '1000px';
 export const SECTION_PADDING = '40px';
 export const HEADER_HEIGHT = 64;
 export const HEADER_HEIGHT_MOBILE = 48;
+// The header bar's soft shadow, also worn by the floating eyes.
+export const SOFT_SHADOW = '0 2px 5px rgba(0,0,0,.05), 0 8px 40px rgba(0,0,0,.04), 0 0 2px rgba(0,0,0,.15)';
 // Fired by the header's Contact link so the footer lights up the email.
 export const HIGHLIGHT_EMAIL_EVENT = 'hellbros:highlight-email';
 

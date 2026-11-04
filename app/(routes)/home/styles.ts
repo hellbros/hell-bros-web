@@ -3,7 +3,7 @@
 import styled, { keyframes } from 'styled-components';
 import { variant } from 'styled-system';
 import TextGlobal from '../../_components/Text';
-import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, MAX_WIDTH, SECTION_PADDING } from '../../_utils/constants';
+import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, MAX_WIDTH, SECTION_PADDING, SOFT_SHADOW } from '../../_utils/constants';
 import { theme } from '@/app/_styles/theme';
 
 export const CAPSULE_POPUP_GAP = 6;
@@ -583,6 +583,7 @@ export const EyeButton = styled.button<{ $size: number }>`
   background: ${theme.colors.white};
   border: 0;
   border-radius: 50%;
+  box-shadow: ${SOFT_SHADOW};
   cursor: pointer;
 `;
 

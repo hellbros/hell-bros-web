@@ -3,7 +3,7 @@
 import styled, { keyframes } from 'styled-components';
 import { variant } from 'styled-system';
 import TextGlobal from '../../_components/Text';
-import { MAX_WIDTH, SECTION_PADDING, HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from '@/app/_utils/constants';
+import { MAX_WIDTH, SECTION_PADDING, HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, SOFT_SHADOW } from '@/app/_utils/constants';
 import { theme } from '@/app/_styles/theme';
 
 interface HeaderStyledProps {
@@ -21,9 +21,7 @@ export const HeaderStyled = styled.header<HeaderStyledProps>`
   background: ${({ $expanded, $hasScrolled }) =>
     $expanded ? 'transparent' : $hasScrolled ? theme.colors.white : theme.colors.whiteSmoke};
   box-shadow: ${({ $expanded, $hasScrolled }) =>
-    !$expanded && $hasScrolled
-      ? '0 2px 5px rgba(0,0,0,.05), 0 8px 40px rgba(0,0,0,.04), 0 0 2px rgba(0,0,0,.15)'
-      : 'unset'};
+    !$expanded && $hasScrolled ? SOFT_SHADOW : 'unset'};
   transition: background 0.3s ease-out, box-shadow 0.3s ease-out,
     height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 9999;
