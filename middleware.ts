@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { LOCALE_COOKIE, PRESSKIT_PAGE, isLocale, parseAcceptLanguage } from '@/app/_i18n/locales';
+import { LOCALE_COOKIE, PRESSKIT_PAGE, PRIVACY_PAGE, isLocale, parseAcceptLanguage } from '@/app/_i18n/locales';
 
 // Pages that exist in every language, as their English path.
-const PAGES = ['/', PRESSKIT_PAGE];
+const PAGES = ['/', PRESSKIT_PAGE, PRIVACY_PAGE];
 
 // Each language has one URL: English at /, Spanish at /es. Both pages are
 // static, so the language choice happens here instead of on the server render.

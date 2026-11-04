@@ -142,8 +142,50 @@ const en = {
     clickToCopy: 'Click to copy',
     followUs: 'Follow us',
     pressKit: 'Press kit',
+    privacy: 'Privacy',
     rights: 'All rights reserved.',
     socialLink: (network: string) => `Hell Bros on ${network} (opens in a new tab)`,
+  },
+  privacy: {
+    metaTitle: 'Privacy Policy | Hell Bros',
+    metaDescription:
+      'How hellbrosstudio.com handles your data: no tracking cookies, no analytics, no ads.',
+    title: 'Privacy Policy',
+    updated: 'Last updated: November 4, 2026',
+    intro: 'Hell Bros is a video game studio from Lima, Peru. Here we explain what happens to your data when you visit hellbrosstudio.com.',
+    // Each section: a heading, then paragraphs or a list of labeled points.
+    sections: [
+      {
+        title: "What we don't do",
+        paragraphs: ["We don't use tracking cookies, analytics or ads. There are no forms or accounts. We don't sell or share your data."],
+      },
+      {
+        title: 'What your browser keeps',
+        paragraphs: [
+          'If you move the three eyes, your browser remembers where you left them, to show them there on your next visit. If you pick a language in the menu, a cookie remembers it for a year. Both stay on your device and never reach us. You can delete them by clearing this site\'s data in your browser.',
+        ],
+      },
+      {
+        title: "Other companies' services",
+        items: [
+          { label: 'Hosting', text: 'the site runs on Vercel. Like any web server, it records technical data about each visit, such as your IP address and browser, for a limited time, so the site works and stays protected.' },
+          { label: 'YouTube', text: "the trailer loads from YouTube only if you click it, in YouTube's privacy-enhanced mode." },
+          { label: 'Links', text: "if you go to Steam, Discord or our social media, those sites' own privacy policies apply." },
+        ],
+      },
+      {
+        title: 'If you write to us',
+        paragraphs: ["If you write to us at hello@hellbrosstudio.com, we use your email and your message only to reply. We don't add them to any list or share them."],
+      },
+      {
+        title: 'Your rights',
+        paragraphs: ['You can ask us to see, correct or delete any data of yours we have. Write to us at hello@hellbrosstudio.com.'],
+      },
+      {
+        title: 'Changes',
+        paragraphs: ['If something changes, for example if we add a newsletter, we will update this page and its date.'],
+      },
+    ],
   },
   error: {
     title: 'Something went wrong!',
@@ -292,8 +334,49 @@ const es: Dictionary = {
     clickToCopy: 'Clic para copiar',
     followUs: 'Síguenos',
     pressKit: 'Kit de prensa',
+    privacy: 'Privacidad',
     rights: 'Todos los derechos reservados.',
     socialLink: (network: string) => `Hell Bros en ${network} (se abre en una pestaña nueva)`,
+  },
+  privacy: {
+    metaTitle: 'Política de privacidad | Hell Bros',
+    metaDescription:
+      'Cómo trata hellbrosstudio.com tus datos: sin cookies de seguimiento, sin analíticas, sin publicidad.',
+    title: 'Política de privacidad',
+    updated: 'Última actualización: 4 de noviembre de 2026',
+    intro: 'Hell Bros es un estudio de videojuegos de Lima, Perú. Aquí te contamos qué pasa con tus datos cuando visitas hellbrosstudio.com.',
+    sections: [
+      {
+        title: 'Lo que no hacemos',
+        paragraphs: ['No usamos cookies de seguimiento, analíticas ni publicidad. No hay formularios ni cuentas. No vendemos ni compartimos tus datos.'],
+      },
+      {
+        title: 'Lo que se guarda en tu navegador',
+        paragraphs: [
+          'Si mueves los tres ojos, tu navegador recuerda dónde los dejaste para mostrarlos ahí en tu próxima visita. Si eliges un idioma en el menú, una cookie lo recuerda por un año. Ambos se quedan en tu dispositivo y nunca nos llegan. Puedes borrarlos limpiando los datos de este sitio en tu navegador.',
+        ],
+      },
+      {
+        title: 'Servicios de otras empresas',
+        items: [
+          { label: 'Alojamiento', text: 'el sitio está en Vercel. Como cualquier servidor web, registra datos técnicos de cada visita, como tu dirección IP y tu navegador, por un tiempo limitado, para que el sitio funcione y esté protegido.' },
+          { label: 'YouTube', text: 'el tráiler se carga desde YouTube solo si haces clic en él, en el modo de privacidad mejorada de YouTube.' },
+          { label: 'Enlaces', text: 'si entras a Steam, Discord o nuestras redes sociales, rigen las políticas de privacidad de esos sitios.' },
+        ],
+      },
+      {
+        title: 'Si nos escribes',
+        paragraphs: ['Si nos escribes a hello@hellbrosstudio.com, usamos tu correo y tu mensaje solo para responderte. No los agregamos a listas ni los compartimos.'],
+      },
+      {
+        title: 'Tus derechos',
+        paragraphs: ['Puedes pedirnos ver, corregir o borrar cualquier dato tuyo que tengamos. Escríbenos a hello@hellbrosstudio.com.'],
+      },
+      {
+        title: 'Cambios',
+        paragraphs: ['Si algo cambia, por ejemplo si agregamos un boletín, actualizaremos esta página y su fecha.'],
+      },
+    ],
   },
   error: {
     title: '¡Algo salió mal!',

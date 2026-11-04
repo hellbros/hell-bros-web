@@ -205,6 +205,18 @@ export const FooterBottom = styled.div`
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);
 
+  a.privacy {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (hover: hover) {
+    a.privacy:hover {
+      color: ${theme.colors.white};
+    }
+  }
+
   /* The art bleeds past the footer's side padding and melts into black on
      every edge, so the claw reaches out of the dark with no visible frame. */
   .claw {

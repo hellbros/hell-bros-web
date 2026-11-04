@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
+import TrailerPoster from "@/public/assets/look-out/look-out-trailer-poster.webp";
 import EyePicker, { IRIS_INK, type Iris } from "./EyePicker";
 import { SectionContainer, Brand, Intro, Act, Studio, Card, StoryArt, HeroLogo, Tagline, Mark, WishNote, Pill, Lanes, Lane, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
 import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
@@ -250,7 +251,7 @@ const HomeContent = () => {
       <Act>
         <h2>{t.lookout.escapeTitle}</h2>
         <Card>
-          <TrailerEmbed videoId={TRAILER_ID} title={t.lookout.trailerTitle} />
+          <TrailerEmbed videoId={TRAILER_ID} poster={TrailerPoster} title={t.lookout.trailerTitle} />
         </Card>
 
         <WishNote>

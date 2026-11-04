@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { LOCALES, PRESSKIT_PAGE, localeUrl } from '@/app/_i18n/locales'
+import { LOCALES, PRESSKIT_PAGE, PRIVACY_PAGE, localeUrl } from '@/app/_i18n/locales'
 import { SHOWCASE_IMAGES } from '@/app/_utils/constants'
 
 const sitemap = (): MetadataRoute.Sitemap => [
@@ -25,6 +25,18 @@ const sitemap = (): MetadataRoute.Sitemap => [
       languages: {
         en: localeUrl('en', PRESSKIT_PAGE),
         es: localeUrl('es', PRESSKIT_PAGE),
+      },
+    },
+  })),
+  ...LOCALES.map((locale) => ({
+    url: localeUrl(locale, PRIVACY_PAGE),
+    lastModified: new Date(),
+    changeFrequency: 'yearly' as const,
+    priority: 0.2,
+    alternates: {
+      languages: {
+        en: localeUrl('en', PRIVACY_PAGE),
+        es: localeUrl('es', PRIVACY_PAGE),
       },
     },
   })),

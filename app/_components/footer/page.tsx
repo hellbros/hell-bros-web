@@ -5,7 +5,7 @@ import Image from 'next/image';
 import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
 import FooterClaw from '@/public/assets/look-out/hell-bros-look-out-demon-hand.webp';
 import { useDictionary, useLocale } from '@/app/_i18n/LocaleProvider';
-import { PRESSKIT_PAGE, localePath } from '@/app/_i18n/locales';
+import { PRESSKIT_PAGE, PRIVACY_PAGE, localePath } from '@/app/_i18n/locales';
 import { HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
 
@@ -138,7 +138,11 @@ const Footer = () => {
         <FooterBottom>
           <Image className="claw" src={FooterClaw} alt={t.footer.handArtAlt} sizes="(max-width: 1000px) 100vw, 1000px" />
           <p className="slogan">Games from hell</p>
-          © {new Date().getFullYear()} Hell Bros. {t.footer.rights}
+          © {new Date().getFullYear()} Hell Bros. {t.footer.rights}{' '}
+          <span aria-hidden="true">·</span>{' '}
+          <a className="privacy" href={localePath(locale, PRIVACY_PAGE)}>
+            {t.footer.privacy}
+          </a>
         </FooterBottom>
       </FooterInner>
     </FooterStyled>

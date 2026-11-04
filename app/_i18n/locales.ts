@@ -15,6 +15,7 @@ export const otherLocale = (locale: Locale): Locale => (locale === 'en' ? 'es' :
 
 // The site's pages besides the home page, as their path after the language.
 export const PRESSKIT_PAGE = '/presskit';
+export const PRIVACY_PAGE = '/privacy';
 
 // English lives at the root; other languages under their own prefix. `page` is
 // a path such as PRESSKIT_PAGE; none means the home page.
