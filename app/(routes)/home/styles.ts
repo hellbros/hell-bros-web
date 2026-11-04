@@ -637,6 +637,22 @@ export const EyeDock = styled.div`
     pointer-events: none;
   }
 
+  .grip {
+    display: none;
+  }
+
+  /* An invisible pad around the group that catches presses between or just
+     off the eyes (see EyePicker). */
+  &[data-live='true'] .grip {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+    cursor: grab;
+    will-change: transform;
+  }
+
   &[data-live='true'] button {
     position: absolute;
     top: 0;

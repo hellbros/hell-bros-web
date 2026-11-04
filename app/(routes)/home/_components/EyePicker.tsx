@@ -75,6 +75,9 @@ const SQUEEZE_SPEED = 1600;
 const STRING_MAX = 1.7;
 const PERSONAL_SPACE = 0.94;
 const LIFT = 1.08;
+// The grip: the eyes' whole group plus this margin, so a press between them or
+// just off one still catches the nearest eye.
+const GRIP_MARGIN = 14;
 
 // The bottom spot is the phone's row; fy only counts on a side. order[i] is
 // the arrangement's spot eye i took (spots listed in the logo's order).
@@ -136,13 +139,15 @@ type Props = {
 const EyePicker = ({ iris, onPick }: Props) => {
   const t = useDictionary();
   const dockRef = useRef<HTMLDivElement>(null);
+  const gripRef = useRef<HTMLSpanElement>(null);
   const eyeRefs = useRef<Partial<Record<Iris, HTMLButtonElement | null>>>({});
 
   // Before paint, so eyes the visitor moved never flash at their default spot.
   useLayoutEffect(() => {
     const dock = dockRef.current;
+    const grip = gripRef.current;
     const eyes = IRISES.map((id) => eyeRefs.current[id]);
-    if (!dock || eyes.some((el) => !el)) return;
+    if (!dock || !grip || eyes.some((el) => !el)) return;
     const buttons = eyes as HTMLButtonElement[];
 
     // Where the stylesheet puts the phone's row, measured once: its gap to the
@@ -167,6 +172,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
       samples: { t: number; x: number; y: number }[];
       slop: number;
       moving: boolean;
+      fromGrip: boolean; // pressed on the grip, not on the eye itself
     } | null = null;
     let frame = 0;
     let last = 0;
@@ -201,6 +207,14 @@ const EyePicker = ({ iris, onPick }: Props) => {
         const scale = drag?.moving && drag.eye === i ? lift : 1 + (lift - 1) * 0.6;
         el.style.transform = `translate3d(${b.x.toFixed(2)}px, ${b.y.toFixed(2)}px, 0) scale(${scale.toFixed(3)})`;
       });
+      // The grip hugs the group wherever it goes.
+      const left = Math.min(...bodies.map((b) => b.x)) - GRIP_MARGIN;
+      const top = Math.min(...bodies.map((b) => b.y)) - GRIP_MARGIN;
+      const right = Math.max(...bodies.map((b) => b.x)) + S + GRIP_MARGIN;
+      const bottom = Math.max(...bodies.map((b) => b.y)) + S + GRIP_MARGIN;
+      grip.style.transform = `translate3d(${left.toFixed(2)}px, ${top.toFixed(2)}px, 0)`;
+      grip.style.width = `${(right - left).toFixed(2)}px`;
+      grip.style.height = `${(bottom - top).toFixed(2)}px`;
     };
 
     // Everything straight to its spot, no motion.
@@ -377,7 +391,13 @@ const EyePicker = ({ iris, onPick }: Props) => {
 
     const down = (e: PointerEvent) => {
       if (!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) return;
-      const eye = buttons.findIndex((el) => el.contains(e.target as Node));
+      // An eye, or the grip around them: then the eye nearest the press.
+      let eye = buttons.findIndex((el) => el.contains(e.target as Node));
+      const fromGrip = eye < 0 && e.target === grip;
+      if (fromGrip) {
+        const gap = (b: Body) => Math.hypot(e.clientX - (b.x + S / 2), e.clientY - (b.y + S / 2));
+        eye = bodies.reduce((best, b, i) => (gap(b) < gap(bodies[best]) ? i : best), 0);
+      }
       if (eye < 0) return;
       const b = bodies[eye];
       drag = {
@@ -390,6 +410,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
         samples: [{ t: performance.now(), x: e.clientX, y: e.clientY }],
         slop: DRAG_START[e.pointerType] ?? 4,
         moving: false,
+        fromGrip,
       };
     };
 
@@ -415,7 +436,11 @@ const EyePicker = ({ iris, onPick }: Props) => {
       if (!drag || e.pointerId !== drag.id) return;
       const done = drag;
       drag = null;
-      if (!done.moving) return;
+      if (!done.moving) {
+        // A tap on the grip counts as a tap on the nearest eye.
+        if (done.fromGrip && e.type === 'pointerup') buttons[done.eye].click();
+        return;
+      }
       delete dock.dataset.dragging;
       buttons[done.eye].style.removeProperty('z-index');
       document.documentElement.classList.remove('eyes-dragging');
@@ -526,6 +551,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
 
   return (
     <EyeDock ref={dockRef}>
+      <span ref={gripRef} className="grip" aria-hidden="true" />
       <EyeGroup role="group" aria-label={t.lookout.eyesGroup} $size={EYE_SIZE}>
         {IRISES.map((id) => (
           <EyeButton
