@@ -607,9 +607,11 @@ export const EyePupil = styled.span<{ $size: number }>`
   border-radius: 50%;
 `;
 
-// The eyes wait in the top-left corner, just under the header.
-// The visitor can drag it anywhere (see EyePicker): the browser mustn't take
-// the gesture for a scroll or a text selection.
+// The eyes wait in the top-left corner, just under the header. Once the script
+// runs it places each eye itself (data-live): the dock becomes a layer over
+// the whole window that only the eyes catch pointers in, so the visitor can
+// grab and throw them; the browser mustn't take that for a scroll or a text
+// selection.
 export const EyeDock = styled.div`
   position: fixed;
   top: ${HEADER_HEIGHT + 12}px;
@@ -620,19 +622,6 @@ export const EyeDock = styled.div`
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 
-  /* Lifted while dragged: a little bigger, with a deeper shadow. */
-  & > div {
-    transition: transform 0.15s ease-out;
-  }
-
-  &[data-dragging='true'] > div {
-    transform: scale(1.08);
-  }
-
-  &[data-dragging='true'] button {
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), ${SOFT_SHADOW};
-  }
-
   /* Phones: one row at the bottom center, within thumb reach and clear of the
      header, lifted above the iPhone's home indicator. */
   ${PHONE} {
@@ -640,6 +629,25 @@ export const EyeDock = styled.div`
     left: 50%;
     bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     transform: translateX(-50%);
+  }
+
+  &[data-live='true'] {
+    inset: 0;
+    transform: none;
+    pointer-events: none;
+  }
+
+  &[data-live='true'] button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+    will-change: transform;
+  }
+
+  /* Lifted while dragged: a deeper shadow under each eye. */
+  &[data-dragging='true'] button {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), ${SOFT_SHADOW};
   }
 `;
 
