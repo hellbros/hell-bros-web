@@ -107,9 +107,11 @@ export const Logos = styled.div`
   flex-wrap: wrap;
   gap: 16px;
 
+  /* Flex, not grid: the logo's max-height needs the box's fixed height. */
   a {
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 240px;
     max-width: 100%;
     height: 150px;
@@ -128,5 +130,6 @@ export const Logos = styled.div`
     height: auto;
     max-width: 100%;
     max-height: 100%;
+    object-fit: contain;
   }
 `;

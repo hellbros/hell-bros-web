@@ -12,8 +12,12 @@ import SteamCapsule from "@/public/assets/look-out/steam-capsule.webp"
 import DemonsInWater from "@/public/assets/look-out/hell-bros-look-out-demons-in-water.webp"
 import DemonHand from "@/public/assets/look-out/hell-bros-look-out-demon-hand.webp"
 import LookOutLogo from "@/public/assets/look-out/look-out-logo-hell-bros.png"
-import HellBrosLogo from "@/public/assets/brand/logo_hb_color02.svg"
-import HellBrosLogoWhite from "@/public/assets/brand/logo_hb_neg02.svg"
+import HellBrosColor from "@/public/assets/brand/logo_hb_color02.png"
+import HellBrosLine from "@/public/assets/brand/logo_hb_linea02.png"
+import HellBrosWhite from "@/public/assets/brand/logo_hb_neg02.png"
+import HellBrosIsoColor from "@/public/assets/brand/hellbros_iso_02.png"
+import HellBrosIsoLine from "@/public/assets/brand/hellbros_iso_02linea.png"
+import HellBrosIsoWhite from "@/public/assets/brand/hellbros_iso_02neg.png"
 
 const EMAIL = 'hello@hellbrosstudio.com';
 const TRAILER_URL = 'https://www.youtube.com/watch?v=CY4mwk-rh30';
@@ -26,6 +30,18 @@ const SHOTS: { img: StaticImageData; file: string }[] = [
   { img: Shot2, file: '/assets/images/2.png' },
   { img: Shot3, file: '/assets/images/3.png' },
   { img: Shot4, file: '/assets/images/4.png' },
+];
+
+// The game's logo, then the studio's in color, black outline and white (the
+// white ones on black), whole and as the icon alone.
+const LOGOS: { img: StaticImageData; file: string; alt: keyof Dictionary['presskit']['logoAlt']; dark?: boolean }[] = [
+  { img: LookOutLogo, file: '/assets/look-out/look-out-logo-hell-bros.png', alt: 'lookOut' },
+  { img: HellBrosColor, file: '/assets/brand/logo_hb_color02.png', alt: 'color' },
+  { img: HellBrosLine, file: '/assets/brand/logo_hb_linea02.png', alt: 'line' },
+  { img: HellBrosWhite, file: '/assets/brand/logo_hb_neg02.png', alt: 'white', dark: true },
+  { img: HellBrosIsoColor, file: '/assets/brand/hellbros_iso_02.png', alt: 'isoColor' },
+  { img: HellBrosIsoLine, file: '/assets/brand/hellbros_iso_02linea.png', alt: 'isoLine' },
+  { img: HellBrosIsoWhite, file: '/assets/brand/hellbros_iso_02neg.png', alt: 'isoWhite', dark: true },
 ];
 
 const TEAM: { name: string; role: keyof Dictionary['people']['roles'] }[] = [
@@ -98,15 +114,11 @@ const PressKitContent = () => {
 
         <h2>{p.logos}</h2>
         <Logos>
-          <a href="/assets/look-out/look-out-logo-hell-bros.png" target="_blank" rel="noopener noreferrer">
-            <Image src={LookOutLogo} alt={p.logoAlt.lookOut} sizes="200px" />
-          </a>
-          <a href="/assets/brand/logo_hb_color02.svg" target="_blank" rel="noopener noreferrer">
-            <Image src={HellBrosLogo} alt={p.logoAlt.hellBros} />
-          </a>
-          <a className="dark" href="/assets/brand/logo_hb_neg02.svg" target="_blank" rel="noopener noreferrer">
-            <Image src={HellBrosLogoWhite} alt={p.logoAlt.hellBrosWhite} />
-          </a>
+          {LOGOS.map(({ img, file, alt, dark }) => (
+            <a key={file} className={dark ? 'dark' : undefined} href={file} target="_blank" rel="noopener noreferrer">
+              <Image src={img} alt={p.logoAlt[alt]} sizes="200px" />
+            </a>
+          ))}
         </Logos>
 
         <h2>{p.team}</h2>
