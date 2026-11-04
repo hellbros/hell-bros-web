@@ -73,7 +73,7 @@ export const Sheet = styled.article`
   }
 
   .note {
-    margin-top: 10px;
+    margin-top: -4px;
     color: ${theme.colors.secondaryText};
     font-size: 15px;
   }

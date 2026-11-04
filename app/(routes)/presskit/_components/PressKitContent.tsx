@@ -97,6 +97,7 @@ const PressKitContent = () => {
         </ul>
 
         <h2>{p.media}</h2>
+        <p className="note">{p.fullSize}</p>
         <h3>{p.screenshots}</h3>
         <Gallery>
           {SHOTS.map(({ img, file }, i) => (
@@ -105,7 +106,6 @@ const PressKitContent = () => {
             </a>
           ))}
         </Gallery>
-        <p className="note">{p.fullSize}</p>
 
         <h3>{p.art}</h3>
         <Gallery $wide>
