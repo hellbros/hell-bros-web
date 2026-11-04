@@ -608,11 +608,30 @@ export const EyePupil = styled.span<{ $size: number }>`
 `;
 
 // The eyes wait in the top-left corner, just under the header.
+// The visitor can drag it anywhere (see EyePicker): the browser mustn't take
+// the gesture for a scroll or a text selection.
 export const EyeDock = styled.div`
   position: fixed;
   top: ${HEADER_HEIGHT + 12}px;
   left: 12px;
   z-index: 9998;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+
+  /* Lifted while dragged: a little bigger, with a deeper shadow. */
+  & > div {
+    transition: transform 0.15s ease-out;
+  }
+
+  &[data-dragging='true'] > div {
+    transform: scale(1.08);
+  }
+
+  &[data-dragging='true'] button {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), ${SOFT_SHADOW};
+  }
 
   /* Phones: one row at the bottom center, within thumb reach and clear of the
      header, lifted above the iPhone's home indicator. */
