@@ -123,11 +123,11 @@ function saveSpot(spot: Spot) {
   }
 }
 
-// How far down the window an arrangement can go: below the header, above the
-// bottom edge.
-function verticalRoom(f: Formation) {
+// How far down the visible area (this tall) an arrangement can go: below the
+// header, above the bottom edge.
+function verticalRoom(f: Formation, height: number) {
   const min = (isPhone() ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT) + EDGE;
-  return { min, max: Math.max(min, window.innerHeight - f.h - EDGE) };
+  return { min, max: Math.max(min, height - f.h - EDGE) };
 }
 
 function sideX(side: 'left' | 'right', f: Formation) {
@@ -162,6 +162,12 @@ const EyePicker = ({ iris, onPick }: Props) => {
     const bottomGap = window.innerHeight - cssRect.bottom;
 
     let layout: Layout = isPhone() ? 'row' : 'triangle';
+    // Where the group rests: a side, the phone's bottom row, or (null) the
+    // desktop's default corner. At the bottom the eyes are pinned to the
+    // visible area's bottom edge, so they ride along when a phone's address
+    // bar shows or hides, without waiting for the script.
+    let rest: Spot['side'] | null = null;
+    let phone = isPhone();
     let origin: Point = { x: 0, y: 0 };
     let velocity: Point = { x: 0, y: 0 };
     let target: Point | null = null; // where a throw glides to
@@ -209,20 +215,34 @@ const EyePicker = ({ iris, onPick }: Props) => {
       return Math.hypot(b.x - a.x, b.y - a.y);
     };
 
+    // The visible area's height: the dock covers it once the script runs.
+    const viewHeight = () => (dock.dataset.live ? dock.clientHeight : window.innerHeight);
+
+    // Places an element at (x, y) from the top, or the same spot measured from
+    // the bottom edge while the group rests at the bottom.
+    const place = (el: HTMLElement, x: number, y: number, h: number, scale: number, fromBottom: boolean, height: number) => {
+      el.style.top = fromBottom ? 'auto' : '0';
+      el.style.bottom = fromBottom ? '0' : 'auto';
+      const ty = fromBottom ? y + h - height : y;
+      el.style.transform = `translate3d(${x.toFixed(2)}px, ${ty.toFixed(2)}px, 0) scale(${scale.toFixed(3)})`;
+    };
+
     const draw = () => {
+      const height = viewHeight();
+      const fromBottom = rest === 'bottom' && !drag?.moving && !target;
       buttons.forEach((el, i) => {
         const b = bodies[i];
         const scale = drag?.moving && drag.eye === i ? lift : 1 + (lift - 1) * 0.6;
-        el.style.transform = `translate3d(${b.x.toFixed(2)}px, ${b.y.toFixed(2)}px, 0) scale(${scale.toFixed(3)})`;
+        place(el, b.x, b.y, S, scale, fromBottom, height);
       });
       // The grip hugs the group wherever it goes.
       const left = Math.min(...bodies.map((b) => b.x)) - GRIP_MARGIN;
       const top = Math.min(...bodies.map((b) => b.y)) - GRIP_MARGIN;
       const right = Math.max(...bodies.map((b) => b.x)) + S + GRIP_MARGIN;
       const bottom = Math.max(...bodies.map((b) => b.y)) + S + GRIP_MARGIN;
-      grip.style.transform = `translate3d(${left.toFixed(2)}px, ${top.toFixed(2)}px, 0)`;
       grip.style.width = `${(right - left).toFixed(2)}px`;
       grip.style.height = `${(bottom - top).toFixed(2)}px`;
+      place(grip, left, top, bottom - top, 1, fromBottom, height);
     };
 
     // Everything straight to its spot, no motion.
@@ -239,22 +259,26 @@ const EyePicker = ({ iris, onPick }: Props) => {
     // The phone's row at the bottom center, where the stylesheet puts it.
     const bottomSpot = (): Point => {
       const f = FORMATIONS.row;
-      return { x: (document.documentElement.clientWidth - f.w) / 2, y: window.innerHeight - bottomGap - f.h };
+      return { x: (document.documentElement.clientWidth - f.w) / 2, y: viewHeight() - bottomGap - f.h };
     };
 
     // The resting place: where the visitor left the eyes, or the default.
     const home = () => {
       const spot = readSpot();
       order = spot && isOrder(spot.order) ? spot.order : LOGO_ORDER;
+      phone = isPhone();
       if (spot && spot.side !== 'bottom') {
-        layout = isPhone() ? 'column' : 'triangle';
+        rest = spot.side;
+        layout = phone ? 'column' : 'triangle';
         const f = formation();
-        const room = verticalRoom(f);
+        const room = verticalRoom(f, viewHeight());
         origin = { x: sideX(spot.side, f), y: room.min + spot.fy * (room.max - room.min) };
-      } else if (isPhone()) {
+      } else if (phone) {
+        rest = 'bottom';
         layout = 'row';
         origin = bottomSpot();
       } else {
+        rest = null;
         layout = 'triangle';
         origin = { x: 12, y: HEADER_HEIGHT + 12 };
       }
@@ -328,7 +352,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
         const cx = (f.w - S) / 2;
         const cy = (f.h - S) / 2;
         const grabbed = { x: drag.pointer.x - drag.grab.x, y: drag.pointer.y - drag.grab.y };
-        const room = verticalRoom(f);
+        const room = verticalRoom(f, viewHeight());
         origin = {
           x: clamp(grabbed.x - cx - (at.x - cx) * squeeze, EDGE, Math.max(EDGE, document.documentElement.clientWidth - f.w - EDGE)),
           y: clamp(grabbed.y - cy - (at.y - cy) * squeeze, room.min, room.max),
@@ -386,6 +410,8 @@ const EyePicker = ({ iris, onPick }: Props) => {
       for (let i = 0; i < steps; i++) step(elapsed / steps, now);
       if (resting()) {
         pace = IRISES.map(() => 1);
+        // The visible area may have changed on the way down.
+        if (rest === 'bottom') origin = bottomSpot();
         settle();
         frame = 0;
         return;
@@ -476,7 +502,7 @@ const EyePicker = ({ iris, onPick }: Props) => {
         // A throw that's mostly downward goes home too, even if its carry
         // would overshoot the middle.
         const downward = velocity.y > 400 && velocity.y > 1.5 * Math.abs(velocity.x);
-        if (toBottom < toSide || (downward && center.y > window.innerHeight * 0.6)) side = 'bottom';
+        if (toBottom < toSide || (downward && center.y > viewHeight() * 0.6)) side = 'bottom';
       }
       const turnTo: Layout = !isPhone() ? 'triangle' : side === 'bottom' ? 'row' : 'column';
       if (turnTo !== layout) {
@@ -509,11 +535,12 @@ const EyePicker = ({ iris, onPick }: Props) => {
           order = candidate;
         }
       }
+      rest = side;
       if (side === 'bottom') {
         target = bottomSpot();
         saveSpot({ side, fy: 1, order });
       } else {
-        const room = verticalRoom(f);
+        const room = verticalRoom(f, viewHeight());
         target = { x: sideX(side, f), y: clamp(carried.y, room.min, room.max) };
         saveSpot({ side, fy: room.max > room.min ? (target.y - room.min) / (room.max - room.min) : 0, order });
       }
@@ -539,11 +566,21 @@ const EyePicker = ({ iris, onPick }: Props) => {
       e.stopPropagation();
     };
 
+    // The visible area changed size: a phone's address bar showing or hiding,
+    // a turned phone or a resized window. The eyes keep their place: on the
+    // same side at the same height, or at the bottom.
     const resize = () => {
-      if (drag?.moving) return;
-      target = null;
+      if (drag?.moving || target) return;
       velocity = { x: 0, y: 0 };
-      home();
+      if (isPhone() !== phone) {
+        home();
+      } else if (rest === 'bottom') {
+        origin = bottomSpot();
+      } else if (rest) {
+        const f = formation();
+        const room = verticalRoom(f, viewHeight());
+        origin = { x: sideX(rest, f), y: clamp(origin.y, room.min, room.max) };
+      }
       settle();
     };
 
@@ -558,7 +595,12 @@ const EyePicker = ({ iris, onPick }: Props) => {
     window.addEventListener('pointerup', end);
     window.addEventListener('pointercancel', end);
     window.addEventListener('resize', resize);
+    // Also watches the dock itself, which covers the visible area: on phones
+    // its height follows the address bar even when no resize event comes.
+    const watch = new ResizeObserver(resize);
+    watch.observe(dock);
     return () => {
+      watch.disconnect();
       cancelAnimationFrame(frame);
       document.documentElement.classList.remove('eyes-dragging');
       dock.removeEventListener('pointerdown', down);
