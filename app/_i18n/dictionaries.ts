@@ -30,7 +30,7 @@ const en = {
     trappedTitle: 'Three trapped demons',
     // From the game design document's story, without its twist.
     story:
-      "In the Demon World, each demon sees a single color. Three human heroes were turned into demons in an experiment by the Demon King, but something went wrong: each one woke up with someone else's eye. Now each one sees what the others can't, and only together can they escape.",
+      "In the Demon World, each demon sees a single color. Three demons were part of an experiment by the Demon King, but something went wrong: each one woke up with someone else's eye. Now each one sees what the others can't, and only together can they escape.",
     pathTitle: 'No one sees their own path',
     escapeTitle: 'They must escape together',
     tagline: 'An **online co-op 3D platformer** where **3\u00A0demons** are trying to escape the Demon World.',
@@ -225,7 +225,7 @@ const es: Dictionary = {
   lookout: {
     trappedTitle: 'Tres demonios atrapados',
     story:
-      'En el Mundo Demoníaco, cada demonio ve un solo color. Tres héroes humanos fueron convertidos en demonios en un experimento del Rey Demonio, pero algo salió mal: cada uno despertó con el ojo de otro. Ahora cada uno ve lo que los demás no pueden, y solo juntos pueden escapar.',
+      'En el Mundo Demoníaco, cada demonio ve un solo color. Tres demonios fueron parte de un experimento del Rey Demonio, pero algo salió mal: cada uno despertó con el ojo de otro. Ahora cada uno ve lo que los demás no pueden, y solo juntos pueden escapar.',
     pathTitle: 'Ninguno ve su propio camino',
     escapeTitle: 'Deben escapar juntos',
     tagline: 'Un **juego de plataformas 3D cooperativo online** donde **3\u00A0demonios** intentan escapar del Mundo Demoníaco.',
