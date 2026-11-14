@@ -1,0 +1,682 @@
+'use client';
+
+import { useLayoutEffect, useRef } from 'react';
+import { EyeButton, EyeDock, EyeGroup, EyeIris, EyePupil } from '../styles';
+import { useDictionary } from '@/app/_i18n/LocaleProvider';
+import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from '@/app/_utils/constants';
+
+export type Iris = 'red' | 'blue' | 'green';
+
+// Red on top, green below left, blue below right, like the eyes in the logo.
+// Also the order an unseen string ties them in: red to green to blue.
+const IRISES: Iris[] = ['red', 'green', 'blue'];
+
+const EYE_SIZE = 46;
+
+// The colors of the logo's eyes, solid and as highlighter on the page.
+export const IRIS_INK: Record<Iris, { solid: string; mark: string }> = {
+  red: { solid: '#ED1B24', mark: 'rgba(237, 27, 36, 0.35)' },
+  blue: { solid: '#00A2EA', mark: 'rgba(0, 162, 234, 0.35)' },
+  green: { solid: '#B5E51D', mark: 'rgba(181, 229, 29, 0.6)' },
+};
+
+/* Dragging ----------------------------------------------------------------
+   The visitor can grab any eye and throw the three: they fly on, land on the
+   nearest side and stay at the height they were thrown to. On phones they
+   can also land back in their row at the bottom center, within thumb reach. Each eye is its
+   own body tied to the next by a string nobody sees: the grabbed one stays
+   under the finger, the others follow on springs, bunch up the faster they go
+   (never overlapping) and spread back with a little bounce once they stop.
+   Once thrown they don't fly as a block: the grabbed eye is the quickest,
+   then whichever of the others is nearer its landing spot, so they arrive
+   one after another.
+   Each eye takes the free spot of the arrangement nearest to it, so none
+   crosses the others: while dragged, as soon as they plainly fall into
+   another order, and again where they land. The logo's order only holds
+   until the first move. */
+
+type Point = { x: number; y: number };
+type Layout = 'triangle' | 'row' | 'column';
+type Formation = { w: number; h: number; at: Record<Iris, Point> };
+
+// Where each eye sits (its top-left corner) in each arrangement: the triangle
+// of the stylesheet on desktop, its row on phones, and a column for a phone's
+// side so the eyes cover as little of a line of text as they can.
+const S = EYE_SIZE;
+const FORMATIONS: Record<Layout, Formation> = {
+  triangle: {
+    w: 2 * (S + 2) + 4,
+    h: 2 * S + 2,
+    at: { red: { x: S + 4 - S / 2, y: 0 }, green: { x: 0, y: S + 2 }, blue: { x: S + 6, y: S + 2 } },
+  },
+  row: { w: 3 * S + 16, h: S, at: { red: { x: 0, y: 0 }, green: { x: S + 8, y: 0 }, blue: { x: 2 * S + 16, y: 0 } } },
+  column: { w: S, h: 3 * S + 16, at: { red: { x: 0, y: 0 }, green: { x: 0, y: S + 8 }, blue: { x: 0, y: 2 * S + 16 } } },
+};
+
+const PHONE_QUERY = '(max-width: 700px)';
+// How far a press travels before it's a drag rather than a click: just past
+// a mouse's or a finger's jitter.
+const DRAG_START: Record<string, number> = { mouse: 3, pen: 4, touch: 6 };
+// Room kept between the eyes and the window's sides and header.
+const EDGE = 12;
+// Where the visitor left the eyes, per layout: the side and how far down the
+// free room. A convenience: the page works without it.
+const SPOT_KEY = 'hb-eyes';
+
+// Springs, per second. The eyes chase their spot a little loosely so they
+// sway; the group glides to its side with a slight overshoot.
+const EYE_SPRING = { k: 380, c: 24 };
+const GLIDE_SPRING = { k: 200, c: 24 };
+// How far a throw carries: a release at v px/s lands about v / 2 px further,
+// like a scroll view's normal deceleration.
+const CARRY = 0.5;
+// At full speed the eyes pull a quarter of the way together.
+const SQUEEZE = 0.25;
+const SQUEEZE_SPEED = 1600;
+// The string never stretches past 1.7 times the eyes' gap, so a hard throw
+// can't leave an eye behind; and no two eyes get closer than this share of
+// their size.
+const STRING_MAX = 1.7;
+const PERSONAL_SPACE = 0.94;
+const LIFT = 1.08;
+// While dragged, the eyes trade spots only once that saves this much (in
+// squared px): a little past halfway between two spots, so they don't flick
+// back and forth.
+const REORDER_MARGIN = (S / 2) ** 2;
+// How briskly each eye chases its spot after a throw, against the usual
+// spring: the grabbed one, then the others from nearest their landing spot.
+const PACE = { grabbed: 1.8, near: 1, far: 0.55 };
+// The grip: the eyes' whole group plus this margin, so a press between them or
+// just off one still catches the nearest eye.
+const GRIP_MARGIN = 14;
+
+// The bottom spot is the phone's row; fy only counts on a side. order[i] is
+// the arrangement's spot eye i took (spots listed in the logo's order).
+type Spot = { side: 'left' | 'right' | 'bottom'; fy: number; order?: number[] };
+
+// The ways three eyes can fill three spots.
+const ORDERS = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+const LOGO_ORDER = ORDERS[0];
+const isOrder = (order: unknown): order is number[] =>
+  Array.isArray(order) && ORDERS.some((o) => o.every((v, i) => v === order[i]));
+type Body = { x: number; y: number; vx: number; vy: number };
+
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+const isPhone = () => window.matchMedia(PHONE_QUERY).matches;
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const spotKey = () => `${SPOT_KEY}-${isPhone() ? 'phone' : 'desktop'}`;
+
+function readSpot(): Spot | null {
+  try {
+    const spot = JSON.parse(window.localStorage.getItem(spotKey()) ?? 'null');
+    if (!spot || !Number.isFinite(spot.fy)) return null;
+    // Spots saved before the eyes snapped to a side kept a free x instead.
+    if (spot.side !== 'left' && spot.side !== 'right' && spot.side !== 'bottom') {
+      return Number.isFinite(spot.fx) ? { side: spot.fx < 0.5 ? 'left' : 'right', fy: spot.fy } : null;
+    }
+    return spot;
+  } catch {
+    return null;
+  }
+}
+
+function saveSpot(spot: Spot) {
+  try {
+    window.localStorage.setItem(spotKey(), JSON.stringify(spot));
+  } catch {
+    // Storage blocked: the eyes stay put for this visit only.
+  }
+}
+
+// How far down the visible area (this tall) an arrangement can go: below the
+// header, above the bottom edge.
+function verticalRoom(f: Formation, height: number) {
+  const min = (isPhone() ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT) + EDGE;
+  return { min, max: Math.max(min, height - f.h - EDGE) };
+}
+
+function sideX(side: 'left' | 'right', f: Formation) {
+  return side === 'left' ? EDGE : Math.max(EDGE, document.documentElement.clientWidth - f.w - EDGE);
+}
+
+type Props = {
+  iris: Iris | null;
+  onPick: (iris: Iris) => void;
+};
+
+// The three eyes, always on screen: in a triangle in the top-left corner
+// under the header, or in a row at the bottom center on phones, until the
+// visitor throws them to a side. A short press still picks an eye.
+const EyePicker = ({ iris, onPick }: Props) => {
+  const t = useDictionary();
+  const dockRef = useRef<HTMLDivElement>(null);
+  const gripRef = useRef<HTMLSpanElement>(null);
+  const eyeRefs = useRef<Partial<Record<Iris, HTMLButtonElement | null>>>({});
+
+  // Before paint, so eyes the visitor moved never flash at their default spot.
+  useLayoutEffect(() => {
+    const dock = dockRef.current;
+    const grip = gripRef.current;
+    const eyes = IRISES.map((id) => eyeRefs.current[id]);
+    if (!dock || !grip || eyes.some((el) => !el)) return;
+    const buttons = eyes as HTMLButtonElement[];
+
+    // Where the stylesheet puts the phone's row, measured once: its gap to the
+    // bottom includes the iPhone's home indicator.
+    const cssRect = dock.getBoundingClientRect();
+    const bottomGap = window.innerHeight - cssRect.bottom;
+
+    let layout: Layout = isPhone() ? 'row' : 'triangle';
+    // Where the group rests: a side, the phone's bottom row, or (null) the
+    // desktop's default corner. At the bottom the eyes are pinned to the
+    // visible area's bottom edge, so they ride along when a phone's address
+    // bar shows or hides, without waiting for the script.
+    let rest: Spot['side'] | null = null;
+    let phone = isPhone();
+    let origin: Point = { x: 0, y: 0 };
+    let velocity: Point = { x: 0, y: 0 };
+    let target: Point | null = null; // where a throw glides to
+    let squeeze = 1;
+    // Each eye's pace after a throw (1 while dragged or at rest).
+    let pace = IRISES.map(() => 1);
+    let lift = 1;
+    const bodies: Body[] = IRISES.map(() => ({ x: 0, y: 0, vx: 0, vy: 0 }));
+    let drag: {
+      id: number;
+      eye: number;
+      x0: number;
+      y0: number;
+      grab: Point; // pointer offset within the grabbed eye
+      pointer: Point;
+      samples: { t: number; x: number; y: number }[];
+      slop: number;
+      moving: boolean;
+      fromGrip: boolean; // pressed on the grip, not on the eye itself
+    } | null = null;
+    let frame = 0;
+    let last = 0;
+    let swallowClick = false;
+
+    // Which of the arrangement's spots each eye holds.
+    let order = LOGO_ORDER;
+
+    const formation = () => FORMATIONS[layout];
+    const slot = (f: Formation, i: number, of = order) => f.at[IRISES[of[i]]];
+
+    // Where an eye holding the arrangement's spot `at` wants to be with the
+    // group at `from`: pulled toward the middle while the group moves fast.
+    const spotAt = (f: Formation, from: Point, at: Point): Point => {
+      const cx = (f.w - S) / 2;
+      const cy = (f.h - S) / 2;
+      return { x: from.x + cx + (at.x - cx) * squeeze, y: from.y + cy + (at.y - cy) * squeeze };
+    };
+    const spotOf = (i: number): Point => {
+      const f = formation();
+      return spotAt(f, origin, slot(f, i));
+    };
+
+    const restLength = (i: number, of = order) => {
+      const f = formation();
+      const a = slot(f, i, of);
+      const b = slot(f, i + 1, of);
+      return Math.hypot(b.x - a.x, b.y - a.y);
+    };
+
+    // The visible area's height: the dock covers it once the script runs.
+    const viewHeight = () => (dock.dataset.live ? dock.clientHeight : window.innerHeight);
+
+    // Places an element at (x, y) from the top, or the same spot measured from
+    // the bottom edge while the group rests at the bottom.
+    const place = (el: HTMLElement, x: number, y: number, h: number, scale: number, fromBottom: boolean, height: number) => {
+      el.style.top = fromBottom ? 'auto' : '0';
+      el.style.bottom = fromBottom ? '0' : 'auto';
+      const ty = fromBottom ? y + h - height : y;
+      el.style.transform = `translate3d(${x.toFixed(2)}px, ${ty.toFixed(2)}px, 0) scale(${scale.toFixed(3)})`;
+    };
+
+    const draw = () => {
+      const height = viewHeight();
+      const fromBottom = rest === 'bottom' && !drag?.moving && !target;
+      buttons.forEach((el, i) => {
+        const b = bodies[i];
+        const scale = drag?.moving && drag.eye === i ? lift : 1 + (lift - 1) * 0.6;
+        place(el, b.x, b.y, S, scale, fromBottom, height);
+      });
+      // The grip hugs the group wherever it goes.
+      const left = Math.min(...bodies.map((b) => b.x)) - GRIP_MARGIN;
+      const top = Math.min(...bodies.map((b) => b.y)) - GRIP_MARGIN;
+      const right = Math.max(...bodies.map((b) => b.x)) + S + GRIP_MARGIN;
+      const bottom = Math.max(...bodies.map((b) => b.y)) + S + GRIP_MARGIN;
+      grip.style.width = `${(right - left).toFixed(2)}px`;
+      grip.style.height = `${(bottom - top).toFixed(2)}px`;
+      place(grip, left, top, bottom - top, 1, fromBottom, height);
+    };
+
+    // Everything straight to its spot, no motion.
+    const settle = () => {
+      squeeze = 1;
+      lift = 1;
+      bodies.forEach((b, i) => {
+        const p = spotOf(i);
+        Object.assign(b, { x: p.x, y: p.y, vx: 0, vy: 0 });
+      });
+      draw();
+    };
+
+    // The phone's row at the bottom center, where the stylesheet puts it.
+    const bottomSpot = (): Point => {
+      const f = FORMATIONS.row;
+      return { x: (document.documentElement.clientWidth - f.w) / 2, y: viewHeight() - bottomGap - f.h };
+    };
+
+    // The resting place: where the visitor left the eyes, or the default.
+    const home = () => {
+      const spot = readSpot();
+      order = spot && isOrder(spot.order) ? spot.order : LOGO_ORDER;
+      phone = isPhone();
+      if (spot && spot.side !== 'bottom') {
+        rest = spot.side;
+        layout = phone ? 'column' : 'triangle';
+        const f = formation();
+        const room = verticalRoom(f, viewHeight());
+        origin = { x: sideX(spot.side, f), y: room.min + spot.fy * (room.max - room.min) };
+      } else if (phone) {
+        rest = 'bottom';
+        layout = 'row';
+        origin = bottomSpot();
+      } else {
+        rest = null;
+        layout = 'triangle';
+        origin = { x: 12, y: HEADER_HEIGHT + 12 };
+      }
+    };
+
+    const spring = (b: Body, to: Point, k: number, c: number, dt: number) => {
+      b.vx += (k * (to.x - b.x) - c * b.vx) * dt;
+      b.vy += (k * (to.y - b.y) - c * b.vy) * dt;
+      b.x += b.vx * dt;
+      b.y += b.vy * dt;
+    };
+
+    // Pulls two eyes back to a distance between min and max, moving the ones
+    // that aren't held.
+    const keepApart = (i: number, j: number, min: number, max: number) => {
+      const a = bodies[i];
+      const b = bodies[j];
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const d = Math.hypot(dx, dy) || 0.01;
+      const goal = clamp(d, min, max);
+      if (goal === d) return;
+      const fix = (d - goal) / d;
+      const held = drag?.moving ? drag.eye : -1;
+      if (held === i) {
+        b.x -= dx * fix; b.y -= dy * fix;
+      } else if (held === j) {
+        a.x += dx * fix; a.y += dy * fix;
+      } else {
+        a.x += (dx * fix) / 2; a.y += (dy * fix) / 2;
+        b.x -= (dx * fix) / 2; b.y -= (dy * fix) / 2;
+      }
+    };
+
+    // The string between neighbors, and room between every pair.
+    const tieStrings = () => {
+      for (let i = 0; i < bodies.length; i++) {
+        for (let j = i + 1; j < bodies.length; j++) {
+          const max = j === i + 1 ? restLength(i) * STRING_MAX : Infinity;
+          keepApart(i, j, S * PERSONAL_SPACE, max);
+        }
+      }
+    };
+
+    // The group's place while dragged: the held eye, holding the spot `at`,
+    // under the pointer, as long as the group fits.
+    const dragOrigin = (f: Formation, at: Point): Point => {
+      if (!drag) return origin;
+      const cx = (f.w - S) / 2;
+      const cy = (f.h - S) / 2;
+      const grabbed = { x: drag.pointer.x - drag.grab.x, y: drag.pointer.y - drag.grab.y };
+      const room = verticalRoom(f, viewHeight());
+      return {
+        x: clamp(grabbed.x - cx - (at.x - cx) * squeeze, EDGE, Math.max(EDGE, document.documentElement.clientWidth - f.w - EDGE)),
+        y: clamp(grabbed.y - cy - (at.y - cy) * squeeze, room.min, room.max),
+      };
+    };
+
+    // While dragged, the eyes keep any order they plainly fall into: each
+    // takes the spot it's nearest, counted from the held eye under the
+    // pointer. An order that would pull the held eye off the pointer (the
+    // group pressed against an edge) or snap the string waits for the release.
+    const regroup = () => {
+      if (!drag?.moving) return;
+      const f = formation();
+      const held = drag.eye;
+      const fit = (of: number[]) => {
+        const from = dragOrigin(f, slot(f, held, of));
+        const spots = bodies.map((b, i) => spotAt(f, from, slot(f, i, of)));
+        const cost = bodies.reduce((sum, b, i) => (i === held ? sum : sum + (b.x - spots[i].x) ** 2 + (b.y - spots[i].y) ** 2), 0);
+        return { heldAt: spots[held], cost };
+      };
+      const now = fit(order);
+      let best = { of: order, cost: now.cost - REORDER_MARGIN };
+      for (const candidate of ORDERS) {
+        const { heldAt, cost } = fit(candidate);
+        const stays = Math.hypot(heldAt.x - now.heldAt.x, heldAt.y - now.heldAt.y) < 1;
+        const tied = bodies.every((b, i) => {
+          const next = bodies[i + 1];
+          return !next || Math.hypot(next.x - b.x, next.y - b.y) <= restLength(i, candidate) * STRING_MAX;
+        });
+        if (cost < best.cost && stays && tied) best = { of: candidate, cost };
+      }
+      order = best.of;
+    };
+
+    // The pointer's speed over its last tenth of a second; zero once it rests.
+    const pointerVelocity = (now: number): Point => {
+      if (!drag) return { x: 0, y: 0 };
+      const recent = drag.samples.filter((p) => now - p.t <= 100);
+      if (recent.length < 2) return { x: 0, y: 0 };
+      const a = recent[0];
+      const b = recent[recent.length - 1];
+      const span = (b.t - a.t) / 1000;
+      return span > 0 ? { x: (b.x - a.x) / span, y: (b.y - a.y) / span } : { x: 0, y: 0 };
+    };
+
+    const step = (dt: number, now: number) => {
+      const still = reducedMotion();
+      const f = formation();
+      if (drag?.moving) velocity = pointerVelocity(now);
+
+      // Faster means tighter, eased so it doesn't flicker.
+      const speed = Math.hypot(velocity.x, velocity.y);
+      const squeezeGoal = still ? 1 : 1 - SQUEEZE * Math.min(1, speed / SQUEEZE_SPEED);
+      squeeze += (squeezeGoal - squeeze) * Math.min(1, dt * 10);
+      const liftGoal = drag?.moving && !still ? LIFT : 1;
+      lift += (liftGoal - lift) * Math.min(1, dt * 18);
+
+      // The group: under the finger while dragged, gliding to its side after.
+      if (drag?.moving) {
+        origin = dragOrigin(f, slot(f, drag.eye));
+      } else if (target) {
+        if (still) {
+          origin = target;
+          velocity = { x: 0, y: 0 };
+        } else {
+          velocity.x += (GLIDE_SPRING.k * (target.x - origin.x) - GLIDE_SPRING.c * velocity.x) * dt;
+          velocity.y += (GLIDE_SPRING.k * (target.y - origin.y) - GLIDE_SPRING.c * velocity.y) * dt;
+          origin = { x: origin.x + velocity.x * dt, y: origin.y + velocity.y * dt };
+        }
+        if (Math.hypot(target.x - origin.x, target.y - origin.y) < 0.3 && Math.hypot(velocity.x, velocity.y) < 6) {
+          origin = target;
+          velocity = { x: 0, y: 0 };
+          target = null;
+        }
+      }
+
+      bodies.forEach((b, i) => {
+        const to = spotOf(i);
+        if (drag?.moving && drag.eye === i) {
+          // Held: its spot is under the finger, as long as the group fits.
+          b.vx = (to.x - b.x) / dt;
+          b.vy = (to.y - b.y) / dt;
+          b.x = to.x;
+          b.y = to.y;
+        } else if (still) {
+          Object.assign(b, { x: to.x, y: to.y, vx: 0, vy: 0 });
+        } else {
+          // A brisker spring keeps an eye closer to its moving spot; damping
+          // grows with it so each sways alike.
+          spring(b, to, EYE_SPRING.k * pace[i], EYE_SPRING.c * Math.sqrt(pace[i]), dt);
+        }
+      });
+      if (!still) {
+        tieStrings();
+        regroup();
+      }
+    };
+
+    const resting = () =>
+      !drag?.moving &&
+      !target &&
+      Math.abs(squeeze - 1) < 0.001 &&
+      Math.abs(lift - 1) < 0.001 &&
+      bodies.every((b, i) => {
+        const to = spotOf(i);
+        return Math.hypot(to.x - b.x, to.y - b.y) < 0.2 && Math.hypot(b.vx, b.vy) < 4;
+      });
+
+    const tick = (now: number) => {
+      const elapsed = Math.min((now - last) / 1000, 1 / 30);
+      last = now;
+      // Small steps keep the springs steady on slow frames.
+      const steps = Math.max(1, Math.ceil(elapsed / (1 / 240)));
+      for (let i = 0; i < steps; i++) step(elapsed / steps, now);
+      if (resting()) {
+        pace = IRISES.map(() => 1);
+        // The visible area may have changed on the way down.
+        if (rest === 'bottom') origin = bottomSpot();
+        settle();
+        frame = 0;
+        return;
+      }
+      draw();
+      frame = requestAnimationFrame(tick);
+    };
+
+    const wake = () => {
+      if (frame) return;
+      last = performance.now();
+      frame = requestAnimationFrame(tick);
+    };
+
+    const down = (e: PointerEvent) => {
+      if (!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      // An eye, or the grip around them: then the eye nearest the press.
+      let eye = buttons.findIndex((el) => el.contains(e.target as Node));
+      const fromGrip = eye < 0 && e.target === grip;
+      if (fromGrip) {
+        const gap = (b: Body) => Math.hypot(e.clientX - (b.x + S / 2), e.clientY - (b.y + S / 2));
+        eye = bodies.reduce((best, b, i) => (gap(b) < gap(bodies[best]) ? i : best), 0);
+      }
+      if (eye < 0) return;
+      const b = bodies[eye];
+      drag = {
+        id: e.pointerId,
+        eye,
+        x0: e.clientX,
+        y0: e.clientY,
+        grab: { x: e.clientX - b.x, y: e.clientY - b.y },
+        pointer: { x: e.clientX, y: e.clientY },
+        samples: [{ t: performance.now(), x: e.clientX, y: e.clientY }],
+        slop: DRAG_START[e.pointerType] ?? 4,
+        moving: false,
+        fromGrip,
+      };
+    };
+
+    const move = (e: PointerEvent) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (!drag.moving) {
+        if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < drag.slop) return;
+        drag.moving = true;
+        pace = IRISES.map(() => 1);
+        target = null;
+        buttons[drag.eye].setPointerCapture(e.pointerId);
+        dock.dataset.dragging = 'true';
+        buttons[drag.eye].style.zIndex = '1';
+        document.documentElement.classList.add('eyes-dragging');
+      }
+      drag.pointer = { x: e.clientX, y: e.clientY };
+      // The pointer's recent path, for the throw's speed.
+      drag.samples.push({ t: performance.now(), x: e.clientX, y: e.clientY });
+      if (drag.samples.length > 32) drag.samples.shift();
+      wake();
+    };
+
+    const end = (e: PointerEvent) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const done = drag;
+      drag = null;
+      if (!done.moving) {
+        // A tap on the grip counts as a tap on the nearest eye.
+        if (done.fromGrip && e.type === 'pointerup') buttons[done.eye].click();
+        return;
+      }
+      delete dock.dataset.dragging;
+      buttons[done.eye].style.removeProperty('z-index');
+      document.documentElement.classList.remove('eyes-dragging');
+      // The throw: the pointer's speed as it let go (none after a pause).
+      drag = done;
+      velocity = pointerVelocity(performance.now());
+      drag = null;
+
+      // Where the throw would carry the group decides where it lands: the
+      // nearer side or, on phones, the row at the bottom center if that's
+      // nearer still.
+      const width = document.documentElement.clientWidth;
+      const carried = { x: origin.x + velocity.x * CARRY, y: origin.y + velocity.y * CARRY };
+      const center = { x: carried.x + formation().w / 2, y: carried.y + formation().h / 2 };
+      let side: Spot['side'] = center.x < width / 2 ? 'left' : 'right';
+      if (isPhone()) {
+        const row = FORMATIONS.row;
+        const bottom = bottomSpot();
+        const toSide = Math.min(center.x - (EDGE + S / 2), width - EDGE - S / 2 - center.x);
+        const toBottom = Math.hypot(center.x - width / 2, center.y - (bottom.y + row.h / 2));
+        // A throw that's mostly downward goes home too, even if its carry
+        // would overshoot the middle.
+        const downward = velocity.y > 400 && velocity.y > 1.5 * Math.abs(velocity.x);
+        if (toBottom < toSide || (downward && center.y > viewHeight() * 0.6)) side = 'bottom';
+      }
+      const turnTo: Layout = !isPhone() ? 'triangle' : side === 'bottom' ? 'row' : 'column';
+      if (turnTo !== layout) {
+        // Keeps the eyes where they are while the arrangement turns.
+        const from = formation();
+        layout = turnTo;
+        const to = formation();
+        origin = { x: origin.x + (from.w - to.w) / 2, y: origin.y + (from.h - to.h) / 2 };
+      }
+      // Each eye takes the spot nearest to where it is in the group: of the six
+      // ways to share the spots, the one with the least travel.
+      const f = formation();
+      const mean = (points: Point[]) => ({
+        x: points.reduce((sum, p) => sum + p.x, 0) / points.length,
+        y: points.reduce((sum, p) => sum + p.y, 0) / points.length,
+      });
+      const spots = IRISES.map((id) => f.at[id]);
+      const spotsMid = mean(spots);
+      const eyesMid = mean(bodies);
+      const travelOf = (candidate: number[]) => bodies.reduce((sum, b, i) => {
+        const at = spots[candidate[i]];
+        return sum + ((b.x - eyesMid.x) - (at.x - spotsMid.x)) ** 2 + ((b.y - eyesMid.y) - (at.y - spotsMid.y)) ** 2;
+      }, 0);
+      // On a tie the eyes keep the spots they had.
+      let travel = travelOf(order);
+      for (const candidate of ORDERS) {
+        const cost = travelOf(candidate);
+        if (cost < travel - 0.5) {
+          travel = cost;
+          order = candidate;
+        }
+      }
+      rest = side;
+      if (side === 'bottom') {
+        target = bottomSpot();
+        saveSpot({ side, fy: 1, order });
+      } else {
+        const room = verticalRoom(f, viewHeight());
+        target = { x: sideX(side, f), y: clamp(carried.y, room.min, room.max) };
+        saveSpot({ side, fy: room.max > room.min ? (target.y - room.min) / (room.max - room.min) : 0, order });
+      }
+      // The grabbed eye flies quickest; of the others, the one nearer its
+      // landing spot goes next.
+      const landing = target;
+      const toLand = (i: number) => {
+        const at = slot(f, i);
+        return Math.hypot(landing.x + at.x - bodies[i].x, landing.y + at.y - bodies[i].y);
+      };
+      const others = bodies.map((b, i) => i).filter((i) => i !== done.eye).sort((a, b) => toLand(a) - toLand(b));
+      pace = IRISES.map((id, i) => (i === done.eye ? PACE.grabbed : i === others[0] ? PACE.near : PACE.far));
+      wake();
+      // The click that follows a drag isn't a pick.
+      swallowClick = true;
+      window.setTimeout(() => { swallowClick = false; }, 0);
+    };
+
+    const click = (e: MouseEvent) => {
+      if (!swallowClick) return;
+      swallowClick = false;
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    // The visible area changed size: a phone's address bar showing or hiding,
+    // a turned phone or a resized window. The eyes keep their place: on the
+    // same side at the same height, or at the bottom.
+    const resize = () => {
+      if (drag?.moving || target) return;
+      velocity = { x: 0, y: 0 };
+      if (isPhone() !== phone) {
+        home();
+      } else if (rest === 'bottom') {
+        origin = bottomSpot();
+      } else if (rest) {
+        const f = formation();
+        const room = verticalRoom(f, viewHeight());
+        origin = { x: sideX(rest, f), y: clamp(origin.y, room.min, room.max) };
+      }
+      settle();
+    };
+
+    // From here the script places the eyes; the stylesheet's layout was only
+    // for the first paint.
+    dock.dataset.live = 'true';
+    home();
+    settle();
+    dock.addEventListener('pointerdown', down);
+    dock.addEventListener('click', click, true);
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+    window.addEventListener('resize', resize);
+    // Also watches the dock itself, which covers the visible area: on phones
+    // its height follows the address bar even when no resize event comes.
+    const watch = new ResizeObserver(resize);
+    watch.observe(dock);
+    return () => {
+      watch.disconnect();
+      cancelAnimationFrame(frame);
+      document.documentElement.classList.remove('eyes-dragging');
+      dock.removeEventListener('pointerdown', down);
+      dock.removeEventListener('click', click, true);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', end);
+      window.removeEventListener('pointercancel', end);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return (
+    <EyeDock ref={dockRef}>
+      <span ref={gripRef} className="grip" aria-hidden="true" />
+      <EyeGroup role="group" aria-label={t.lookout.eyesGroup} $size={EYE_SIZE}>
+        {IRISES.map((id) => (
+          <EyeButton
+            key={id}
+            ref={(el) => { eyeRefs.current[id] = el; }}
+            type="button"
+            $size={EYE_SIZE}
+            aria-pressed={iris === id}
+            aria-label={t.lookout.iris[id]}
+            onClick={() => onPick(id)}
+          >
+            <EyeIris aria-hidden="true" $size={Math.round(EYE_SIZE * 0.62)} $color={IRIS_INK[id].solid} $chosen={iris === id} />
+            <EyePupil aria-hidden="true" $size={Math.round(EYE_SIZE * 0.3)} />
+          </EyeButton>
+        ))}
+      </EyeGroup>
+    </EyeDock>
+  );
+};
+
+export default EyePicker;

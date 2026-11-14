@@ -17,6 +17,10 @@ const Theme = {
     yellow: '#ffd600',
     secondaryText: '#5B5B66',
   },
+  fonts: {
+    // Hand lettering for titles, notes and buttons (loaded in the root layout).
+    hand: "var(--font-hand), 'Comic Sans MS', cursive",
+  },
 };
 
 export default Theme;

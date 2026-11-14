@@ -1,5 +1,25 @@
 html {
   scroll-behavior: smooth;
+  /* Keyboard focus stops below the fixed header instead of under it. */
+  scroll-padding-top: 80px;
+}
+
+/* Reduced motion: everything lands instantly. The durations are near zero, not
+   `none`, because the mobile menu items start at opacity 0 and rely on their
+   animation finishing. Hover scales are switched off where they are declared. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }
 
 /* Scroll lock (lightbox / mobile menu): freeze the page without a layout
@@ -14,16 +34,23 @@ html.scroll-locked .site-header {
   padding-right: var(--sbw, 0px);
 }
 
+/* While the floating eyes are dragged, the grab shows everywhere and no text
+   gets selected along the way. */
+html.eyes-dragging,
+html.eyes-dragging * {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
 body {
   color: #000000;
-  background-color: #F5F5F5;
+  background-color: #F4F4F4;
   -webkit-font-smoothing: antialiased;
 }
 
 button {
   padding: 0;
   border: 0;
-  outline: 0;
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
@@ -32,9 +59,11 @@ button {
   background-color: transparent;
 }
 
-button:focus {
-  outline: 0;
-  box-shadow: none;
+/* One focus ring for the whole site, keyboard only. The brand red clears 3:1 on
+   both the light page and the black cards. */
+:focus-visible {
+  outline: 2px solid #D62828;
+  outline-offset: 2px;
 }
 
 ul,

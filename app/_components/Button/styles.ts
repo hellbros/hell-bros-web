@@ -14,7 +14,8 @@ type ButtonProps = {
   fullWidth?: boolean;
   loading?: string;
   color?: string;
-  iconColor?: string;
+  // Label color at rest, for fills too light to carry the default white.
+  $labelColor?: string;
   justIcon?: boolean;
 } & StyledProps;
 
@@ -27,13 +28,6 @@ const spinnerAnimation = keyframes`
     -webkit-transform: translate(-50%) rotate(360deg);
     transform: translate(-50%, -50%) rotate(360deg);
   }
-`;
-
-export const SVGContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
 `;
 
 export const StyledButton = styled.button<ButtonProps>`
@@ -112,11 +106,28 @@ export const StyledButton = styled.button<ButtonProps>`
         '@media (hover: none) and (pointer: coarse)': { //MOBILES
           color: `${theme.colors.white}`,
         },
+        '@media (prefers-reduced-motion: reduce)': {
+          '&:hover': {
+            transform: 'none',
+          },
+        },
       },
       justIcon: {
       },
     },
   })}
+
+  ${({ $labelColor }) => $labelColor && css`
+    @media (hover: hover) and (pointer: fine) {
+      &:not(:hover) {
+        color: ${$labelColor};
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      color: ${$labelColor};
+    }
+  `}
 
   ${space};
   ${layout};

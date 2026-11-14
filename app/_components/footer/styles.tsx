@@ -15,6 +15,12 @@ export const FooterInner = styled.div`
   max-width: ${MAX_WIDTH};
   margin: 0 auto;
   padding: 64px ${SECTION_PADDING} 32px;
+
+  /* On phones the home page's eyes float at the bottom center (46px tall,
+     16px up): leave room so they don't cover the copyright line. */
+  @media (max-width: 700px) {
+    padding-bottom: calc(94px + env(safe-area-inset-bottom, 0px));
+  }
 `;
 
 export const FooterGrid = styled.div`
@@ -66,6 +72,29 @@ export const Brand = styled.div`
     transition-duration: 0.25s;
   }
 
+  /* The way in for the press: a white outlined pill under the email. */
+  a.press {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    border: 2px solid ${theme.colors.white};
+    border-radius: 48px;
+    color: ${theme.colors.white};
+    font-family: ${theme.fonts.hand};
+    font-size: 16px;
+    font-weight: 800;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  @media (hover: hover) {
+    a.press:hover {
+      background-color: ${theme.colors.white};
+      color: ${theme.colors.black};
+    }
+  }
+
   .copied-badge {
     position: absolute;
     right: 0;
@@ -98,10 +127,9 @@ export const Col = styled.div`
 
   .label {
     margin: 0 0 0.3rem;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    font-family: ${theme.fonts.hand};
+    font-size: 20px;
+    font-weight: 800;
     color: ${theme.colors.white};
   }
 
@@ -146,12 +174,20 @@ export const SocialRow = styled.div`
     height: 44px;
     border-radius: 12px;
     color: ${theme.colors.white};
-    transition: color 0.2s ease, transform 0.2s ease;
+    transition: color 0.2s ease-out, transform 0.2s ease-out;
+    /* Its own layer from the start: otherwise the browser redraws the icon
+       sharp once the hover scale ends, and the growth lands in two steps. */
+    will-change: transform;
   }
 
   @media (hover: hover) {
     a:hover {
       color: ${theme.colors.red};
+    }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    a:hover {
       transform: scale(1.1);
     }
   }
@@ -168,6 +204,18 @@ export const FooterBottom = styled.div`
   text-align: center;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);
+
+  a.privacy {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (hover: hover) {
+    a.privacy:hover {
+      color: ${theme.colors.white};
+    }
+  }
 
   /* The art bleeds past the footer's side padding and melts into black on
      every edge, so the claw reaches out of the dark with no visible frame. */
@@ -189,7 +237,8 @@ export const FooterBottom = styled.div`
 
   .slogan {
     margin: 0 0 10px;
-    font-size: 13px;
+    font-family: ${theme.fonts.hand};
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;

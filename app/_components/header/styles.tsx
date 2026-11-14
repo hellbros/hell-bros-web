@@ -3,23 +3,48 @@
 import styled, { keyframes } from 'styled-components';
 import { variant } from 'styled-system';
 import TextGlobal from '../../_components/Text';
-import { MAX_WIDTH, SECTION_PADDING, HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from '@/app/_utils/constants';
+import { MAX_WIDTH, SECTION_PADDING, HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, SOFT_SHADOW } from '@/app/_utils/constants';
 import { theme } from '@/app/_styles/theme';
 
 interface HeaderStyledProps {
   $hasScrolled?: boolean;
+  $expanded?: boolean;
   $mobileMenuOpen?: boolean;
 }
 
-export const HeaderStyled = styled.div<HeaderStyledProps>`
+// While the page's big logo shows, the header is just the links over the page;
+// once it scrolls away the bar fills in with its own small logo.
+export const HeaderStyled = styled.header<HeaderStyledProps>`
   width: 100%;
   height: ${HEADER_HEIGHT}px;
   position: fixed;
-  background: ${(props) => (props.$hasScrolled ? theme.colors.white : theme.colors.whiteSmoke)};
-  box-shadow: ${(props) => (props.$hasScrolled ? '0 2px 5px rgba(0,0,0,.05), 0 8px 40px rgba(0,0,0,.04), 0 0 2px rgba(0,0,0,.15)' : 'unset')};
+  background: ${({ $expanded, $hasScrolled }) =>
+    $expanded ? 'transparent' : $hasScrolled ? theme.colors.white : theme.colors.whiteSmoke};
+  box-shadow: ${({ $expanded, $hasScrolled }) =>
+    !$expanded && $hasScrolled ? SOFT_SHADOW : 'unset'};
   transition: background 0.3s ease-out, box-shadow 0.3s ease-out,
     height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 9999;
+
+  /* First Tab stop; stays off-screen until it has keyboard focus. */
+  .skip-link {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 1;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: ${theme.colors.black};
+    color: ${theme.colors.white};
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus {
+    transform: none;
+  }
 
   .header-content {
     margin: auto;
@@ -34,16 +59,20 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
     .logo {
       display: flex;
       align-items: center;
+      opacity: ${({ $expanded }) => ($expanded ? 0 : 1)};
+      visibility: ${({ $expanded }) => ($expanded ? 'hidden' : 'visible')};
+      transition: opacity 0.3s ease-out, visibility 0.3s;
     }
 
     .logo button {
       display: flex;
       align-items: center;
+      min-height: 44px;
       cursor: pointer;
     }
 
     .logo img {
-      height: 36px;
+      height: 44px;
       width: auto;
     }
 
@@ -68,7 +97,7 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
       top: ${HEADER_HEIGHT_MOBILE / 2}px;
 
       .logo img {
-        height: 26px;
+        height: 32px;
       }
 
       .menu-toggle {
@@ -79,8 +108,10 @@ export const HeaderStyled = styled.div<HeaderStyledProps>`
 `;
 
 export const MenuToggle = styled.button`
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  /* Grows outward so the icon stays where it was. */
+  margin-right: -2px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -100,7 +131,7 @@ export const MenuToggle = styled.button`
   }
 `;
 
-export const HeaderOptions = styled.div`
+export const HeaderOptions = styled.nav`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -109,14 +140,15 @@ export const HeaderOptions = styled.div`
     display: none;
   }
 
-  button {
+  button,
+  a {
     margin: 0.95rem;
     padding: 0.5rem;
     text-decoration: none;
     color: #393939;
-    font-weight: 600;
+    font-family: ${theme.fonts.hand};
+    font-weight: 800;
     font-size: 17px;
-    letter-spacing: 1px;
     transition: color 0.4s ease-out;
     cursor: pointer;
     user-select: none;
@@ -155,7 +187,7 @@ const fadeIn = keyframes`
   }
 `;
 
-export const HeaderMobileOptions = styled.div`
+export const HeaderMobileOptions = styled.nav`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -165,13 +197,15 @@ export const HeaderMobileOptions = styled.div`
     display: none;
   }
 
-  button {
+  button,
+  a {
+    display: block;
     margin: 0.95rem;
     padding: 1.2rem;
     text-decoration: none;
     color: #393939;
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-family: ${theme.fonts.hand};
+    font-weight: 800;
     transition: color 0.4s ease-out;
     cursor: pointer;
     user-select: none;
@@ -203,12 +237,24 @@ export const HeaderMobileOptions = styled.div`
     }
   }
 
+  /* A phone held sideways can't fit four options at the default spacing, and
+     the page behind is locked, so the last one would be out of reach. */
+  @media (max-height: 460px) {
+    button,
+    a {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: 0.7rem;
+      padding-bottom: 0.7rem;
+    }
+  }
+
   /* Stagger: options appear one after another, not all at once, and start
      early (no need to wait for the panel to finish dropping). */
-  button:nth-child(1) { animation-delay: 0.05s; }
-  button:nth-child(2) { animation-delay: 0.13s; }
-  button:nth-child(3) { animation-delay: 0.21s; }
-  button:nth-child(4) { animation-delay: 0.29s; }
+  > :nth-child(1) { animation-delay: 0.05s; }
+  > :nth-child(2) { animation-delay: 0.13s; }
+  > :nth-child(3) { animation-delay: 0.21s; }
+  > :nth-child(4) { animation-delay: 0.29s; }
 `;
 
 export const Text = styled(TextGlobal)`

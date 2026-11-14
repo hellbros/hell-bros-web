@@ -1,16 +1,20 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { HeaderMobileOptions, HeaderOptions, HeaderStyled, MenuToggle, Text } from './styles'
 import useScroll from '@/app/hooks/useScroll';
+import useInView from '@/app/hooks/useInView';
 import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
 import scrollToSection, { onScrollNear } from '@/app/_utils/functions';
 import { lockScroll, unlockScroll } from '@/app/_utils/scrollLock';
+import { trapTab } from '@/app/_utils/focus';
 import useMediaQuery from '@/app/hooks/useMediaQuery';
 import useActiveSection from '@/app/hooks/useActiveSection';
 import Image from 'next/image';
 import HellBrosLogo from '@/public/assets/brand/logo_hb_color02.svg';
-import { useDictionary } from '@/app/_i18n/LocaleProvider';
+import { useDictionary, useLocale } from '@/app/_i18n/LocaleProvider';
 import type { Dictionary } from '@/app/_i18n/dictionaries';
+import { LOCALE_COOKIE, localePath, otherLocale } from '@/app/_i18n/locales';
+import { usePathname } from 'next/navigation';
 
 const HamburgerIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -36,13 +40,30 @@ const EMAIL_HIGHLIGHT_MS = { min: 500, max: 1300 };
 
 const Header = () => {
   const t = useDictionary();
+  const locale = useLocale();
+  const nextLocale = otherLocale(locale);
+  // This page's path after the language ('' on the home page). Away from home,
+  // the logo and the section links go back to it.
+  const page = (usePathname() ?? '/').replace(/^\/es(?=\/|$)/, '').replace(/^\/$/, '');
+  const onHome = page === '';
   const sm = useMediaQuery('(max-width: 700px)');
   const hasScrolled = useScroll();
   const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
+  // Up top the page shows the studio's logo big; the header only brings its
+  // own small one once that has scrolled away.
+  const brandInView = useInView('marca', headerHeight);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const activeSection = useActiveSection(NAV_IDS, headerHeight);
+  const spiedSection = useActiveSection(NAV_IDS, headerHeight);
+  const activeSection = onHome ? spiedSection : undefined;
+  const headerRef = useRef<HTMLElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   function goToSection(sectionId: string): void {
+    // A section that isn't on this page is on the home page.
+    if (!document.getElementById(sectionId)) {
+      window.location.assign(`${localePath(locale)}#${sectionId}`);
+      return;
+    }
     const from = window.scrollY;
     const top = scrollToSection(sectionId, headerHeight);
     if (sectionId === 'contact' && top !== undefined) {
@@ -58,6 +79,27 @@ const Header = () => {
     setMobileMenuOpen(false);
   }
 
+  function goHome(): void {
+    if (!onHome) {
+      window.location.assign(localePath(locale));
+      return;
+    }
+    scrollToSection('inicio', headerHeight);
+    setMobileMenuOpen(false);
+  }
+
+  // Beats the browser's language on later visits to the root.
+  function rememberLanguage(): void {
+    document.cookie = `${LOCALE_COOKIE}=${nextLocale}; path=/; max-age=31536000; samesite=lax`;
+  }
+
+  // Moves focus without adding #inicio to the URL: the lightbox closes with
+  // history.back(), and a fragment there sends the page back to the top.
+  function skipToContent(e: React.MouseEvent): void {
+    e.preventDefault();
+    document.getElementById('inicio')?.focus();
+  }
+
   useEffect(() => {
     // Lock background scroll while the mobile menu is open (no layout shift).
     if (sm && mobileMenuOpen) {
@@ -71,18 +113,40 @@ const Header = () => {
     };
   }, [mobileMenuOpen, sm]);
 
+  // The open menu covers the page: Esc closes it and Tab stays inside.
+  useEffect(() => {
+    if (!sm || !mobileMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        toggleRef.current?.focus();
+      } else if (e.key === 'Tab') {
+        trapTab(e, headerRef.current);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mobileMenuOpen, sm]);
+
   return (
-    <HeaderStyled className="site-header" $hasScrolled={hasScrolled} $mobileMenuOpen={mobileMenuOpen}>
+    <HeaderStyled
+      ref={headerRef}
+      className="site-header"
+      $hasScrolled={hasScrolled}
+      $expanded={brandInView && !mobileMenuOpen}
+      $mobileMenuOpen={mobileMenuOpen}
+    >
+      <a className="skip-link" href="#inicio" onClick={skipToContent}>{t.nav.skip}</a>
       <div className='header-content'>
 
         <div className='row'>
           <div className='logo'>
-            <button type="button" aria-label={t.nav.home} onClick={() => scrollToSection('inicio', headerHeight)}>
+            <button type="button" aria-label={t.nav.home} onClick={goHome}>
               <Image src={HellBrosLogo} alt="Hell Bros" priority />
             </button>
           </div>
 
-          <HeaderOptions>
+          <HeaderOptions aria-label={t.nav.label}>
             {NAV.map(({ id, label, scrollTo }) => (
               <button
                 key={id}
@@ -93,13 +157,24 @@ const Header = () => {
                 <Text $styles='link' as="span">{t.nav[label]}</Text>
               </button>
             ))}
+            <a
+              href={localePath(nextLocale, page)}
+              hrefLang={nextLocale}
+              lang={nextLocale}
+              aria-label={t.nav.language}
+              onClick={rememberLanguage}
+            >
+              <Text $styles='link' as="span">{t.nav.languageShort}</Text>
+            </a>
           </HeaderOptions>
 
           <MenuToggle
+            ref={toggleRef}
             className="menu-toggle"
             type="button"
             aria-label={mobileMenuOpen ? t.nav.closeMenu : t.nav.openMenu}
             aria-expanded={mobileMenuOpen}
+            aria-controls={mobileMenuOpen ? 'mobile-menu' : undefined}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -107,7 +182,7 @@ const Header = () => {
         </div>
 
         {mobileMenuOpen &&
-          <HeaderMobileOptions>
+          <HeaderMobileOptions id="mobile-menu" aria-label={t.nav.label}>
             {NAV.map(({ id, label, scrollTo }) => (
               <button
                 key={id}
@@ -118,6 +193,9 @@ const Header = () => {
                 <Text as="span">{t.nav[label]}</Text>
               </button>
             ))}
+            <a href={localePath(nextLocale, page)} hrefLang={nextLocale} lang={nextLocale} onClick={rememberLanguage}>
+              <Text as="span">{t.nav.language}</Text>
+            </a>
           </HeaderMobileOptions>
         }
 

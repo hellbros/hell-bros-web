@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import HellBrosLogoWhite from '@/public/assets/brand/logo_hb_neg02.svg';
-import FooterClaw from '@/public/assets/look-out/footer-hand.webp';
-import { useDictionary } from '@/app/_i18n/LocaleProvider';
+import FooterClaw from '@/public/assets/look-out/hell-bros-look-out-demon-hand.webp';
+import { useDictionary, useLocale } from '@/app/_i18n/LocaleProvider';
+import { PRESSKIT_PAGE, PRIVACY_PAGE, localePath } from '@/app/_i18n/locales';
 import { HIGHLIGHT_EMAIL_EVENT } from '@/app/_utils/constants';
 import { FooterStyled, FooterInner, FooterGrid, Brand, Col, SocialRow, FooterBottom } from './styles';
 
@@ -53,7 +54,7 @@ const RedditIcon = () => (
 );
 
 const socials = [
-  { label: 'Discord', href: 'https://discord.gg/5yXsbXfKM', Icon: DiscordIcon },
+  { label: 'Discord', href: 'https://discord.gg/mSYYyGs5Yd', Icon: DiscordIcon },
   { label: 'Instagram', href: 'https://www.instagram.com/hellbrosstudio', Icon: IgIcon },
   { label: 'TikTok', href: 'https://www.tiktok.com/@hellbrosstudio', Icon: TiktokIcon },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/company/hellbrosstudio/', Icon: LinkedinIcon },
@@ -64,6 +65,7 @@ const socials = [
 
 const Footer = () => {
   const t = useDictionary();
+  const locale = useLocale();
   const [copied, setCopied] = useState(false);
   const [highlighted, setHighlighted] = useState(false);
 
@@ -116,13 +118,16 @@ const Footer = () => {
                 </span>
               )}
             </a>
+            <a className="press" href={localePath(locale, PRESSKIT_PAGE)}>
+              {t.footer.pressKit}
+            </a>
           </Brand>
 
           <Col>
             <p className="label">{t.footer.followUs}</p>
             <SocialRow>
               {socials.map(({ label, href, Icon }) => (
-                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={t.footer.socialLink(label)}>
                   <Icon />
                 </a>
               ))}
@@ -131,9 +136,13 @@ const Footer = () => {
         </FooterGrid>
 
         <FooterBottom>
-          <Image className="claw" src={FooterClaw} alt="" sizes="(max-width: 1000px) 100vw, 1000px" />
+          <Image className="claw" src={FooterClaw} alt={t.footer.handArtAlt} sizes="(max-width: 1000px) 100vw, 1000px" />
           <p className="slogan">Games from hell</p>
-          © {new Date().getFullYear()} Hell Bros. {t.footer.rights}
+          © {new Date().getFullYear()} Hell Bros. {t.footer.rights}{' '}
+          <span aria-hidden="true">·</span>{' '}
+          <a className="privacy" href={localePath(locale, PRIVACY_PAGE)}>
+            {t.footer.privacy}
+          </a>
         </FooterBottom>
       </FooterInner>
     </FooterStyled>

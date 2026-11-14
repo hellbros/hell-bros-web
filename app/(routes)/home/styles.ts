@@ -1,144 +1,95 @@
 "use client"
 
-import styled, { css, keyframes } from 'styled-components';
-import { LayoutProps, SpaceProps, layout, space, variant } from 'styled-system';
+import styled, { keyframes } from 'styled-components';
+import { variant } from 'styled-system';
 import TextGlobal from '../../_components/Text';
-import { MAX_WIDTH, SECTION_PADDING } from '../../_utils/constants';
+import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE, MAX_WIDTH, SECTION_PADDING, SOFT_SHADOW } from '../../_utils/constants';
 import { theme } from '@/app/_styles/theme';
 
-export const LayoutSection = styled.section`
+export const CAPSULE_POPUP_GAP = 6;
 
+const PHONE = '@media (max-width: 700px)';
+const PHONE_PADDING = '20px';
+// Where the side-by-side pairs of a part stack up.
+const NARROW = '@media (max-width: 860px)';
+
+// Hand-drawn box: each corner bulges a little differently.
+const ROUGH_RADIUS = '255px 15px 225px 15px / 15px 225px 15px 255px';
+
+// No top padding: the brand section sits under the header, which is see-through
+// up there.
+export const SectionContainer = styled.main`
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  /* A tilted card must not widen the page. */
+  overflow-x: clip;
+
+  /* Focusable only as the skip link's target; a ring around the page is noise. */
+  &:focus {
+    outline: none;
+  }
 `;
 
-export type StyledProps = SpaceProps & LayoutProps;
-
-interface SectionProps {
-  $styles?: 'solid' | 'card';
-  color?: string;
-  textColor?: string;
-}
-
-export const Section = styled.section<SectionProps & StyledProps>`
+// The studio up top, like Evil Empire: the logo big, the slogan under it.
+export const Brand = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* 40px between every direct child, so elements share one vertical rhythm. */
-  gap: ${SECTION_PADDING};
-  margin: auto;
-  /* Fill up to max-width instead of shrinking to fit content, so every
-     section shares the same box width (1000px). */
-  width: 100%;
-  max-width: ${MAX_WIDTH};
-  /* 40px padding on every side (the first section also clears the fixed
-     header via the container's padding-top). */
-  padding: ${SECTION_PADDING};
-  background-color: ${({ color }) => color};
-  color: ${({ textColor }) => textColor};
-  border-radius: 40px;
-  margin-bottom: ${SECTION_PADDING};
+  gap: 14px;
+  min-height: min(70vh, 560px);
+  padding: ${HEADER_HEIGHT + 24}px ${SECTION_PADDING} 32px;
+  box-sizing: border-box;
+  text-align: center;
 
-  ${() => variant({
-  prop: '$styles',
-  variants: {
-    solid: {
-      maxWidth: '100%',
-      paddingX: `calc((max(100%, ${MAX_WIDTH}) - ${MAX_WIDTH})/2 + ${SECTION_PADDING})`,
-      borderRadius: '0px',
-    },
-    card: {
-      // Align the black card with the section content column (the video):
-      // same 40px side margins as a normal section body, so it no longer
-      // sticks out past the video. Kept as a reusable variant (not removed).
-      width: `calc(100% - ${SECTION_PADDING} * 2)`,
-      maxWidth: `calc(${MAX_WIDTH} - ${SECTION_PADDING} * 2)`,
-      '@media (max-width: 640px)': {
-        // Fixed insets instead of a viewport-based guess at the row's
-        // content width: the row itself (DiscordRow) shrinks its own
-        // pieces to fit, so the card padding can just stay constant.
-        paddingX: '12px',
-        paddingY: '20px',
-        // Smaller radius to match the shorter mobile card; the 40px
-        // desktop radius is too big for this height and crowds the
-        // icon/button against the curve.
-        borderRadius: '24px',
-      },
-    },
-  },
-})}
+  img {
+    width: min(560px, 82vw);
+    height: auto;
+  }
 
-  ${space};
-  ${layout};
+  p {
+    margin: 0;
+    font-family: ${theme.fonts.hand};
+    font-size: clamp(30px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
+  ${PHONE} {
+    min-height: 0;
+    padding: ${HEADER_HEIGHT_MOBILE + 32}px ${PHONE_PADDING} 24px;
+  }
 `;
 
-interface SectionContainerProps {
-  $headerHeight?: number;
-}
-
-export const SectionContainer = styled.div<SectionContainerProps>`
-  padding-top: ${(props) => (props.$headerHeight)}px;
+export const NotFoundPage = styled.main`
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: ${SECTION_PADDING};
+  text-align: center;
+
+  img {
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1;
+  }
 `;
 
 export const Text = styled(TextGlobal)`
    ${variant({
   prop: '$styles',
   variants: {
-    sectionTitle: {
-      fontSize: '40px',
-      // No own margin; the section's 40px gap handles title-to-content spacing.
-      marginBottom: '0px',
-      textAlign: 'center',
-      fontWeight: 500,
-    },
-    sectionTitle2: {
-      color: theme.colors.tercerary,
-      fontSize: '40px',
-      marginBottom: '54px',
-      textAlign: 'center',
-      fontWeight: 500,
-    },
-    sectionSubtitle: {
-      fontSize: '40px',
-    },
-    sectionDesc: {
-      fontSize: '18px',
-      color: `${theme.colors.secondaryText}`,
-      lineHeight: '28px'
-    },
-    studioIntro: {
-      fontSize: '18px',
-      lineHeight: '28px',
-      color: `${theme.colors.secondaryText}`,
-      textAlign: 'center',
-      width: '100%',
-      '.big': {
-        fontSize: '24px',
-        fontWeight: 700,
-        color: theme.colors.black,
-      },
-    },
-    sectionDesc2: {
-      fontSize: '18px',
-      color: `${theme.colors.whiteSmoke}`,
-      lineHeight: '28px'
-    },
-    headsTitle: {
-      fontSize: '28px',
-      fontWeight: 700,
-      textAlign: 'center',
-      marginTop: '4rem',
-      marginBottom: '0.5rem',
-    },
-    heroEyebrow: {
-      fontSize: '14px',
-      fontWeight: 700,
-      letterSpacing: '2px',
-      textTransform: 'uppercase',
-      color: theme.colors.primary,
-    },
     heroTagline: {
       fontSize: '19px',
       fontWeight: 400,
@@ -150,45 +101,591 @@ export const Text = styled(TextGlobal)`
         color: theme.colors.black,
       },
     },
-    heroPitch: {
-      fontSize: '18px',
-      lineHeight: '28px',
-      maxWidth: '620px',
-      color: theme.colors.secondaryText,
-    },
-    emailFooter: {
-      color: 'white',
-      fontSize: 'min(3vw + 10px, 40px)',
-      marginTop: '32px',
-    },
   },
 })}
 `;
 
-export const Hero = styled.section`
+/* One of the page's three parts: a title, then its pictures and text, on the
+   header's 1000px grid. */
+export const Act = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  max-width: ${MAX_WIDTH};
+  margin: 0 auto;
+  padding: 64px ${SECTION_PADDING} 0;
+  box-sizing: border-box;
+
+  & > h2 {
+    margin: 0;
+    font-family: ${theme.fonts.hand};
+    font-size: clamp(34px, 4.6vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  & > p {
+    margin: 0;
+    font-size: 21px;
+    line-height: 1.45;
+  }
+
+  ${PHONE} {
+    gap: 24px;
+    padding: 48px ${PHONE_PADDING} 0;
+  }
+`;
+
+/* The studio and its team, after the three parts. */
+export const Studio = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  width: 100%;
+  max-width: ${MAX_WIDTH};
+  margin: 0 auto;
+  padding: 88px ${SECTION_PADDING} 72px;
+  box-sizing: border-box;
+
+  ${PHONE} {
+    gap: 36px;
+    padding: 64px ${PHONE_PADDING} 40px;
+  }
+`;
+
+// A white card for a photo or a note: thick black border, round corners.
+export const Card = styled.div`
+  position: relative;
+  margin: 0;
+  padding: 10px;
+  box-sizing: border-box;
+  background: ${theme.colors.white};
+  border: 3px solid ${theme.colors.black};
+  border-radius: 18px;
+`;
+
+// Look Out up front, before its three parts: the logo, what the game is, and
+// the Steam button.
+export const Intro = styled.section`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 28px 40px;
+  align-items: center;
+  width: 100%;
+  max-width: ${MAX_WIDTH};
+  margin: 0 auto;
+  padding: 32px ${SECTION_PADDING} 0;
+  box-sizing: border-box;
+
+  .pitch {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  /* Phones: one centered column under the studio's logo, the button spanning
+     its width. */
+  ${PHONE} {
+    gap: 12px;
+    justify-items: center;
+    padding: 16px ${PHONE_PADDING} 0;
+    text-align: center;
+
+    .pitch {
+      gap: 16px;
+    }
+
+    .pitch > * {
+      align-self: stretch;
+    }
+  }
+`;
+
+// On phones it grows with the screen but stays small enough on the common
+// ones (up to about 430px wide) for the Steam button to clear the floating eyes
+// on the first screen.
+export const HeroLogo = styled.h1`
+  width: min(460px, 100%);
+  margin: 0;
+  transform: rotate(-3deg);
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+
+  ${PHONE} {
+    width: clamp(240px, 64vw, 340px);
+  }
+`;
+
+export const Tagline = styled.p`
+  margin: 0;
+  font-size: clamp(23px, 2.7vw, 30px);
+  line-height: 1.32;
+`;
+
+// Part 1: the three demons in the water, a little tilted.
+export const StoryArt = styled(Card)`
+  align-self: center;
+  width: min(880px, 100%);
+  transform: rotate(-1deg);
+`;
+
+// Highlighter over the key phrases. A color you can't see leaves only a dashed
+// underline.
+export const Mark = styled.mark<{ $color: string; $seen: boolean }>`
+  color: inherit;
+  background: ${({ $color, $seen }) => ($seen ? $color : 'none')};
+  text-decoration: ${({ $seen }) => ($seen ? 'none' : 'underline dashed 2px')};
+  text-underline-offset: 6px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+`;
+
+// Steam's note under the trailer: the game's capsule beside the button.
+export const WishNote = styled(Card)`
+  /* Above the trailer, so the coming-soon popup can open over it. */
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 28px;
+  align-items: center;
+  padding: 20px;
+
+  & > img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  h3 {
+    margin: 0 0 14px;
+    font-family: ${theme.fonts.hand};
+    font-size: clamp(26px, 3vw, 32px);
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  ${PHONE} {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 16px;
+  }
+`;
+
+// The page's buttons: black pills lettered by hand. On hover they empty out,
+// like the site's other solid buttons.
+export const Pill = styled.button`
+  position: relative;
+  /* The hover scale wraps the coming-soon popup in the button's own layer, so
+     the button has to sit above the cards around it. */
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 60px;
+  padding: 0 30px;
+  box-sizing: border-box;
+  border: 2px solid ${theme.colors.black};
+  border-radius: 48px;
+  background-color: ${theme.colors.black};
+  color: ${theme.colors.white};
+  font-family: ${theme.fonts.hand};
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: normal;
+  cursor: pointer;
+  transition: background-color 250ms ease, color 250ms ease, transform 200ms ease;
+
+  svg {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: transparent;
+      color: ${theme.colors.black};
+      transform: scale(1.04);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      transform: none;
+    }
+  }
+`;
+
+/* Part 2: three screens side by side, one per iris. On phones they stack. */
+export const Lanes = styled.div`
+  container-type: inline-size;
+  display: flex;
+  gap: 14px;
+
+  ${PHONE} {
+    flex-direction: column;
+    gap: 18px;
+  }
+`;
+
+// What one iris sees: its screen framed in its color, and its label under it.
+// The iris you pick opens its screen wide; the colors you can't see go grey
+// behind a dashed border. On phones the open one keeps its full height and the
+// others shrink to a strip.
+export const Lane = styled.div<{ $color: string; $seen: boolean; $open: boolean }>`
+  flex: ${({ $open }) => ($open ? 2.6 : 1)} 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: flex-grow 0.3s ease-out;
+
+  .screen {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: clamp(220px, 33vw, 330px);
+    overflow: hidden;
+    padding: 0;
+    box-sizing: border-box;
+    background: ${theme.colors.black};
+    border: 4px ${({ $seen }) => ($seen ? 'solid' : 'dashed')} ${({ $color, $seen }) => ($seen ? $color : theme.colors.black)};
+    border-radius: 16px;
+    filter: ${({ $seen }) => ($seen ? 'none' : 'grayscale(1)')};
+    opacity: ${({ $seen }) => ($seen ? 1 : 0.45)};
+    cursor: zoom-in;
+    transition: height 0.3s ease-out, filter 0.3s ease-out, opacity 0.3s ease-out;
+  }
+
+  .screen img {
+    object-fit: cover;
+  }
+
+  /* One line: while a screen widens, its label is cut instead of wrapping. */
+  p {
+    margin: 0;
+    overflow: hidden;
+    font-family: ${theme.fonts.hand};
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+
+  /* Phones: the screens don't change width here, so a long label may wrap. */
+  ${PHONE} {
+    flex: none;
+
+    .screen {
+      height: ${({ $seen }) => ($seen ? 'calc(100cqw * 9 / 16)' : '96px')};
+    }
+
+    p {
+      font-size: 16px;
+      white-space: normal;
+    }
+  }
+`;
+
+// The demons' diagram beside how the game plays.
+export const Mechanics = styled.div`
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px 40px;
+  align-items: center;
+
+  figcaption {
+    margin-top: 6px;
+    font-family: ${theme.fonts.hand};
+    font-size: 24px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  ${NARROW} {
+    grid-template-columns: 1fr;
+  }
+
+  .copy {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    font-size: 21px;
+    line-height: 1.45;
+  }
+
+  .copy p {
+    margin: 0;
+  }
+`;
+
+export const StudioGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 24px 40px;
+  align-items: center;
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  h2 {
+    margin: 0;
+    padding-bottom: 6px;
+    border-bottom: 4px dashed ${theme.colors.black};
+    font-family: ${theme.fonts.hand};
+    font-size: clamp(34px, 4.6vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  p {
+    margin: 0;
+    font-size: 21px;
+    line-height: 1.45;
+  }
+
+  .iso {
+    justify-self: center;
+    width: min(320px, 80%);
+    height: auto;
+    transform: rotate(3deg);
+  }
+`;
+
+// The three demons' diagram, with the empty sides of the 16:9 art cut off.
+// The drawing spans x 257-1662 of 1920; keep about 127px of it beside each cape.
+export const ChainArt = styled.div`
+  position: relative;
+  aspect-ratio: 1659 / 1080;
+  overflow: hidden;
+  border-radius: 10px;
+
+  img {
+    object-fit: cover;
+  }
+`;
+
+// The art keeps the trailer's 16:9 frame.
+export const ArtFrame = styled.div`
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 10px;
+
+  img {
+    object-fit: cover;
+  }
+`;
+
+export const Team = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+  gap: 30px 22px;
+  padding-bottom: 16px;
+`;
+
+// Each teammate as a demon of the game, linking to their LinkedIn; every other
+// one stands a little lower and each one hops on hover.
+export const Member = styled.a<{ $low?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  /* Match the shared 1000px section box. */
-  width: 100%;
-  max-width: ${MAX_WIDTH};
-  /* Same box as the other sections: 40px all sides, 40px between children,
-     40px bottom margin. */
-  margin: 0 auto ${SECTION_PADDING};
-  padding: ${SECTION_PADDING};
-  gap: ${SECTION_PADDING};
+  color: ${theme.colors.black};
+  text-decoration: none;
+  transform: translateY(${({ $low }) => ($low ? 14 : 0)}px);
+  transition: transform 0.15s ease-out;
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(${({ $low }) => ($low ? 10 : -4)}px);
+    }
+  }
+
+  img {
+    width: min(200px, 100%);
+    height: auto;
+    margin-bottom: 10px;
+  }
+
+  .name {
+    margin: 0;
+    font-family: ${theme.fonts.hand};
+    font-size: 23px;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .role {
+    margin: 4px 0 0;
+    font-size: 18px;
+    line-height: 1.25;
+  }
+
+  /* Two to a row on phones: no staggering. */
+  ${PHONE} {
+    transform: none;
+
+    @media (hover: hover) {
+      &:hover {
+        transform: translateY(-4px);
+      }
+    }
+  }
 `;
+
+/* Eyes ------------------------------------------------------------------- */
+
+// The chosen eye narrows its lid into a V over the iris instead of wearing a
+// ring. Both shapes have the same points so the lid can close in a blink.
+const LID_OPEN = 'polygon(0 0, 50% 0, 100% 0, 100% 100%, 0 100%)';
+const LID_V = 'polygon(0 12%, 50% 41%, 100% 12%, 100% 100%, 0 100%)';
+
+/* Two eyes below, one on top; on phones, one row. */
+export const EyeGroup = styled.div<{ $size: number }>`
+  display: grid;
+  grid-template-columns: repeat(2, ${({ $size }) => $size + 2}px);
+  gap: 2px 4px;
+
+  & > :first-child {
+    grid-column: 1 / span 2;
+    justify-self: center;
+  }
+
+  ${PHONE} {
+    display: flex;
+    gap: 8px;
+  }
+`;
+
+export const EyeButton = styled.button<{ $size: number }>`
+  display: grid;
+  place-items: center;
+  width: ${({ $size }) => $size}px;
+  height: ${({ $size }) => $size}px;
+  padding: 0;
+  box-sizing: border-box;
+  background: ${theme.colors.white};
+  border: 0;
+  border-radius: 50%;
+  box-shadow: ${SOFT_SHADOW};
+  cursor: pointer;
+`;
+
+export const EyeIris = styled.span<{ $size: number; $color: string; $chosen: boolean }>`
+  grid-area: 1 / 1;
+  width: ${({ $size }) => $size}px;
+  height: ${({ $size }) => $size}px;
+  background: ${({ $color }) => $color};
+  border-radius: 50%;
+  clip-path: ${({ $chosen }) => ($chosen ? LID_V : LID_OPEN)};
+  transition: clip-path 0.1s ease-out;
+`;
+
+// Always on top of the iris, even while the lid cuts it.
+export const EyePupil = styled.span<{ $size: number }>`
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 1;
+  width: ${({ $size }) => $size}px;
+  height: ${({ $size }) => $size}px;
+  background: ${theme.colors.black};
+  border-radius: 50%;
+`;
+
+// The eyes wait in the top-left corner, just under the header. Once the script
+// runs it places each eye itself (data-live): the dock becomes a layer over
+// the whole window that only the eyes catch pointers in, so the visitor can
+// grab and throw them; the browser mustn't take that for a scroll or a text
+// selection.
+export const EyeDock = styled.div`
+  position: fixed;
+  top: ${HEADER_HEIGHT + 12}px;
+  left: 12px;
+  z-index: 9998;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  /* Hidden until the script places the eyes where the visitor left them, so
+     they never flash at the default spot while the page loads. */
+  opacity: 0;
+  visibility: hidden;
+
+  /* Phones: one row at the bottom center, within thumb reach and clear of the
+     header, lifted above the iPhone's home indicator. */
+  ${PHONE} {
+    top: auto;
+    left: 50%;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+  }
+
+  &[data-live='true'] {
+    inset: 0;
+    transform: none;
+    pointer-events: none;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 200ms ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .grip {
+    display: none;
+  }
+
+  /* An invisible pad around the group that catches presses between or just
+     off the eyes (see EyePicker). */
+  &[data-live='true'] .grip {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+    cursor: grab;
+    will-change: transform;
+  }
+
+  &[data-live='true'] button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+    will-change: transform;
+  }
+
+  /* Lifted while dragged: a deeper shadow under each eye. */
+  &[data-dragging='true'] button {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), ${SOFT_SHADOW};
+  }
+`;
+
+/* Trailer ---------------------------------------------------------------- */
 
 export const TrailerFrame = styled.div`
   width: 100%;
-  /* Grow to the full section content width. */
-  max-width: 100%;
   aspect-ratio: 16 / 9;
-  border-radius: 14px;
   overflow: hidden;
-  background: #0d0d10;
-  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.14);
+  border-radius: 10px;
+  background: ${theme.colors.black};
 
   iframe {
     width: 100%;
@@ -204,8 +701,12 @@ export const TrailerFrame = styled.div`
     padding: 0;
     border: 0;
     cursor: pointer;
-    background: #0d0d10;
+    background: ${theme.colors.black};
     display: block;
+  }
+
+  .facade:focus-visible {
+    outline-offset: -4px;
   }
 
   .facade img {
@@ -220,328 +721,55 @@ export const TrailerFrame = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 68px;
-    height: 68px;
+    width: 92px;
+    height: 92px;
+    box-sizing: border-box;
+    border: 4px solid ${theme.colors.black};
     border-radius: 50%;
-    background: ${theme.colors.primary};
+    background: ${theme.colors.white};
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.2s ease;
   }
 
-  .facade:hover .play {
-    transform: translate(-50%, -50%) scale(1.08);
+  @media (prefers-reduced-motion: no-preference) {
+    .facade:hover .play {
+      transform: translate(-50%, -50%) scale(1.08);
+    }
   }
 
   .facade .play svg {
-    width: 30px;
-    height: 30px;
-    fill: ${theme.colors.white};
-    margin-left: 3px;
-  }
-`;
-
-// Same frame as the trailer, so the art matches the video's exact size.
-export const StudioArt = styled(TrailerFrame)`
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-`;
-
-export const HeroLeft = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 1.5rem;
-
-  @media (min-width: 820px) {
-    align-items: flex-start;
-    text-align: left;
-  }
-`;
-
-export const HeroRight = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 1.5rem;
-`;
-
-export const HeroLogo = styled.div`
-  width: 100%;
-  max-width: 360px;
-
-  img {
-    width: 100%;
-    height: auto;
+    width: 42px;
+    height: 42px;
+    fill: ${theme.colors.black};
+    margin-left: 4px;
   }
 
-  @media (max-width: 700px) {
-    max-width: 300px;
-  }
-`;
-
-export const StudioLogo = styled.div`
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-`;
-
-/* Look Out: three gameplay shots in one row (3 equal columns with gaps). */
-export const ShotsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  width: 100%;
-
-  .shot {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 12px;
-    overflow: hidden;
-    /* Button reset — each shot is a clickable zoom trigger. */
-    border: 0;
-    padding: 0;
-    background: none;
-    cursor: zoom-in;
-    display: block;
-  }
-
-  .shot img {
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  @media (hover: hover) {
-    .shot:hover img {
-      transform: scale(1.12);
-    }
-  }
-`;
-
-/* A single standalone image (not inside a grid/card): 75% on desktop, full
-   width on phones. */
-export const FullShot = styled.div`
-  width: 75%;
-  margin: 0 auto;
-
-  @media (max-width: 640px) {
-    width: 100%;
-  }
-
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 12px;
-  }
-`;
-
-/* Black CTA card (Discord / Wishlist) placed inside a section rather than
-   being its own section. 50px of separation above it. */
-export const CtaCard = styled.div`
-  width: 100%;
-  /* Spacing above is the section's 40px gap. Adaptive inner padding: 15px on
-     phones up to 30px on desktop. */
-  padding: clamp(15px, 3vw, 30px);
-  background-color: ${theme.colors.black};
-  color: ${theme.colors.white};
-  border-radius: 24px;
-`;
-
-export const CtaRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 0.5rem;
-`;
-
-export const HeadsGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2.5rem;
-  width: 100%;
-`;
-
-export const HeadCard = styled.div<{ $accent?: string }>`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.6rem;
-  /* Fixed width so every people-card is equal and both grids wrap
-     2 -> 1 columns at the same width. */
-  flex: 0 0 240px;
-  max-width: 100%;
-
-  .name {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 700;
-  }
-
-  .role {
-    margin: 0;
-    font-size: 15px;
-    color: ${theme.colors.secondaryText};
-  }
-
-  .linkedin {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 0.35rem;
-    color: ${({ $accent }) => $accent || theme.colors.primary};
-    transition: transform 0.2s ease;
-  }
-
-  @media (hover: hover) {
-    .linkedin:hover {
-      transform: scale(1.15);
-    }
-  }
-
-  .linkedin svg {
-    width: 22px;
-    height: 22px;
-    fill: currentColor;
-  }
-`;
-
-export const Avatar = styled.div<{ $bg?: string }>`
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-  background-color: ${({ $bg }) => $bg || theme.colors.primary};
-  color: ${theme.colors.white};
-  font-size: 38px;
-  font-weight: 700;
-  user-select: none;
-`;
-
-export const SectionContent = styled.div`
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-  img {
-    margin-top: 3rem;
-    border-radius: 20px;    
-    object-fit: cover;
-  }  
-`;
-
-export const DiscordRow = styled.div`
-  /* Two equal columns: left = icon + text, right = button. */
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-
-  .left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    text-align: left;
-    min-width: 0;
-  }
-
-  .left > div {
-    min-width: 0;
-  }
-
-  .icon {
-    flex-shrink: 0;
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    background: #5865f2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .icon svg {
-    width: 30px;
-    height: 30px;
-    fill: ${theme.colors.white};
-  }
-
-  /* One line normally; wraps to 2 lines when its column gets narrow. */
-  .title {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 700;
-  }
-
-  /* Button fills 90% of the right column, pinned right, so it's a long,
-     easy-to-press target. */
-  & > a,
-  & > button {
-    width: 90%;
-    justify-self: end;
-  }
-
-  @media (max-width: 640px) {
-    gap: 8px;
-
-    .left {
-      gap: 10px;
+  ${PHONE} {
+    .facade .play {
+      width: 68px;
+      height: 68px;
     }
 
-    .icon {
-      width: 40px;
-      height: 40px;
-    }
-
-    .icon svg {
-      width: 22px;
-      height: 22px;
-    }
-
-    .title {
-      font-size: 15px;
-    }
-
-    & > a,
-    & > button {
-      min-height: 40px;
-      padding-left: 8px;
-      padding-right: 8px;
-      font-size: 12px;
-      line-height: 1.2;
+    .facade .play svg {
+      width: 30px;
+      height: 30px;
+      margin-left: 3px;
     }
   }
 `;
 
 // "Coming soon!" popup for the Wishlist button while the Steam page isn't
 // live: the Steam capsule under a green header, framed in the same green.
-// Pops above the button's right edge like a badge; always mounted (just
-// hidden) so the image is already loaded when it shows.
-export const CapsulePopup = styled.span<{ $visible: boolean }>`
+// Pops centered above the button, or below it when there's no room under the
+// fixed header; always mounted (just hidden) so the image is already loaded
+// when it shows.
+export const CapsulePopup = styled.span<{ $visible: boolean; $below: boolean }>`
   position: absolute;
-  right: 0;
-  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  ${({ $below }) => ($below ? 'top' : 'bottom')}: calc(100% + ${CAPSULE_POPUP_GAP}px);
   z-index: 2;
   display: block;
   width: 300px;
@@ -576,33 +804,6 @@ export const CapsulePopup = styled.span<{ $visible: boolean }>`
     .header {
       font-size: 13px;
     }
-  }
-`;
-
-// Same black-card row as Discord, with a Steam-cyan icon tile.
-export const WishlistRow = styled(DiscordRow)`
-  .icon {
-    background: ${theme.colors.cyan};
-  }
-`;
-
-export const HalfCircleContainer = styled.div`
-  width: 100%;
-  /* Solapa 1px con la sección negra de abajo para evitar una línea fina en el borde */
-  margin-bottom: -1px;
-`;
-
-export const HalfCircle = styled.div`
-  width: 100%;
-  /* La altura controla directamente qué tan pronunciado es el arco */
-  height: 56px;
-  background-color: ${theme.colors.black};
-  /* Radio elíptico solo en las esquinas superiores: 50% de ancho a cada lado
-     (se encuentran en el centro) y radio vertical = alto -> un arco simple */
-  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-
-  @media (max-width: 700px) {
-    height: 36px;
   }
 `;
 
@@ -693,9 +894,12 @@ export const Lightbox = styled.div`
   }
 
   @media (max-width: 640px) {
+    /* The photo fills the width here, so the arrows sit on top of it and the
+       translucent white disappears over the bright shots. */
     .nav {
       width: 40px;
       height: 40px;
+      background: rgba(0, 0, 0, 0.55);
     }
     .nav.prev {
       left: 8px;

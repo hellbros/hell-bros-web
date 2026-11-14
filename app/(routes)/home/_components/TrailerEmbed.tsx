@@ -1,11 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import Image, { type StaticImageData } from 'next/image';
 import { TrailerFrame } from '../styles';
 import { useDictionary } from '@/app/_i18n/LocaleProvider';
 
 type Props = {
   videoId?: string;
+  // The video's first frame, served by the site itself: YouTube only hears
+  // about the visitor once they press play.
+  poster: StaticImageData;
   title?: string;
 };
 
@@ -15,7 +19,7 @@ const PlayIcon = () => (
   </svg>
 );
 
-const TrailerEmbed = ({ videoId, title: titleProp }: Props) => {
+const TrailerEmbed = ({ videoId, poster, title: titleProp }: Props) => {
   const t = useDictionary();
   const title = titleProp ?? t.lookout.trailerTitle;
   const [playing, setPlaying] = useState(false);
@@ -41,16 +45,7 @@ const TrailerEmbed = ({ videoId, title: titleProp }: Props) => {
         onClick={() => videoId && setPlaying(true)}
         aria-label={t.lookout.play(title)}
       >
-        {videoId ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-            alt={title}
-            onError={(e) => {
-              e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-            }}
-          />
-        ) : null}
+        <Image src={poster} alt={title} sizes="(max-width: 1000px) 100vw, 1000px" />
         <span className="play" aria-hidden="true">
           <PlayIcon />
         </span>

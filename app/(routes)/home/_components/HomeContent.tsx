@@ -1,36 +1,31 @@
 'use client'
-import { useState, useEffect, useRef, type TouchEvent as ReactTouchEvent } from "react";
+import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 import TrailerEmbed from "./TrailerEmbed";
-import Button from "@/app/_components/Button";
-import { SectionContainer, Section, Text, HalfCircle, HalfCircleContainer, Hero, HeroLogo, StudioLogo, HeadsGrid, HeadCard, Avatar, DiscordRow, WishlistRow, ShotsGrid, FullShot, CtaCard, Lightbox, CapsulePopup, StudioArt } from "../styles";
-import { HEADER_HEIGHT, HEADER_HEIGHT_MOBILE } from "@/app/_utils/constants";
-import { theme } from "@/app/_styles/theme";
-import LookOutLogo from "@/public/assets/look-out/lookout-wordmark.png"
+import TrailerPoster from "@/public/assets/look-out/look-out-trailer-poster.webp";
+import EyePicker, { IRIS_INK, type Iris } from "./EyePicker";
+import { SectionContainer, Brand, Intro, Act, Studio, Card, StoryArt, HeroLogo, Tagline, Mark, WishNote, Pill, Lanes, Lane, Mechanics, StudioGrid, ChainArt, ArtFrame, Team, Member, Lightbox, CapsulePopup, CAPSULE_POPUP_GAP } from "../styles";
+import { STEAM_PAGE_LIVE, STEAM_URL } from "@/app/_utils/constants";
+import LookOutLogo from "@/public/assets/look-out/look-out-logo-hell-bros.png"
+import HellBrosLogo from "@/public/assets/brand/logo_hb_color02.svg"
 import HellBrosIso from "@/public/assets/brand/hellbros_iso_02.svg"
+import RaulDemon from "@/public/assets/team/hell-bros-raul-jeri.webp"
+import IvanDemon from "@/public/assets/team/hell-bros-ivan-araoz.webp"
+import ArianaDemon from "@/public/assets/team/hell-bros-ariana-coronel.webp"
+import GunterDemon from "@/public/assets/team/hell-bros-gunter-brenner.webp"
 import Shot1 from "@/public/assets/images/1.png"
 import Shot2 from "@/public/assets/images/2.png"
 import Shot3 from "@/public/assets/images/3.png"
 import Shot4 from "@/public/assets/images/4.png"
 import SteamCapsule from "@/public/assets/look-out/steam-capsule.webp"
-import DemonsInWater from "@/public/assets/look-out/demons-in-water.webp"
-import Image from "next/image";
-import useMediaQuery from '@/app/hooks/useMediaQuery';
+import DemonsInWater from "@/public/assets/look-out/hell-bros-look-out-demons-in-water.webp"
+import Image, { type StaticImageData } from "next/image";
 import { lockScroll, unlockScroll } from "@/app/_utils/scrollLock";
-import { rich, useDictionary } from "@/app/_i18n/LocaleProvider";
+import { trapTab } from "@/app/_utils/focus";
+import { useDictionary } from "@/app/_i18n/LocaleProvider";
+import type { Dictionary } from "@/app/_i18n/dictionaries";
 
 // YouTube video ID of the trailer (the part after v= / youtu.be/).
 const TRAILER_ID = 'CY4mwk-rh30';
-
-const STEAM_URL = 'https://store.steampowered.com/app/4605750/';
-// The Steam page isn't public yet: the Wishlist button shows a "Coming soon!"
-// capsule popup instead of linking out. Flip to true once the store page is live.
-const STEAM_PAGE_LIVE = false;
-
-const LinkedinIcon = () => (
-  <svg viewBox="0 0 448 512" aria-hidden="true">
-    <path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
-  </svg>
-);
 
 const DiscordIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -38,14 +33,22 @@ const DiscordIcon = () => (
   </svg>
 );
 
-const SteamIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z" />
-  </svg>
-);
+// The three Look Out gameplay shots, in order (used by the screens + lightbox),
+// each seen through one eye.
+const SHOTS: { src: StaticImageData; eye: Iris }[] = [
+  { src: Shot1, eye: 'blue' },
+  { src: Shot2, eye: 'green' },
+  { src: Shot3, eye: 'red' },
+];
 
-// The three Look Out gameplay shots, in order (used by the grid + lightbox).
-const SHOTS = [Shot1, Shot2, Shot3];
+// Each teammate as a demon of the game in their own colors. They aren't part
+// of the page's colors, so the eyes leave them alone.
+const TEAM: { name: string; role: keyof Dictionary['people']['roles']; demon: StaticImageData; linkedin: string }[] = [
+  { name: 'Raúl Jeri', role: 'technicalCreative', demon: RaulDemon, linkedin: 'https://www.linkedin.com/in/rauljerilara/' },
+  { name: 'Iván Aráoz', role: 'productionMarketing', demon: IvanDemon, linkedin: 'https://www.linkedin.com/in/iaraoz06/' },
+  { name: 'Ariana Coronel', role: 'art', demon: ArianaDemon, linkedin: 'https://www.linkedin.com/in/ariana-coronel-palma-48b653401/' },
+  { name: 'Gunter Brenner', role: 'soundMusic', demon: GunterDemon, linkedin: 'https://www.linkedin.com/in/gunterbrenner/' },
+];
 
 const CloseIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6L18 18M18 6L6 18" /></svg>
@@ -54,35 +57,84 @@ const ChevronIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5L8 12l7 7" /></svg>
 );
 
-const HomeContent = () => {
-  const t = useDictionary();
-  const sm = useMediaQuery('(max-width: 700px)');
-  const headerHeight = sm ? HEADER_HEIGHT_MOBILE : HEADER_HEIGHT;
-  const [zoom, setZoom] = useState<number | null>(null);
-  const [comingSoon, setComingSoon] = useState(false);
-  const comingSoonTimer = useRef<number>();
+// Text without its `**emphasis**` markers.
+const plain = (text: string) => text.replace(/\*\*/g, '');
 
-  const showComingSoon = () => {
+// Steam's button, up top and again under the trailer. While the store page
+// isn't live, it shows its own "Coming soon!" capsule instead of linking out.
+const WishlistButton = () => {
+  const t = useDictionary();
+  const [comingSoon, setComingSoon] = useState(false);
+  const [popupBelow, setPopupBelow] = useState(false);
+  const comingSoonTimer = useRef<number | undefined>(undefined);
+  const popupRef = useRef<HTMLSpanElement>(null);
+
+  const showComingSoon = (e: ReactMouseEvent<HTMLElement>) => {
+    const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
+    const popupHeight = popupRef.current?.offsetHeight ?? 0;
+    setPopupBelow(e.currentTarget.getBoundingClientRect().top - popupHeight - CAPSULE_POPUP_GAP < headerBottom);
     setComingSoon(true);
     window.clearTimeout(comingSoonTimer.current);
     comingSoonTimer.current = window.setTimeout(() => setComingSoon(false), 1600);
   };
   useEffect(() => () => window.clearTimeout(comingSoonTimer.current), []);
-  const lightboxOpen = zoom !== null;
 
-  // While the lightbox is open: lock scroll (no layout shift), wire keys, and
-  // push a history entry so the phone's native back button / gesture closes
-  // the zoom instead of leaving the page. Depends on the open/closed flag (not
-  // the index) so switching shots doesn't stack history entries.
+  if (STEAM_PAGE_LIVE) {
+    return (
+      <Pill as="a" href={STEAM_URL} target="_blank" rel="noopener noreferrer">
+        {t.lookout.wishlistButton}
+      </Pill>
+    );
+  }
+  return (
+    <Pill type="button" onClick={showComingSoon}>
+      {t.lookout.wishlistButton}
+      <CapsulePopup ref={popupRef} $visible={comingSoon} $below={popupBelow} role="status">
+        <span className="header">{t.lookout.comingSoon}</span>
+        <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
+      </CapsulePopup>
+    </Pill>
+  );
+};
+
+const HomeContent = () => {
+  const t = useDictionary();
+  // The eye the visitor picked: only its iris color stays on the page.
+  const [iris, setIris] = useState<Iris | null>(null);
+  const [zoom, setZoom] = useState<number | null>(null);
+
+  const seen = (color: Iris) => iris === null || iris === color;
+  const pickIris = (color: Iris) => setIris((current) => (current === color ? null : color));
+
+  // `**text**` becomes highlighter, taking the colors in order.
+  const marked = (text: string, colors: Iris[]): ReactNode =>
+    text.split(/\*\*(.+?)\*\*/g).map((part, i) => {
+      if (i % 2 === 0) return part;
+      const color = colors[((i - 1) / 2) % colors.length];
+      return <Mark key={i} $color={IRIS_INK[color].mark} $seen={seen(color)}>{part}</Mark>;
+    });
+
+  const lightboxOpen = zoom !== null;
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  // The thumbnail that opened the lightbox, so focus can return to it on close.
+  const zoomTrigger = useRef<HTMLElement | null>(null);
+
+  // While the lightbox is open: lock scroll (no layout shift), wire keys, keep
+  // focus inside, and push a history entry so the phone's native back button /
+  // gesture closes the zoom instead of leaving the page. Depends on the
+  // open/closed flag (not the index) so switching shots doesn't stack history
+  // entries.
   useEffect(() => {
     if (!lightboxOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setZoom(null);
       else if (e.key === 'ArrowRight') setZoom((z) => (z === null ? z : (z + 1) % SHOTS.length));
       else if (e.key === 'ArrowLeft') setZoom((z) => (z === null ? z : (z - 1 + SHOTS.length) % SHOTS.length));
+      else if (e.key === 'Tab') trapTab(e, lightboxRef.current);
     };
     const onPop = () => setZoom(null); // back button closes the lightbox
     lockScroll();
+    lightboxRef.current?.querySelector<HTMLElement>('.close')?.focus({ preventScroll: true });
     // Preserve Next's router state; just flag this entry as the lightbox's.
     window.history.pushState({ ...window.history.state, __lightbox: true }, '');
     window.addEventListener('keydown', onKey);
@@ -96,6 +148,7 @@ const HomeContent = () => {
       if (window.history.state && window.history.state.__lightbox) {
         window.history.back();
       }
+      zoomTrigger.current?.focus({ preventScroll: true });
     };
   }, [lightboxOpen]);
 
@@ -126,203 +179,125 @@ const HomeContent = () => {
   };
 
   return (
-    <SectionContainer id="inicio" $headerHeight={headerHeight}>
+    <SectionContainer id="inicio" tabIndex={-1}>
 
-      {/* LOOK OUT (first section — clears the header via the container's
-          padding-top plus its own 40px top padding):
-          logo -> tagline -> video + wishlist -> shots -> text -> shot -> text */}
-      <Hero id="lookout">
+      {/* The studio first: its logo big and the slogan under it. Once this
+          leaves the screen, the header shows the logo small. */}
+      <Brand id="marca">
+        <Image src={HellBrosLogo} alt="Hell Bros" sizes="(max-width: 700px) 82vw, 560px" priority />
+        <p>Games from hell</p>
+      </Brand>
+
+      <EyePicker iris={iris} onPick={pickIris} />
+
+      {/* LOOK OUT first says what it is: logo, tagline and Steam's button. */}
+      <Intro id="lookout">
         <HeroLogo>
-          <Image src={LookOutLogo} alt="Look Out" priority />
+          <Image src={LookOutLogo} alt="Look Out: Indie Game" sizes="(max-width: 700px) 90vw, 460px" priority />
         </HeroLogo>
+        <div className="pitch">
+          <Tagline>{marked(t.lookout.tagline, ['blue', 'red'])}</Tagline>
+          <WishlistButton />
+        </div>
+      </Intro>
 
-        <Text as="p" $styles="heroTagline">
-          {rich(t.lookout.tagline)}
-        </Text>
+      {/* Part 1: the three demons, trapped: who they are and why they escape. */}
+      <Act>
+        <h2>{t.lookout.trappedTitle}</h2>
+        <p>{t.lookout.story}</p>
+        <StoryArt>
+          <ArtFrame>
+            <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} fill sizes="(max-width: 1000px) 90vw, 856px" />
+          </ArtFrame>
+        </StoryArt>
+      </Act>
 
-        <TrailerEmbed videoId={TRAILER_ID} title={t.lookout.trailerTitle} />
-
-        <CtaCard>
-          <WishlistRow>
-            <div className="left">
-              <span className="icon" aria-hidden="true">
-                <SteamIcon />
-              </span>
-              <div>
-                <h2 className="title">{t.lookout.wishlistTitle}</h2>
-              </div>
-            </div>
-            {STEAM_PAGE_LIVE ? (
-              <Button
-                as="a"
-                href={STEAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                $variant="solid"
-                color={theme.colors.cyan}>
-                {t.lookout.wishlistButton}
-              </Button>
-            ) : (
-              <Button
-                $variant="solid"
-                color={theme.colors.cyan}
-                onClick={showComingSoon}>
-                {t.lookout.wishlistButton}
-                <CapsulePopup $visible={comingSoon} role="status">
-                  <span className="header">{t.lookout.comingSoon}</span>
-                  <Image src={SteamCapsule} alt="Look Out" sizes="300px" />
-                </CapsulePopup>
-              </Button>
-            )}
-          </WishlistRow>
-        </CtaCard>
-
-        <ShotsGrid>
-          {SHOTS.map((src, i) => (
-            <button
-              key={i}
-              type="button"
-              className="shot"
-              onClick={() => setZoom(i)}
-              aria-label={t.lookout.enlargeShot(i + 1, SHOTS.length)}
-            >
-              <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 31vw, 300px" />
-            </button>
+      {/* Part 2: no one sees their own path. What each eye can do over its
+          screen, then what that means beside the diagram. */}
+      <Act>
+        <h2>{t.lookout.pathTitle}</h2>
+        <p>{marked(t.lookout.mechanicPaths, ['red', 'blue'])}</p>
+        <Lanes>
+          {SHOTS.map(({ src, eye }, i) => (
+            <Lane key={eye} $color={IRIS_INK[eye].solid} $seen={seen(eye)} $open={iris === eye}>
+              <button
+                type="button"
+                className="screen"
+                onClick={(e) => { zoomTrigger.current = e.currentTarget; setZoom(i); }}
+                aria-label={`${plain(t.lookout.irisLabel[eye])}. ${t.lookout.enlargeShot(i + 1, SHOTS.length)}`}
+              >
+                <Image src={src} alt={t.lookout.shotAlt} fill sizes="(max-width: 700px) 90vw, 600px" />
+              </button>
+              {/* The open screen says whose view it is; the others just name their iris. */}
+              <p>{marked(iris === eye ? t.lookout.irisSees[eye] : t.lookout.irisLabel[eye], [eye])}</p>
+            </Lane>
           ))}
-        </ShotsGrid>
+        </Lanes>
 
-        <Text as="p" $styles="heroTagline">
-          {rich(t.lookout.platforms)}
-        </Text>
+        <Mechanics>
+          <Card as="figure">
+            <ChainArt>
+              <Image src={Shot4} alt={t.lookout.shotAlt} fill sizes="(max-width: 860px) 90vw, 380px" />
+            </ChainArt>
+            <figcaption>{t.lookout.chainCaption}</figcaption>
+          </Card>
+          <div className="copy">
+            <p>{marked(t.lookout.mechanicChain, ['green'])}</p>
+          </div>
+        </Mechanics>
+      </Act>
 
-        <FullShot>
-          <Image src={Shot4} alt={t.lookout.shotAlt} sizes="(max-width: 1000px) 100vw, 920px" />
-        </FullShot>
+      {/* Part 3: escape together. The trailer, then Steam's note. */}
+      <Act>
+        <h2>{t.lookout.escapeTitle}</h2>
+        <Card>
+          <TrailerEmbed videoId={TRAILER_ID} poster={TrailerPoster} title={t.lookout.trailerTitle} />
+        </Card>
 
-        <Text as="p" $styles="heroTagline">
-          {rich(t.lookout.players)}
-        </Text>
-      </Hero>
+        <WishNote>
+          <Image src={SteamCapsule} alt="Look Out" sizes="(max-width: 700px) 90vw, 300px" />
+          <div>
+            <h3>{t.lookout.wishlistTitle}</h3>
+            <WishlistButton />
+          </div>
+        </WishNote>
+      </Act>
 
-      {/* OUR STUDIO */}
-      <Section id="about">
-        <Text as="h2" $styles="sectionTitle">
-          {t.studio.title}
-        </Text>
-        <StudioLogo>
-          <Image src={HellBrosIso} alt="Hell Bros" />
-        </StudioLogo>
-        <Text as="p" $styles="studioIntro">
-          {rich(t.studio.intro)}
-        </Text>
-
-        <CtaCard>
-          <DiscordRow>
-            <div className="left">
-              <span className="icon" aria-hidden="true">
-                <DiscordIcon />
-              </span>
-              <div>
-                <h2 className="title">{t.studio.discordTitle}</h2>
-              </div>
-            </div>
-            <Button
-              as="a"
-              href="https://discord.gg/5yXsbXfKM"
-              target="_blank"
-              rel="noopener noreferrer"
-              $variant="solid"
-              color="#5865F2">
+      {/* OUR STUDIO: intro + Discord, the team */}
+      <Studio id="about">
+        <StudioGrid>
+          <div className="intro">
+            <h2>{t.studio.title}</h2>
+            <p>{plain(t.studio.intro)}</p>
+            <Pill as="a" href="https://discord.gg/mSYYyGs5Yd" target="_blank" rel="noopener noreferrer">
+              <DiscordIcon />
               {t.studio.discordButton}
-            </Button>
-          </DiscordRow>
-        </CtaCard>
+            </Pill>
+          </div>
+          <Image className="iso" src={HellBrosIso} alt="Hell Bros" />
+        </StudioGrid>
 
-        <StudioArt>
-          <Image src={DemonsInWater} alt={t.lookout.demonsArtAlt} sizes="(max-width: 1000px) 100vw, 920px" />
-        </StudioArt>
-      </Section>
-
-      {/* OUR HEADS */}
-      <Section id="nosotros">
-        <Text as="h2" $styles="sectionTitle">
-          {t.people.headsTitle}
-        </Text>
-        <HeadsGrid>
-          <HeadCard $accent={theme.colors.red}>
-            <Avatar $bg={theme.colors.red} aria-hidden="true">RJ</Avatar>
-            <p className="name">Raúl Jeri</p>
-            <p className="role">{t.people.roles.technicalCreative}</p>
-            <a
-              className="linkedin"
-              href="https://www.linkedin.com/in/rauljerilara/"
+        <Team id="team">
+          {TEAM.map(({ name, role, demon, linkedin }, i) => (
+            <Member
+              key={name}
+              href={linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={t.people.onLinkedin('Raúl Jeri')}
+              aria-label={t.people.onLinkedin(name)}
+              $low={i % 2 === 1}
             >
-              <LinkedinIcon />
-            </a>
-          </HeadCard>
-          <HeadCard $accent={theme.colors.blue}>
-            <Avatar $bg={theme.colors.blue} aria-hidden="true">IA</Avatar>
-            <p className="name">Iván Aráoz</p>
-            <p className="role">{t.people.roles.productionMarketing}</p>
-            <a
-              className="linkedin"
-              href="https://www.linkedin.com/in/iaraoz06/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t.people.onLinkedin('Iván Aráoz')}
-            >
-              <LinkedinIcon />
-            </a>
-          </HeadCard>
-        </HeadsGrid>
-      </Section>
-
-      {/* OUR TEAM */}
-      <Section id="team">
-        <Text as="h2" $styles="sectionTitle">
-          {t.people.teamTitle}
-        </Text>
-        <HeadsGrid>
-          <HeadCard $accent={theme.colors.cyan}>
-            <Avatar $bg={theme.colors.cyan} aria-hidden="true">AC</Avatar>
-            <p className="name">Ariana Coronel</p>
-            <p className="role">{t.people.roles.art}</p>
-            <a
-              className="linkedin"
-              href="https://www.linkedin.com/in/ariana-coronel-palma-48b653401/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t.people.onLinkedin('Ariana Coronel')}
-            >
-              <LinkedinIcon />
-            </a>
-          </HeadCard>
-          <HeadCard $accent="#7C3AED">
-            <Avatar $bg="#7C3AED" aria-hidden="true">GB</Avatar>
-            <p className="name">Gunter Brenner</p>
-            <p className="role">{t.people.roles.soundMusic}</p>
-            <a
-              className="linkedin"
-              href="https://www.linkedin.com/in/gunterbrenner/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t.people.onLinkedin('Gunter Brenner')}
-            >
-              <LinkedinIcon />
-            </a>
-          </HeadCard>
-        </HeadsGrid>
-      </Section>
-
-      <HalfCircleContainer>
-        <HalfCircle/>
-      </HalfCircleContainer>
+              <Image src={demon} alt="" sizes="(max-width: 700px) 40vw, 200px" />
+              <p className="name">{name}</p>
+              <p className="role">{t.people.roles[role]}</p>
+            </Member>
+          ))}
+        </Team>
+      </Studio>
 
       {zoom !== null && (
         <Lightbox
+          ref={lightboxRef}
           onClick={() => { if (swiped.current) { swiped.current = false; return; } setZoom(null); }}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
@@ -343,7 +318,7 @@ const HomeContent = () => {
             <ChevronIcon />
           </button>
           <div className="frame" onClick={(e) => e.stopPropagation()}>
-            <Image src={SHOTS[zoom]} alt={t.lookout.shotAlt} sizes="90vw" priority />
+            <Image src={SHOTS[zoom].src} alt={t.lookout.shotAlt} sizes="90vw" priority />
           </div>
           <button
             className="nav next"
